@@ -1,0 +1,28 @@
+# Eureka
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:9010/eureka/
+    fetch-registry: true
+    register-with-eureka: true
+server:
+  port: 9110
+spring:
+  application:
+    name: USER-SERVICE
+  # db setting
+  datasource:
+    url: jdbc:postgresql://localhost:5432/
+    username:
+    password:
+  # hibernate setting
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        use_sql_comments: true
+        format_sql: true
+        show_sql: true
+    hibernate:
+      ddl-auto: update
+    generate-ddl: true
