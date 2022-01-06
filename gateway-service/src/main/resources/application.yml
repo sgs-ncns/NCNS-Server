@@ -1,0 +1,31 @@
+# Eureka
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:9010/eureka/
+    fetch-registry: true
+    register-with-eureka: true
+server:
+  port: 9000
+spring:
+  application:
+    name: GATEWAY-SERVICE
+
+---
+# Gateway
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: auth-service
+          uri: lb://AUTH-SERVICE
+          predicates:
+            - Path=/api/auth/**
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/api/users/**
+        - id: post-service
+          uri: lb://POST-SERVICE
+          predicates:
+            - Path=/api/posts/**
