@@ -10,3 +10,22 @@ server:
 spring:
   application:
     name: GATEWAY-SERVICE
+
+---
+# Gateway
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: auth-service
+          uri: lb://AUTH-SERVICE
+          predicates:
+            - Path=/api/auth/**
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/api/users/**
+        - id: post-service
+          uri: lb://POST-SERVICE
+          predicates:
+            - Path=/api/posts/**
