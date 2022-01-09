@@ -1,0 +1,13 @@
+# Eureka
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:9010/eureka/
+    fetch-registry: true
+    register-with-eureka: true
+server:
+  port: 9100
+spring:
+  application:
+    name: AUTH-SERVICE
+  # db setting
