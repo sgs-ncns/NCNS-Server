@@ -7,4 +7,6 @@ spring:
     config:
       server:
         git:
-          uri: https://github.com/NCNS-Config
+          uri: https://github.com/sgs-ncns/NCNS-Config
+          username:
+          password:
