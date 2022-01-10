@@ -1,0 +1,10 @@
+server:
+  port: 9020
+spring:
+  application:
+    name: config-service
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/NCNS-Config
