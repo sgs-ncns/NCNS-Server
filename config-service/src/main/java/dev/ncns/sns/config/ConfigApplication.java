@@ -1,4 +1,4 @@
-package com.ncns.sns.config;
+package dev.ncns.sns.config;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
