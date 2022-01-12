@@ -4,7 +4,7 @@ plugins {
 	id 'java'
 }
 
-group = 'com.ncns.sns'
+group = 'dev.ncns.sns'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
@@ -28,8 +28,10 @@ dependencies {
 	// MSA
 	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
 	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+	implementation 'org.springframework.cloud:spring-cloud-starter-config'
+	implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap'
 	// security
-	implementation 'org.springframework.boot:spring-boot-starter-security'
+//	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	// DB
 	compileOnly 'org.projectlombok:lombok'
