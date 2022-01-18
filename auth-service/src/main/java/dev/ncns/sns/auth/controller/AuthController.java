@@ -1,6 +1,7 @@
 package dev.ncns.sns.auth.controller;
 
 import dev.ncns.sns.auth.common.ResponseEntity;
+import dev.ncns.sns.auth.dto.request.AccountLoginRequestDto;
 import dev.ncns.sns.auth.dto.request.LocalLoginRequestDto;
 import dev.ncns.sns.auth.dto.response.AuthResponseDto;
 import dev.ncns.sns.auth.dto.response.LoginResponseDto;
@@ -28,7 +29,19 @@ public class AuthController {
     @PostMapping("/local")
     public ResponseEntity<AuthResponseDto> localLogin(@RequestBody @Valid LocalLoginRequestDto loginRequest,
                                                       HttpServletResponse httpServletResponse) {
-        LoginResponseDto loginResponse = new LoginResponseDto(1L); // TODO: user-service 호출
+        LoginResponseDto loginResponse = new LoginResponseDto(1L); // TODO: user-service 이메일 로그인 호출
+        return login(loginResponse, httpServletResponse);
+    }
+
+    @PostMapping("/account")
+    public ResponseEntity<AuthResponseDto> accountLogin(@RequestBody @Valid AccountLoginRequestDto loginRequest,
+                                                        HttpServletResponse httpServletResponse) {
+        LoginResponseDto loginResponse = new LoginResponseDto(1L); // TODO: user-service 계정 로그인 호출
+        return login(loginResponse, httpServletResponse);
+    }
+
+    private ResponseEntity<AuthResponseDto> login(LoginResponseDto loginResponse,
+                                                  HttpServletResponse httpServletResponse) {
         AuthResponseDto authResponse = authService.issueToken(loginResponse);
 
         Cookie refreshToken = cookieManager.createCookie(JwtProvider.REFRESH_TOKEN_NAME, authResponse.getRefreshToken());
