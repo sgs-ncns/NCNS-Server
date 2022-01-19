@@ -3,6 +3,7 @@ package dev.ncns.sns.auth.controller;
 import dev.ncns.sns.auth.common.ResponseEntity;
 import dev.ncns.sns.auth.dto.request.AccountLoginRequestDto;
 import dev.ncns.sns.auth.dto.request.LocalLoginRequestDto;
+import dev.ncns.sns.auth.dto.request.SocialLoginRequestDto;
 import dev.ncns.sns.auth.dto.response.AuthResponseDto;
 import dev.ncns.sns.auth.dto.response.LoginResponseDto;
 import dev.ncns.sns.auth.service.AuthService;
@@ -37,6 +38,13 @@ public class AuthController {
     public ResponseEntity<AuthResponseDto> accountLogin(@RequestBody @Valid AccountLoginRequestDto loginRequest,
                                                         HttpServletResponse httpServletResponse) {
         LoginResponseDto loginResponse = new LoginResponseDto(1L); // TODO: user-service 계정 로그인 호출
+        return login(loginResponse, httpServletResponse);
+    }
+
+    @PostMapping("/social")
+    public ResponseEntity<AuthResponseDto> socialLogin(@RequestBody @Valid SocialLoginRequestDto loginRequest,
+                                                       HttpServletResponse httpServletResponse) {
+        LoginResponseDto loginResponse = new LoginResponseDto(1L); // TODO: user-service 소셜 로그인 호출
         return login(loginResponse, httpServletResponse);
     }
 
