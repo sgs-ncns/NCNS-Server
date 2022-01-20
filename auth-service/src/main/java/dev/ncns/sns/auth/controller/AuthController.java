@@ -10,12 +10,10 @@ import dev.ncns.sns.auth.service.AuthService;
 import dev.ncns.sns.auth.util.CookieManager;
 import dev.ncns.sns.auth.util.JwtProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
@@ -46,6 +44,14 @@ public class AuthController {
                                                        HttpServletResponse httpServletResponse) {
         LoginResponseDto loginResponse = new LoginResponseDto(1L); // TODO: user-service 소셜 로그인 호출
         return login(loginResponse, httpServletResponse);
+    }
+
+    @DeleteMapping
+    public ResponseEntity<Void> logout(@RequestHeader("Authorization") String accessToken, // TODO: gateway-service 에서 필터로 거르기
+                                       HttpServletRequest httpServletRequest) throws Exception {
+        Cookie refreshToken = cookieManager.getCookie(httpServletRequest, JwtProvider.REFRESH_TOKEN_NAME);
+        authService.discardToken(accessToken, refreshToken.getValue());
+        return ResponseEntity.successResponse();
     }
 
     private ResponseEntity<AuthResponseDto> login(LoginResponseDto loginResponse,

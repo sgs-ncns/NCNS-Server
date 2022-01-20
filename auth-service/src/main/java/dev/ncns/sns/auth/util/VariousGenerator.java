@@ -16,6 +16,10 @@ public class VariousGenerator {
         return JwtProvider.REFRESH_TOKEN_NAME + "[" + userId + "]";
     }
 
+    public static String getBlackListTokenKey(String userId) {
+        return "BlackListToken" + "[" + userId + "]";
+    }
+
     public static int getResponseCode(String code) {
         String result = port.substring(1) + code;
         return Integer.parseInt(result);
