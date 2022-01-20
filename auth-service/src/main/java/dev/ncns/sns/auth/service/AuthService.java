@@ -25,4 +25,17 @@ public class AuthService {
         return AuthResponseDto.of(accessToken, refreshToken);
     }
 
+    public void discardToken(String accessToken, String refreshToken) {
+        if (!jwtProvider.validateToken(accessToken)) {
+            throw new IllegalArgumentException("access token 만료"); // TODO: Exception Handling
+        }
+        String userId = jwtProvider.getSubject(accessToken);
+        if (!redisManager.getValue(VariousGenerator.getRefreshTokenKey(userId)).equals(refreshToken)) {
+            throw new IllegalArgumentException("refresh token 값 다름"); // TODO: Exception Handling
+        }
+        redisManager.deleteValue(VariousGenerator.getRefreshTokenKey(userId));
+        long timeout = jwtProvider.getExpirationDate(accessToken);
+        redisManager.setValue(VariousGenerator.getBlackListTokenKey(userId), accessToken, timeout);
+    }
+
 }

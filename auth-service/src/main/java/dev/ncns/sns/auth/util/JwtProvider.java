@@ -44,6 +44,12 @@ public class JwtProvider {
         return getClaims(token).getSubject();
     }
 
+    public long getExpirationDate(String token) {
+        Date expiration = getClaims(token).getExpiration();
+        Date now = new Date();
+        return expiration.getTime() - now.getTime();
+    }
+
     private String createToken(String subject, long tokenValidity) {
         Claims claims = Jwts.claims().setSubject(subject);
         Date currentDate = new Date();
