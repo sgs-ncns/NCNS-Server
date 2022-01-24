@@ -2,6 +2,7 @@ package dev.ncns.sns.user.controller;
 
 
 import dev.ncns.sns.user.common.ResponseEntity;
+import dev.ncns.sns.user.common.SecurityUtil;
 import dev.ncns.sns.user.dto.ProfileUpdateRequestDto;
 import dev.ncns.sns.user.dto.SignupRequestDto;
 import dev.ncns.sns.user.dto.UserResponseDto;
@@ -59,5 +60,17 @@ public class UserController {
     public ResponseEntity<UserSummaryResponseDto> getFollowerList(@PathVariable Long userId) {
         List<UserSummaryResponseDto> followerList = userService.getFollowerList(followService.getFollowerIdList(userId));
         return new ResponseEntity(1000,"follower list",followerList);
+    }
+
+    @PostMapping("/follow/{targetId}")
+    public ResponseEntity<?> requestFollow(@PathVariable final Long targetId) {
+        Long currentUserId = SecurityUtil.getCurrentMemberId();
+        Long followData = followService.isFollowing(currentUserId,targetId);
+        if (followData!=null) {
+            followService.unFollow(followData);
+            return new ResponseEntity(1000,"ok", "unfollow");
+        }
+        followService.requestFollow(currentUserId, targetId);
+        return new ResponseEntity(1000,"ok", "follow");
     }
 }
