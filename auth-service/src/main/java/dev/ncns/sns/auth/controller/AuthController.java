@@ -48,7 +48,7 @@ public class AuthController {
 
     @DeleteMapping
     public ResponseEntity<Void> logout(@RequestHeader("Authorization") String accessToken, // TODO: gateway-service 에서 필터로 거르기
-                                       HttpServletRequest httpServletRequest) throws Exception {
+                                       HttpServletRequest httpServletRequest) {
         Cookie refreshToken = cookieManager.getCookie(httpServletRequest, JwtProvider.REFRESH_TOKEN_NAME);
         authService.discardToken(accessToken, refreshToken.getValue());
         return ResponseEntity.successResponse();
