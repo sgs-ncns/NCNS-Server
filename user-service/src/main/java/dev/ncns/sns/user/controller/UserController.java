@@ -5,6 +5,8 @@ import dev.ncns.sns.user.common.ResponseEntity;
 import dev.ncns.sns.user.dto.ProfileUpdateRequestDto;
 import dev.ncns.sns.user.dto.SignupRequestDto;
 import dev.ncns.sns.user.dto.UserResponseDto;
+import dev.ncns.sns.user.dto.UserSummaryResponseDto;
+import dev.ncns.sns.user.service.FollowService;
 import dev.ncns.sns.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindingResult;
@@ -19,6 +21,7 @@ import java.util.stream.Collectors;
 @RequestMapping(value = "/api/user")
 public class UserController {
     private final UserService userService;
+    private final FollowService followService;
 
     @PostMapping
     public ResponseEntity<?> signUp(@Validated @RequestBody SignupRequestDto signupDto, BindingResult bindingResult) throws Exception {
@@ -44,5 +47,17 @@ public class UserController {
     public ResponseEntity<?> getProfile(@PathVariable final String account) throws Exception {
         UserResponseDto user = userService.getUserInfo(account);
         return new ResponseEntity(1000, "ok", user);
+    }
+
+    @GetMapping("/{userId}/following")
+    public ResponseEntity<UserSummaryResponseDto> getFollowingList(@PathVariable Long userId) {
+        List<UserSummaryResponseDto> followingList = userService.getFollowingList(followService.getFollowingIdList(userId));
+        return new ResponseEntity(1000,"following list",followingList);
+    }
+
+    @GetMapping("/{userId}/followers")
+    public ResponseEntity<UserSummaryResponseDto> getFollowerList(@PathVariable Long userId) {
+        List<UserSummaryResponseDto> followerList = userService.getFollowerList(followService.getFollowerIdList(userId));
+        return new ResponseEntity(1000,"follower list",followerList);
     }
 }
