@@ -4,6 +4,7 @@ import dev.ncns.sns.user.common.SecurityUtil;
 import dev.ncns.sns.user.domain.Users;
 import dev.ncns.sns.user.dto.ProfileUpdateRequestDto;
 import dev.ncns.sns.user.dto.UserResponseDto;
+import dev.ncns.sns.user.dto.UserSummaryResponseDto;
 import dev.ncns.sns.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -66,5 +67,17 @@ public class UserService {
         Users user = userRepository.getById(SecurityUtil.getCurrentMemberId());
         user.updateProfile(dto.getAccount(),dto.getNickname(),dto.getIntroduce());
         return true;
+    }
+
+    public List<UserSummaryResponseDto> getFollowingList(List<Long> followingIdList) {
+        return followingIdList.stream()
+                .map(id -> new UserSummaryResponseDto(userRepository.findById(id).orElseThrow(()->new IllegalArgumentException("no such user"))))
+                .collect(Collectors.toList());
+    }
+
+    public List<UserSummaryResponseDto> getFollowerList(List<Long> followerIdList) {
+        return followerIdList.stream()
+                .map(id -> new UserSummaryResponseDto(userRepository.findById(id).orElseThrow(()->new IllegalArgumentException("no such user"))))
+                .collect(Collectors.toList());
     }
 }
