@@ -37,7 +37,7 @@ public class UserServiceTest extends UserApplicationTests{
 
     @Test
     void getUserProfile() throws Exception {
-        UserResponseDto user = userService.getUserInfo(account);
+        UserResponseDto user = userService.getUserInfo(1L);
         System.out.println(user);
         assertEquals("account",user.getAccount());
     }

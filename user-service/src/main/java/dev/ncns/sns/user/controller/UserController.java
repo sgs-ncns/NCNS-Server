@@ -43,10 +43,10 @@ public class UserController {
         return new ResponseEntity(1000, "ok", userService.updateProfile(dto));
     }
 
-    @GetMapping("/{account}")
-    public ResponseEntity<?> getProfile(@PathVariable final String account) throws Exception {
-        UserResponseDto user = userService.getUserInfo(account);
-        return new ResponseEntity(1000, "ok", user);
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserResponseDto> getProfile(@PathVariable final Long userId) throws Exception {
+        UserResponseDto userInfo = userService.getUserInfo(userId);
+        return new ResponseEntity(1000, "ok", userInfo);
     }
 
     @GetMapping("/{userId}/following")

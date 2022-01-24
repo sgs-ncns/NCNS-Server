@@ -57,8 +57,8 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public UserResponseDto getUserInfo(String account) throws Exception {
-        Users user = userRepository.findByAccount(account).orElseThrow(()->new Exception("account not exists"));
+    public UserResponseDto getUserInfo(Long id) throws Exception {
+        Users user = userRepository.findById(id).orElseThrow(()->new Exception("account not exists"));
         return new UserResponseDto(user);
     }
 
