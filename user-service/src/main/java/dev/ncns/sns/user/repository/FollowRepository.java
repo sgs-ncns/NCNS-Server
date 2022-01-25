@@ -15,8 +15,8 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
     @Query("select f.userId from Follow f where f.targetId = :userId")
     List<Long> findUserIdByTargetId(Long userId);
 
-    @Query("select f.id from Follow f " +
-            "where f.userId = :userId and f.targetId = :targetId" +
-            "limit 1")
+    @Query(value = "select f.id from follow f " +
+            "where f.user_id = ? and f.target_id = ? " +
+            "limit 1", nativeQuery = true)
     Long isExist(Long userId, Long targetId);
 }
