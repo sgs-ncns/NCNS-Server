@@ -49,11 +49,9 @@ public class UserService {
     }
 
     @Transactional
-    public boolean signOut() throws Exception{
+    public void signOut() throws Exception{
         Users user = userRepository.findById(SecurityUtil.getCurrentMemberId()).orElseThrow(()->new Exception("no such user"));
         userRepository.delete(user);
-        return true;
-
     }
 
     @Transactional(readOnly = true)
@@ -63,10 +61,9 @@ public class UserService {
     }
 
     @Transactional
-    public boolean updateProfile(ProfileUpdateRequestDto dto) {
+    public void updateProfile(ProfileUpdateRequestDto dto) {
         Users user = userRepository.getById(SecurityUtil.getCurrentMemberId());
         user.updateProfile(dto.getAccount(),dto.getNickname(),dto.getIntroduce());
-        return true;
     }
 
     public List<UserSummaryResponseDto> getFollowingList(List<Long> followingIdList) {

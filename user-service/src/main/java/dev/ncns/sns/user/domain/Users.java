@@ -29,7 +29,7 @@ public class Users extends BaseTime {
     @Column(nullable = false, length = 50)
     private String nickname;
 
-    @Column(nullable = false, unique = true,length = 320)
+    @Column(nullable = false, unique = true, length = 320)
     private String email;
 
     @Column(nullable = false, length = 60)
@@ -51,7 +51,7 @@ public class Users extends BaseTime {
 
 
     @Builder
-    public Users(String account, String nickname, String email,String password, Status status, AuthType authType) {
+    public Users(String account, String nickname, String email, String password, Status status, AuthType authType) {
         this.account = account;
         this.nickname = nickname;
         this.email = email;

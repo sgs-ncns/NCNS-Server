@@ -21,7 +21,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final JwtUtil jwtUtil;
     private static final String[] PUBLIC_URLS = {
-            "/","/api/**","/oauth2/**",
+            "/", "/api/**", "/oauth2/**",
     };
 
     @Bean

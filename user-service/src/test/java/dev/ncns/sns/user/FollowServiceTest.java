@@ -6,16 +6,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-public class FollowServiceTest extends UserApplicationTests{
+public class FollowServiceTest extends UserApplicationTests {
     @Autowired
     private FollowService followService;
 
     @Test
     public void requestFollow() {
-        followService.requestFollow(1L,2L);
-        followService.requestFollow(1L,3L);
-        followService.requestFollow(3L,1L);
-        followService.requestFollow(2L,3L);
+        followService.requestFollow(1L, 2L);
+        followService.requestFollow(1L, 3L);
+        followService.requestFollow(3L, 1L);
+        followService.requestFollow(2L, 3L);
     }
 
     @Test
@@ -23,7 +23,7 @@ public class FollowServiceTest extends UserApplicationTests{
         Long userId = 1L;
 
         List<Long> followingIdList = followService.getFollowingIdList(userId);
-        for (Long id:followingIdList) {
+        for (Long id : followingIdList) {
             System.out.println(id);
         }
     }
@@ -33,7 +33,7 @@ public class FollowServiceTest extends UserApplicationTests{
         Long userId = 1L;
 
         List<Long> followerIdList = followService.getFollowerIdList(userId);
-        for (Long id:followerIdList) {
+        for (Long id : followerIdList) {
             System.out.println(id);
         }
     }
