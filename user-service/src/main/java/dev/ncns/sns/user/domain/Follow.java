@@ -4,10 +4,10 @@ import lombok.*;
 import javax.persistence.*;
 
 @Getter
-@Entity
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "follow")
+@Entity
 public class Follow extends BaseTime {
 
     @Id

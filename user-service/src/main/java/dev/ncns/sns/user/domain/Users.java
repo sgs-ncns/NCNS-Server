@@ -11,12 +11,12 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Getter
-@Entity
-@NoArgsConstructor
 @ToString
-@Table(name = "users")
+@NoArgsConstructor
 @SQLDelete(sql = "update users set deleted_at=now() where id=?")
 @Where(clause = "deleted_at is null")
+@Table(name = "users")
+@Entity
 public class Users extends BaseTime {
 
     @Id

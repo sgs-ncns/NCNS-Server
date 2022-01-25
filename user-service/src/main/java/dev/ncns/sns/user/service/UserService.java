@@ -14,14 +14,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service
 @RequiredArgsConstructor
+@Service
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)
-    public List<UserResponseDto> getAllUserInfo(){
+    public List<UserResponseDto> getAllUserInfo() {
         return userRepository.findAll().stream()
                 .map(UserResponseDto::new)
                 .collect(Collectors.toList());
@@ -41,7 +41,7 @@ public class UserService {
     @Transactional
     public void signUp(Users user) throws Exception {
         final boolean isValidEmail = !userRepository.existsByEmail(user.getEmail());
-        if(!isValidEmail) {
+        if (!isValidEmail) {
             throw new Exception("email already exists");
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -49,32 +49,32 @@ public class UserService {
     }
 
     @Transactional
-    public void signOut() throws Exception{
-        Users user = userRepository.findById(SecurityUtil.getCurrentMemberId()).orElseThrow(()->new Exception("no such user"));
+    public void signOut() throws Exception {
+        Users user = userRepository.findById(SecurityUtil.getCurrentMemberId()).orElseThrow(() -> new Exception("no such user"));
         userRepository.delete(user);
     }
 
     @Transactional(readOnly = true)
     public UserResponseDto getUserInfo(Long id) throws Exception {
-        Users user = userRepository.findById(id).orElseThrow(()->new Exception("account not exists"));
+        Users user = userRepository.findById(id).orElseThrow(() -> new Exception("account not exists"));
         return new UserResponseDto(user);
     }
 
     @Transactional
     public void updateProfile(ProfileUpdateRequestDto dto) {
         Users user = userRepository.getById(SecurityUtil.getCurrentMemberId());
-        user.updateProfile(dto.getAccount(),dto.getNickname(),dto.getIntroduce());
+        user.updateProfile(dto.getAccount(), dto.getNickname(), dto.getIntroduce());
     }
 
     public List<UserSummaryResponseDto> getFollowingList(List<Long> followingIdList) {
         return followingIdList.stream()
-                .map(id -> new UserSummaryResponseDto(userRepository.findById(id).orElseThrow(()->new IllegalArgumentException("no such user"))))
+                .map(id -> new UserSummaryResponseDto(userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("no such user"))))
                 .collect(Collectors.toList());
     }
 
     public List<UserSummaryResponseDto> getFollowerList(List<Long> followerIdList) {
         return followerIdList.stream()
-                .map(id -> new UserSummaryResponseDto(userRepository.findById(id).orElseThrow(()->new IllegalArgumentException("no such user"))))
+                .map(id -> new UserSummaryResponseDto(userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("no such user"))))
                 .collect(Collectors.toList());
     }
 }
