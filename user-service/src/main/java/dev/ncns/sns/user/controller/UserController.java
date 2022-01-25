@@ -31,17 +31,19 @@ public class UserController {
             return new ResponseEntity(1001, "Validation failure", errors);
         }
         userService.signUp(signupDto.toEntity());
-        return new ResponseEntity<>(1000,"success",null);
+        return new ResponseEntity<>(1000, "success", null);
     }
 
     @DeleteMapping
-    public ResponseEntity<?> signOut() throws Exception {
-        return new ResponseEntity<>(1000,"Unregister Success!", userService.signOut());
+    public ResponseEntity<Void> signOut() throws Exception {
+        userService.signOut();
+        return new ResponseEntity<>(1000, "Unregister Success!", null);
     }
 
     @PatchMapping
-    public ResponseEntity<?> updateProfile(@RequestBody ProfileUpdateRequestDto dto) {
-        return new ResponseEntity(1000, "ok", userService.updateProfile(dto));
+    public ResponseEntity<Void> updateProfile(@RequestBody ProfileUpdateRequestDto dto) {
+        userService.updateProfile(dto);
+        return new ResponseEntity(1000, "ok", null);
     }
 
     @GetMapping("/{userId}")
@@ -53,24 +55,19 @@ public class UserController {
     @GetMapping("/{userId}/following")
     public ResponseEntity<UserSummaryResponseDto> getFollowingList(@PathVariable Long userId) {
         List<UserSummaryResponseDto> followingList = userService.getFollowingList(followService.getFollowingIdList(userId));
-        return new ResponseEntity(1000,"following list",followingList);
+        return new ResponseEntity(1000, "following list", followingList);
     }
 
     @GetMapping("/{userId}/followers")
     public ResponseEntity<UserSummaryResponseDto> getFollowerList(@PathVariable Long userId) {
         List<UserSummaryResponseDto> followerList = userService.getFollowerList(followService.getFollowerIdList(userId));
-        return new ResponseEntity(1000,"follower list",followerList);
+        return new ResponseEntity(1000, "follower list", followerList);
     }
 
     @PostMapping("/follow/{targetId}")
-    public ResponseEntity<?> requestFollow(@PathVariable final Long targetId) {
+    public ResponseEntity<String> requestFollow(@PathVariable final Long targetId) {
         Long currentUserId = SecurityUtil.getCurrentMemberId();
-        Long followData = followService.isFollowing(currentUserId,targetId);
-        if (followData!=null) {
-            followService.unFollow(followData);
-            return new ResponseEntity(1000,"ok", "unfollow");
-        }
-        followService.requestFollow(currentUserId, targetId);
-        return new ResponseEntity(1000,"ok", "follow");
+        String data = followService.requestFollow(currentUserId, targetId);
+        return new ResponseEntity(1000, "ok", data);
     }
 }

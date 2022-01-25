@@ -5,7 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface FollowRepository extends JpaRepository<Follow, Long> {
     List<Follow> findFollowsByUserId(Long userId);
@@ -19,5 +18,5 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
     @Query("select f.id from Follow f " +
             "where f.userId = :userId and f.targetId = :targetId" +
             "limit 1")
-    Optional<Long> isExist(Long userId, Long targetId);
+    Long isExist(Long userId, Long targetId);
 }

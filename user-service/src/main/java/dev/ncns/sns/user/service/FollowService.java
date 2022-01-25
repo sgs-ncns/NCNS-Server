@@ -24,8 +24,8 @@ public class FollowService {
     }
 
     @Transactional(readOnly = true)
-    public Long isFollowing(Long userId, Long targetId) {
-        return followRepository.isExist(userId, targetId).orElse(null);
+    private Long isFollowing(Long userId, Long targetId) {
+        return followRepository.isExist(userId, targetId);
     }
 
     @Transactional
@@ -34,11 +34,21 @@ public class FollowService {
     }
 
     @Transactional
-    public void requestFollow(Long userId, Long targetId) {
-        if (userId == targetId) {
-            throw new IllegalArgumentException("unvalid request");
+    public String requestFollow(Long userId, Long targetId) {
+        isSameUser(userId, targetId);
+        Long followData = isFollowing(userId,targetId);
+        if(followData != null) {
+            unFollow(followData);
+            return "unfollow";
         }
         Follow follow = Follow.builder().userId(userId).targetId(targetId).build();
         followRepository.save(follow);
+        return "follow";
+    }
+
+    private void isSameUser(Long userId, Long targetId) {
+        if (userId == targetId) {
+            throw new IllegalArgumentException("unvalid request");
+        }
     }
 }
