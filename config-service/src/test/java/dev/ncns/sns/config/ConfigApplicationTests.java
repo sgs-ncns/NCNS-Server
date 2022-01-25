@@ -1,10 +1,10 @@
-package com.ncns.sns.user;
+package dev.ncns.sns.config;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class UserApplicationTests {
+class ConfigApplicationTests {
 
 	@Test
 	void contextLoads() {

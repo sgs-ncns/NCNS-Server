@@ -1,0 +1,58 @@
+package dev.ncns.sns.user.config;
+
+import dev.ncns.sns.user.common.JwtUtil;
+import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+
+@RequiredArgsConstructor
+@Configuration
+@EnableWebSecurity
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+    private final JwtUtil jwtUtil;
+    private static final String[] PUBLIC_URLS = {
+            "/", "/api/**", "/oauth2/**",
+    };
+
+    @Bean
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
+
+    @Override
+    public void configure(WebSecurity webSecurity) throws Exception {
+        webSecurity.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations())
+                .and().ignoring().mvcMatchers("/image/**")
+                .antMatchers(HttpMethod.OPTIONS, "/**");
+    }
+
+    @Override
+    protected void configure(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity
+                .cors()
+                .and().csrf().disable().headers().frameOptions().disable()
+                .and().authorizeRequests()
+                .mvcMatchers(PUBLIC_URLS)
+                .permitAll()
+                .anyRequest().authenticated()
+                .and().exceptionHandling()
+                .and().sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // session 생성x, 사용x
+                .and().apply(new JwtSecurityConfig(jwtUtil));
+    }
+}
