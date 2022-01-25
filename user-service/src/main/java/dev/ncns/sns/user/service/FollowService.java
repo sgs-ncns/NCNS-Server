@@ -8,8 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Service
 @RequiredArgsConstructor
+@Service
 public class FollowService {
     private final FollowRepository followRepository;
 
@@ -36,8 +36,8 @@ public class FollowService {
     @Transactional
     public String requestFollow(Long userId, Long targetId) {
         isSameUser(userId, targetId);
-        Long followData = isFollowing(userId,targetId);
-        if(followData != null) {
+        Long followData = isFollowing(userId, targetId);
+        if (followData != null) {
             unFollow(followData);
             return "unfollow";
         }
