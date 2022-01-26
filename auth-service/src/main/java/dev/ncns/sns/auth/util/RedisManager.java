@@ -6,6 +6,7 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
+import java.util.NoSuchElementException;
 
 @RequiredArgsConstructor
 @Component
@@ -15,7 +16,11 @@ public class RedisManager {
 
     public String getValue(String key) {
         ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
-        return valueOperations.get(key);
+        String value = valueOperations.get(key);
+        if (value == null) {
+            throw new NoSuchElementException("Not Found Key");
+        }
+        return value;
     }
 
     public void setValue(String key, String value, long timeout) {
