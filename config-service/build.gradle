@@ -1,34 +1,5 @@
-plugins {
-	id 'org.springframework.boot' version '2.5.8'
-	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-	id 'java'
-}
-
-group = 'dev.ncns.sns'
-version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
-
-repositories {
-	mavenCentral()
-}
-
-ext {
-	set('springCloudVersion', "2020.0.5")
-}
-
 dependencies {
 	implementation 'org.springframework.cloud:spring-cloud-config-server'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap'
 	implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.4'
-}
-
-dependencyManagement {
-	imports {
-		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
-	}
-}
-
-test {
-	useJUnitPlatform()
 }
