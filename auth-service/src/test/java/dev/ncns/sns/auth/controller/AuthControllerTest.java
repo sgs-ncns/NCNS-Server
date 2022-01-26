@@ -1,8 +1,7 @@
 package dev.ncns.sns.auth.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dev.ncns.sns.auth.dto.request.AccountLoginRequestDto;
-import dev.ncns.sns.auth.dto.request.LocalLoginRequestDto;
+import dev.ncns.sns.auth.dto.request.LoginRequestDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +40,7 @@ class AuthControllerTest {
 
     @Test
     public void localLoginTest() throws Exception {
-        LocalLoginRequestDto loginRequestDto = new LocalLoginRequestDto(email, password);
+        LoginRequestDto loginRequestDto = new LoginRequestDto(email, null, password, null);
         mockMvc.perform(post("/api/auth/local")
                         .content(objectMapper.writeValueAsString(loginRequestDto))
                         .contentType(MediaType.APPLICATION_JSON))
@@ -53,7 +52,7 @@ class AuthControllerTest {
 
     @Test
     public void accountLoginTest() throws Exception {
-        AccountLoginRequestDto loginRequestDto = new AccountLoginRequestDto(account, password);
+        LoginRequestDto loginRequestDto = new LoginRequestDto(null, account, password, null);
         mockMvc.perform(post("/api/auth/account")
                         .content(objectMapper.writeValueAsString(loginRequestDto))
                         .contentType(MediaType.APPLICATION_JSON))
