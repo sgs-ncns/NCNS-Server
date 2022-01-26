@@ -1,0 +1,23 @@
+# Eureka
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:9010/eureka/
+    fetch-registry: true
+    register-with-eureka: true
+server:
+  port: 9100
+spring:
+  application:
+    name: AUTH-SERVICE
+  # Redis
+  redis:
+    host: localhost
+    port: 6379
+  data:
+    redis:
+      repositories:
+        enabled: false
+
+jwt:
+  secret: ENC(xUS0U73UD2pMlEPt8Fi6SRtZJnZjiLburd8qo+Zm060EV1yKrF3LrzuSPoRigo1z)
