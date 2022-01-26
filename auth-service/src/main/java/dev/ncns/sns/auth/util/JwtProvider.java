@@ -15,7 +15,9 @@ public class JwtProvider {
 
     public static final long ACCESS_TOKEN_VALIDITY = 1000L * 60 * 30; // 30minutes
     public static final long REFRESH_TOKEN_VALIDITY = 1000L * 60 * 60 * 24 * 15; // 15days
+
     public static final String REFRESH_TOKEN_NAME = "RefreshToken";
+    public static final String BLACKLIST_TOKEN_NAME = "BlackListToken";
 
     private final String secretKey;
 
@@ -42,6 +44,14 @@ public class JwtProvider {
 
     public String getSubject(String token) {
         return getClaims(token).getSubject();
+    }
+
+    public String getRefreshTokenKey(String id) {
+        return REFRESH_TOKEN_NAME + "[" + id + "]";
+    }
+
+    public String getBlackListTokenValue(String id) {
+        return BLACKLIST_TOKEN_NAME + "[" + id + "]";
     }
 
     public long getExpirationDate(String token) {

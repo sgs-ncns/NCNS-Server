@@ -7,6 +7,7 @@ public enum AuthType {
 
     GOOGLE,
     APPLE,
-    LOCAL
+    LOCAL,
+    UNKNOWN
 
 }

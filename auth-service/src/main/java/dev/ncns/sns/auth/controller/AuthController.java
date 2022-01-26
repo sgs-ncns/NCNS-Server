@@ -1,21 +1,22 @@
 package dev.ncns.sns.auth.controller;
 
 import dev.ncns.sns.auth.common.ResponseEntity;
-import dev.ncns.sns.auth.dto.request.AccountLoginRequestDto;
-import dev.ncns.sns.auth.dto.request.LocalLoginRequestDto;
-import dev.ncns.sns.auth.dto.request.SocialLoginRequestDto;
+import dev.ncns.sns.auth.dto.request.LoginRequestDto;
 import dev.ncns.sns.auth.dto.response.AuthResponseDto;
 import dev.ncns.sns.auth.dto.response.LoginResponseDto;
 import dev.ncns.sns.auth.service.AuthService;
 import dev.ncns.sns.auth.util.CookieManager;
 import dev.ncns.sns.auth.util.JwtProvider;
+import dev.ncns.sns.auth.dto.validate.AccountLoginValidation;
+import dev.ncns.sns.auth.dto.validate.LocalLoginValidation;
+import dev.ncns.sns.auth.dto.validate.SocialLoginValidation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
 
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/auth")
@@ -26,21 +27,24 @@ public class AuthController {
     private final CookieManager cookieManager;
 
     @PostMapping("/local")
-    public ResponseEntity<AuthResponseDto> localLogin(@RequestBody @Valid LocalLoginRequestDto loginRequest,
+    public ResponseEntity<AuthResponseDto> localLogin(@Validated(LocalLoginValidation.class)
+                                                      @RequestBody LoginRequestDto loginRequest,
                                                       HttpServletResponse httpServletResponse) {
         LoginResponseDto loginResponse = new LoginResponseDto(1L); // TODO: user-service 이메일 로그인 호출
         return login(loginResponse, httpServletResponse);
     }
 
     @PostMapping("/account")
-    public ResponseEntity<AuthResponseDto> accountLogin(@RequestBody @Valid AccountLoginRequestDto loginRequest,
+    public ResponseEntity<AuthResponseDto> accountLogin(@Validated(AccountLoginValidation.class)
+                                                        @RequestBody LoginRequestDto loginRequest,
                                                         HttpServletResponse httpServletResponse) {
         LoginResponseDto loginResponse = new LoginResponseDto(1L); // TODO: user-service 계정 로그인 호출
         return login(loginResponse, httpServletResponse);
     }
 
     @PostMapping("/social")
-    public ResponseEntity<AuthResponseDto> socialLogin(@RequestBody @Valid SocialLoginRequestDto loginRequest,
+    public ResponseEntity<AuthResponseDto> socialLogin(@Validated(SocialLoginValidation.class)
+                                                       @RequestBody LoginRequestDto loginRequest,
                                                        HttpServletResponse httpServletResponse) {
         LoginResponseDto loginResponse = new LoginResponseDto(1L); // TODO: user-service 소셜 로그인 호출
         return login(loginResponse, httpServletResponse);

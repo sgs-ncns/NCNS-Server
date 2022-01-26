@@ -1,6 +1,6 @@
 package dev.ncns.sns.auth.common;
 
-import dev.ncns.sns.auth.util.VariousGenerator;
+import dev.ncns.sns.auth.util.CodeGenerator;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -8,22 +8,22 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ResponseEntity<T> {
 
-    private final int responseCode;
+    private final String responseCode;
     private final String message;
     private final T data;
 
     public static <T> ResponseEntity<T> successResponse(T data) {
         ResponseType type = ResponseType.SUCCESS;
-        return new ResponseEntity<>(VariousGenerator.getResponseCode(type.getCode()), type.getMessage(), data);
+        return new ResponseEntity<>(CodeGenerator.getResponseCode(type.getCode()), type.getMessage(), data);
     }
 
     public static <T> ResponseEntity<T> successResponse() {
         ResponseType type = ResponseType.SUCCESS;
-        return new ResponseEntity<>(VariousGenerator.getResponseCode(type.getCode()), type.getMessage(), null);
+        return new ResponseEntity<>(CodeGenerator.getResponseCode(type.getCode()), type.getMessage(), null);
     }
 
     public static <T> ResponseEntity<T> failureResponse(ResponseType type) {
-        return new ResponseEntity<>(VariousGenerator.getResponseCode(type.getCode()), type.getMessage(), null);
+        return new ResponseEntity<>(CodeGenerator.getResponseCode(type.getCode()), type.getMessage(), null);
     }
 
 }

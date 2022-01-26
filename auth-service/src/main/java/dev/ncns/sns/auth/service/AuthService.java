@@ -4,7 +4,6 @@ import dev.ncns.sns.auth.dto.response.AuthResponseDto;
 import dev.ncns.sns.auth.dto.response.LoginResponseDto;
 import dev.ncns.sns.auth.util.JwtProvider;
 import dev.ncns.sns.auth.util.RedisManager;
-import dev.ncns.sns.auth.util.VariousGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,22 +19,47 @@ public class AuthService {
         String accessToken = jwtProvider.createAccessToken(userId);
         String refreshToken = jwtProvider.createRefreshToken(userId);
 
-        redisManager.setValue(VariousGenerator.getRefreshTokenKey(userId), refreshToken, JwtProvider.REFRESH_TOKEN_VALIDITY);
+        redisManager.setValue(jwtProvider.getRefreshTokenKey(userId), refreshToken, JwtProvider.REFRESH_TOKEN_VALIDITY);
 
         return AuthResponseDto.of(accessToken, refreshToken);
     }
 
     public void discardToken(String accessToken, String refreshToken) {
-        if (!jwtProvider.validateToken(accessToken)) {
-            throw new IllegalArgumentException("access token 만료"); // TODO: Exception Handling
-        }
+        validateToken(accessToken, refreshToken);
+        compareUserId(accessToken, refreshToken);
+
         String userId = jwtProvider.getSubject(accessToken);
-        if (!redisManager.getValue(VariousGenerator.getRefreshTokenKey(userId)).equals(refreshToken)) {
-            throw new IllegalArgumentException("refresh token 값 다름"); // TODO: Exception Handling
-        }
-        redisManager.deleteValue(VariousGenerator.getRefreshTokenKey(userId));
+        redisManager.deleteValue(jwtProvider.getRefreshTokenKey(userId));
+
         long timeout = jwtProvider.getExpirationDate(accessToken);
-        redisManager.setValue(VariousGenerator.getBlackListTokenKey(userId), accessToken, timeout);
+        redisManager.setValue(accessToken, jwtProvider.getBlackListTokenValue(userId), timeout);
+    }
+
+    public AuthResponseDto reissueToken(String accessToken, String refreshToken) {
+        validateToken(accessToken, refreshToken);
+        compareUserId(accessToken, refreshToken);
+
+        String userId = jwtProvider.getSubject(accessToken);
+        String newAccessToken = jwtProvider.createAccessToken(userId);
+        String newRefreshToken = jwtProvider.createRefreshToken(userId);
+
+        redisManager.setValue(jwtProvider.getRefreshTokenKey(userId), newRefreshToken, JwtProvider.REFRESH_TOKEN_VALIDITY);
+
+        return AuthResponseDto.of(newAccessToken, newRefreshToken);
+    }
+
+    private void validateToken(String accessToken, String refreshToken) {
+        if (!jwtProvider.validateToken(accessToken)) {
+            if (!jwtProvider.validateToken(refreshToken)) {
+                throw new IllegalArgumentException("Not Valid Token"); // TODO: Exception Handling
+            }
+        }
+    }
+
+    private void compareUserId(String accessToken, String refreshToken) {
+        if (!jwtProvider.getSubject(accessToken).equals(jwtProvider.getSubject(refreshToken))) {
+            throw new IllegalArgumentException("Not Same UserId");
+        }
     }
 
 }
