@@ -1,4 +1,4 @@
-package dev.ncns.sns.auth.util;
+package dev.ncns.sns.common;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
