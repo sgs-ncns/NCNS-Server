@@ -9,7 +9,7 @@ server:
   port: 9100
 spring:
   application:
-    name: AUTH-SERVICE
+    name: auth-service
   # Redis
   redis:
     host: localhost
@@ -18,6 +18,7 @@ spring:
     redis:
       repositories:
         enabled: false
-
+  jackson:
+    property-naming-strategy: SNAKE_CASE
 jwt:
   secret: ENC(xUS0U73UD2pMlEPt8Fi6SRtZJnZjiLburd8qo+Zm060EV1yKrF3LrzuSPoRigo1z)

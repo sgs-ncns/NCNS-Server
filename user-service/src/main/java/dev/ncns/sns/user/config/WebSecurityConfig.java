@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -14,14 +13,17 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-
 @RequiredArgsConstructor
-@Configuration
 @EnableWebSecurity
+@Configuration
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
     private final JwtUtil jwtUtil;
     private static final String[] PUBLIC_URLS = {
-            "/", "/api/**", "/oauth2/**",
+            "/", "/api/**", "/oauth2/**"
+    };
+    private static final String[] WEB_URLS = {
+            "error", "/h2-console/**", "/swagger-ui/**", "/swagger-resources/**", "v3/api-docs", "/webjars/**"
     };
 
     @Bean
@@ -35,10 +37,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    public void configure(WebSecurity webSecurity) throws Exception {
-        webSecurity.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations())
+    public void configure(WebSecurity webSecurity) {
+        webSecurity.ignoring()
+                .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
                 .and().ignoring().mvcMatchers("/image/**")
-                .antMatchers(HttpMethod.OPTIONS, "/**");
+                .and().ignoring().mvcMatchers(WEB_URLS);
     }
 
     @Override
@@ -55,4 +58,5 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // session 생성x, 사용x
                 .and().apply(new JwtSecurityConfig(jwtUtil));
     }
+
 }

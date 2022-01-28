@@ -9,7 +9,7 @@ server:
   port: 9000
 spring:
   application:
-    name: GATEWAY-SERVICE
+    name: gateway-service
 
 ---
 # Gateway

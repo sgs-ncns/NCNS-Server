@@ -2,3 +2,4 @@ spring:
   cloud:
     config:
       uri: http://localhost:9020
+#      uri: http://15.165.198.76:9020
