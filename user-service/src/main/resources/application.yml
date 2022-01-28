@@ -9,4 +9,4 @@ server:
   port: 9110
 spring:
   application:
-    name: USER-SERVICE
+    name: user-service

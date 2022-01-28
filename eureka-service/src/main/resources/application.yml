@@ -9,4 +9,4 @@ server:
   port: 9010
 spring:
   application:
-    name: EUREKA-SERVICE
+    name: eureka-service

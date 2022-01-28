@@ -9,7 +9,7 @@ server:
   port: 9120
 spring:
   application:
-    name: POST-SERVICE
+    name: post-service
   # db setting
   datasource:
     url: jdbc:postgresql://localhost:5432/
