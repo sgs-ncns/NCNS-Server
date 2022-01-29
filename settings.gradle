@@ -1,0 +1,4 @@
+rootProject.name = 'ncns'
+include('common-service')
+include('gateway-service', 'eureka-service', 'config-service')
+include('auth-service', 'user-service', 'post-service')

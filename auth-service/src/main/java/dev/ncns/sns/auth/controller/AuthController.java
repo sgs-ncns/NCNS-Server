@@ -1,16 +1,17 @@
 package dev.ncns.sns.auth.controller;
 
-import dev.ncns.sns.auth.common.ResponseEntity;
 import dev.ncns.sns.auth.dto.request.LoginRequestDto;
 import dev.ncns.sns.auth.dto.response.AuthResponseDto;
 import dev.ncns.sns.auth.dto.response.LoginResponseDto;
-import dev.ncns.sns.auth.service.AuthService;
-import dev.ncns.sns.auth.util.CookieManager;
-import dev.ncns.sns.auth.util.JwtProvider;
 import dev.ncns.sns.auth.dto.validate.AccountLoginValidation;
 import dev.ncns.sns.auth.dto.validate.LocalLoginValidation;
 import dev.ncns.sns.auth.dto.validate.SocialLoginValidation;
+import dev.ncns.sns.auth.service.AuthService;
+import dev.ncns.sns.auth.util.CookieManager;
+import dev.ncns.sns.auth.util.JwtProvider;
+import dev.ncns.sns.common.domain.ResponseEntity;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +23,9 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping(value = "/api/auth")
 @RestController
 public class AuthController {
+
+    @Value("${server.port}")
+    private String port;
 
     private final AuthService authService;
     private final CookieManager cookieManager;
@@ -54,8 +58,9 @@ public class AuthController {
     public ResponseEntity<Void> logout(@RequestHeader("Authorization") String accessToken, // TODO: gateway-service 에서 필터로 거르기
                                        HttpServletRequest httpServletRequest) {
         Cookie refreshToken = cookieManager.getCookie(httpServletRequest, JwtProvider.REFRESH_TOKEN_NAME);
+        accessToken = accessToken.replace("Bearer ", "");
         authService.discardToken(accessToken, refreshToken.getValue());
-        return ResponseEntity.successResponse();
+        return ResponseEntity.successResponse(port);
     }
 
     private ResponseEntity<AuthResponseDto> login(LoginResponseDto loginResponse,
@@ -65,7 +70,7 @@ public class AuthController {
         Cookie refreshToken = cookieManager.createCookie(JwtProvider.REFRESH_TOKEN_NAME, authResponse.getRefreshToken());
         httpServletResponse.addCookie(refreshToken);
 
-        return ResponseEntity.successResponse(authResponse);
+        return ResponseEntity.successResponse(port, authResponse);
     }
 
 }

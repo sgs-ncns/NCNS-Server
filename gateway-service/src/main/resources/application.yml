@@ -9,7 +9,7 @@ server:
   port: 9000
 spring:
   application:
-    name: GATEWAY-SERVICE
+    name: gateway-service
 
 ---
 # Gateway
@@ -24,8 +24,8 @@ spring:
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
-            - Path=/api/users/**
+            - Path=/api/user/**
         - id: post-service
           uri: lb://POST-SERVICE
           predicates:
-            - Path=/api/posts/**
+            - Path=/api/post/**
