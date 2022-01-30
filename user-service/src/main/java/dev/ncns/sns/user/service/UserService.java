@@ -63,7 +63,7 @@ public class UserService {
     @Transactional
     public void updateProfile(ProfileUpdateRequestDto dto) {
         Users user = userRepository.getById(SecurityUtil.getCurrentMemberId());
-        user.updateProfile(dto.getAccount(), dto.getNickname(), dto.getIntroduce());
+        user.updateProfile(dto.getAccountName(), dto.getNickname(), dto.getIntroduce());
     }
 
     public List<UserSummaryResponseDto> getFollowingList(List<Long> followingIdList) {

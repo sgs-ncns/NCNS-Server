@@ -11,7 +11,7 @@ import org.springframework.beans.BeanUtils;
 @NoArgsConstructor
 public class UserSummaryResponseDto {
     private Long id;
-    private String account;
+    private String accountName;
     private String nickname;
 
     public UserSummaryResponseDto(Users user) {

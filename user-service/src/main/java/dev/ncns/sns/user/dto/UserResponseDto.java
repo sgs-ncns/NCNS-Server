@@ -13,7 +13,7 @@ import org.springframework.beans.BeanUtils;
 public class UserResponseDto {
 
     private Long id;
-    private String account;
+    private String accountName;
     private String nickname;
     private String introduce;
 

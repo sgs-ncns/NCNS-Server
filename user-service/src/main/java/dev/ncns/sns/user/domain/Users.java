@@ -24,7 +24,7 @@ public class Users extends BaseTime {
     private Long id;
 
     @Column(nullable = false, unique = true, length = 50)
-    private String account;
+    private String accountName;
 
     @Column(nullable = false, length = 50)
     private String nickname;
@@ -51,21 +51,21 @@ public class Users extends BaseTime {
 
 
     @Builder
-    public Users(String account, String nickname, String email, String password, Status status, AuthType authType) {
-        this.account = account;
+    public Users(String accountName, String nickname, String email, String password, Status status, AuthType authType) {
+        this.accountName = accountName;
         this.nickname = nickname;
         this.email = email;
         this.password = password;
         this.status = status;
-        this.authType = authType;
+        this.authType =  authType;
     }
 
     public void setPassword(String encode) {
         this.password = encode;
     }
 
-    public Users updateProfile(String account, String nickname, String introduce) {
-        this.account = account;
+    public Users updateProfile(String accountName, String nickname, String introduce) {
+        this.accountName = accountName;
         this.nickname = nickname;
         this.introduce = introduce;
         return this;
