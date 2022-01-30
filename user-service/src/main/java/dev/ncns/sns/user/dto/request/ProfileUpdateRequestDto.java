@@ -1,4 +1,4 @@
-package dev.ncns.sns.user.dto;
+package dev.ncns.sns.user.dto.request;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

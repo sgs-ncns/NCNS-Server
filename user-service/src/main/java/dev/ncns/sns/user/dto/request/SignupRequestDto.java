@@ -1,4 +1,4 @@
-package dev.ncns.sns.user.dto;
+package dev.ncns.sns.user.dto.request;
 
 import dev.ncns.sns.user.domain.AuthType;
 import dev.ncns.sns.user.domain.Status;

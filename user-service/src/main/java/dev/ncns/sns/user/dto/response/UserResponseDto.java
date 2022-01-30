@@ -1,4 +1,4 @@
-package dev.ncns.sns.user.dto;
+package dev.ncns.sns.user.dto.response;
 
 import dev.ncns.sns.user.domain.Users;
 import lombok.Getter;
