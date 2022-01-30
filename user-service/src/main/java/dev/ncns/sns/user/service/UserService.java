@@ -1,7 +1,9 @@
 package dev.ncns.sns.user.service;
 
 import dev.ncns.sns.user.common.SecurityUtil;
+import dev.ncns.sns.user.domain.AuthType;
 import dev.ncns.sns.user.domain.Users;
+import dev.ncns.sns.user.dto.LoginRequestDto;
 import dev.ncns.sns.user.dto.ProfileUpdateRequestDto;
 import dev.ncns.sns.user.dto.UserResponseDto;
 import dev.ncns.sns.user.dto.UserSummaryResponseDto;
@@ -76,5 +78,49 @@ public class UserService {
         return followerIdList.stream()
                 .map(id -> new UserSummaryResponseDto(userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("no such user"))))
                 .collect(Collectors.toList());
+    }
+
+    public Long handleLoginRequest(LoginRequestDto dto) {
+        AuthType authType = dto.getAuthType();
+        switch (authType) {
+            case GOOGLE:
+            case APPLE:
+                return socialLogin(dto.getEmail(), authType);
+            case LOCAL:
+                return localLogin(dto.getEmail(), dto.getPassword());
+            default:
+                return accountLogin(dto.getAccountName(), dto.getPassword());
+        }
+    }
+
+    public Long socialLogin(String email, AuthType authType) {
+        Users user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("no such user"));
+        if (!((user.getAuthType() == authType))) {
+            throw new IllegalArgumentException("sign up with different auth");
+        }
+        return user.getId();
+    }
+
+
+    public Long localLogin(String email, String password) {
+        Users user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("no such user"));
+        if (!(user.getAuthType() == AuthType.LOCAL)) {
+            throw new IllegalArgumentException("sign up with different auth");
+        }
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new IllegalArgumentException("password does not match");
+        }
+        return user.getId();
+    }
+
+    public Long accountLogin(String accountName, String password) {
+        Users user = userRepository.findByAccountName(accountName)
+                .orElseThrow(() -> new IllegalArgumentException("no such user"));
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new IllegalArgumentException("password does not match");
+        }
+        return user.getId();
     }
 }
