@@ -6,5 +6,6 @@ import lombok.Getter;
 public enum AuthType {
     GOOGLE,
     APPLE,
-    LOCAL
+    LOCAL,
+    UNKNOWN
 }

@@ -3,10 +3,12 @@ package dev.ncns.sns.user.controller;
 import dev.ncns.sns.common.domain.ResponseEntity;
 import dev.ncns.sns.common.domain.ResponseType;
 import dev.ncns.sns.user.common.SecurityUtil;
-import dev.ncns.sns.user.dto.ProfileUpdateRequestDto;
-import dev.ncns.sns.user.dto.SignupRequestDto;
-import dev.ncns.sns.user.dto.UserResponseDto;
-import dev.ncns.sns.user.dto.UserSummaryResponseDto;
+import dev.ncns.sns.user.dto.request.LoginRequestDto;
+import dev.ncns.sns.user.dto.request.ProfileUpdateRequestDto;
+import dev.ncns.sns.user.dto.request.SignupRequestDto;
+import dev.ncns.sns.user.dto.response.LoginResponseDto;
+import dev.ncns.sns.user.dto.response.UserResponseDto;
+import dev.ncns.sns.user.dto.response.UserSummaryResponseDto;
 import dev.ncns.sns.user.service.FollowService;
 import dev.ncns.sns.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -76,4 +78,9 @@ public class UserController {
         return ResponseEntity.successResponse(port, data);
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto dto) {
+        LoginResponseDto data = new LoginResponseDto(userService.handleLoginRequest(dto));
+        return ResponseEntity.successResponse(port, data);
+    }
 }

@@ -1,4 +1,4 @@
-package dev.ncns.sns.user.dto;
+package dev.ncns.sns.user.dto.request;
 
 import dev.ncns.sns.user.domain.AuthType;
 import dev.ncns.sns.user.domain.Status;
@@ -13,7 +13,7 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 public class SignupRequestDto {
     @NotBlank(message = "NAME_IS_MANDATORY")
-    private String account;
+    private String accountName;
 
     @NotBlank(message = "NAME_IS_MANDATORY")
     private String nickname;
@@ -27,7 +27,7 @@ public class SignupRequestDto {
 
     public Users toEntity() {
         return Users.builder()
-                .account(account)
+                .accountName(accountName)
                 .nickname(nickname)
                 .email(email)
                 .password(password)

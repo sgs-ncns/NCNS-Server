@@ -1,10 +1,9 @@
 package dev.ncns.sns.user;
 
-import dev.ncns.sns.user.common.JwtAuthenticationFilter;
 import dev.ncns.sns.user.domain.AuthType;
 import dev.ncns.sns.user.domain.Status;
 import dev.ncns.sns.user.domain.Users;
-import dev.ncns.sns.user.dto.UserResponseDto;
+import dev.ncns.sns.user.dto.response.UserResponseDto;
 import dev.ncns.sns.user.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
