@@ -11,3 +11,5 @@ server:
 spring:
   application:
     name: user-service
+  jackson:
+    property-naming-strategy: SNAKE_CASE

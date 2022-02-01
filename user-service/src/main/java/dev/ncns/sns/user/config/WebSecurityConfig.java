@@ -23,7 +23,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             "/", "/api/**", "/oauth2/**"
     };
     private static final String[] WEB_URLS = {
-            "error", "/h2-console/**", "/swagger-ui/**", "/swagger-resources/**", "v3/api-docs", "/webjars/**"
+            "error", "/h2-console/**", "/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs", "/webjars/**"
     };
 
     @Bean
@@ -51,6 +51,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and().csrf().disable().headers().frameOptions().disable()
                 .and().authorizeRequests()
                 .mvcMatchers(PUBLIC_URLS)
+                .permitAll()
+                .antMatchers("/swagger-ui/**")
                 .permitAll()
                 .anyRequest().authenticated()
                 .and().exceptionHandling()

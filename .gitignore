@@ -27,3 +27,6 @@ bin/
 
 ### macOS ###
 .DS_Store
+
+### configuration file ###
+config-service/src/main/resources/application-test.yml
