@@ -12,11 +12,11 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class UserServiceTest extends UserApplicationTests{
+public class UserServiceTest extends UserApplicationTests {
     @Autowired
     private UserService userService;
 
-    String account = "account";
+    String accountName = "account";
     String nickname = "nick";
     String email = "nick@gmail.com";
     String password = "1234";
@@ -24,7 +24,7 @@ public class UserServiceTest extends UserApplicationTests{
     @Test
     void signUp() throws Exception {
         Users user = Users.builder()
-                .account(account)
+                .accountName(accountName)
                 .nickname(nickname)
                 .email(email)
                 .password(password)
@@ -38,14 +38,15 @@ public class UserServiceTest extends UserApplicationTests{
     void getUserProfile() throws Exception {
         UserResponseDto user = userService.getUserInfo(1L);
         System.out.println(user);
-        assertEquals("account",user.getAccount());
+        assertEquals("account", user.getAccountName());
     }
 
     @Test
     void getAllUserInfo() {
         List<UserResponseDto> userList = userService.getAllUserInfo();
-        for (UserResponseDto user:userList) {
+        for (UserResponseDto user : userList) {
             System.out.println(user.getId());
         }
     }
+
 }
