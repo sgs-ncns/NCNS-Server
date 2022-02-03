@@ -1,5 +1,6 @@
 package dev.ncns.sns.auth.config;
 
+import dev.ncns.sns.common.util.Constants;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,9 +21,6 @@ import java.util.List;
 @EnableOpenApi
 @Configuration
 public class SwaggerConfig {
-
-    private static final String AUTH_HEADER_KEY = "Authorization";
-    private static final String AUTH_HEADER_VALUE = "Bearer {accessToken}";
 
     @Bean
     public Docket api() {
@@ -47,7 +45,7 @@ public class SwaggerConfig {
     }
 
     private ApiKey apiKey() {
-        return new ApiKey(AUTH_HEADER_VALUE, AUTH_HEADER_KEY, "header");
+        return new ApiKey(Constants.AUTH_HEADER_KEY, "JWT", "header");
     }
 
     private SecurityContext securityContext() {
@@ -59,7 +57,7 @@ public class SwaggerConfig {
     private List<SecurityReference> defaultAuth() {
         AuthorizationScope authorizationScope = new AuthorizationScope("global", "accessEverything");
         AuthorizationScope[] authorizationScopes = new AuthorizationScope[]{authorizationScope};
-        return List.of(new SecurityReference(AUTH_HEADER_VALUE, authorizationScopes));
+        return List.of(new SecurityReference(Constants.AUTH_HEADER_KEY, authorizationScopes));
     }
 
 }

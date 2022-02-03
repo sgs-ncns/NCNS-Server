@@ -1,4 +1,4 @@
-package dev.ncns.sns.auth.config;
+package dev.ncns.sns.common.config;
 
 import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
 import org.springframework.context.annotation.Configuration;

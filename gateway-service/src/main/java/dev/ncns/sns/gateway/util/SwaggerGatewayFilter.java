@@ -1,5 +1,6 @@
 package dev.ncns.sns.gateway.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -7,14 +8,17 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.server.ServerWebExchange;
 
+@Slf4j
 @Component
-public class SwaggerHeaderFilter extends AbstractGatewayFilterFactory {
+public class SwaggerGatewayFilter extends AbstractGatewayFilterFactory {
 
     @Override
     public GatewayFilter apply(Object config) {
         return (exchange, chain) -> {
             ServerHttpRequest request = exchange.getRequest();
             String path = request.getURI().getPath();
+
+            log.info("[Swagger] - " + request.getMethod() + " " + request.getURI());
 
             if (!StringUtils.endsWithIgnoreCase(path, SwaggerProvider.API_URI)) {
                 return chain.filter(exchange);

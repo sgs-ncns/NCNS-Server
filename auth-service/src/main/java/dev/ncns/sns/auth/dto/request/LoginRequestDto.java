@@ -1,6 +1,6 @@
 package dev.ncns.sns.auth.dto.request;
 
-import dev.ncns.sns.auth.common.AuthType;
+import dev.ncns.sns.auth.domain.AuthType;
 import dev.ncns.sns.auth.dto.validate.AccountLoginValidation;
 import dev.ncns.sns.auth.dto.validate.LocalLoginValidation;
 import dev.ncns.sns.auth.dto.validate.SocialLoginValidation;

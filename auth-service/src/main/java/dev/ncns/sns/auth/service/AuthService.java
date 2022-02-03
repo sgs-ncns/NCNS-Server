@@ -2,17 +2,19 @@ package dev.ncns.sns.auth.service;
 
 import dev.ncns.sns.auth.dto.response.AuthResponseDto;
 import dev.ncns.sns.auth.dto.response.LoginResponseDto;
-import dev.ncns.sns.auth.util.JwtProvider;
 import dev.ncns.sns.auth.util.RedisManager;
+import dev.ncns.sns.common.util.JwtProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
+@ComponentScan(basePackages = "dev.ncns.sns.common.util")
 @Service
 public class AuthService {
 
     private final JwtProvider jwtProvider;
-    public final RedisManager redisManager;
+    private final RedisManager redisManager;
 
     public AuthResponseDto issueToken(LoginResponseDto loginResponse) {
         String userId = loginResponse.getId().toString();
@@ -24,7 +26,9 @@ public class AuthService {
         return AuthResponseDto.of(accessToken, refreshToken);
     }
 
-    public void discardToken(String accessToken, String refreshToken) {
+    public void discardToken(String authorization, String refreshToken) {
+        String accessToken = jwtProvider.getAccessToken(authorization);
+
         validateToken(accessToken, refreshToken);
         compareUserId(accessToken, refreshToken);
 
@@ -35,7 +39,9 @@ public class AuthService {
         redisManager.setValue(accessToken, jwtProvider.getBlackListTokenValue(userId), timeout);
     }
 
-    public AuthResponseDto reissueToken(String accessToken, String refreshToken) {
+    public AuthResponseDto reissueToken(String authorization, String refreshToken) {
+        String accessToken = jwtProvider.getAccessToken(authorization);
+
         validateToken(accessToken, refreshToken);
         compareUserId(accessToken, refreshToken);
 
