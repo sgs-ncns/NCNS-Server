@@ -3,6 +3,8 @@ package com.ncns.sns.post.controller;
 
 import com.ncns.sns.post.dto.request.CreatePostRequestDto;
 import com.ncns.sns.post.dto.request.UpdatePostRequestDto;
+import com.ncns.sns.post.dto.response.PostDetailResponseDto;
+import com.ncns.sns.post.dto.response.PostResponseDto;
 import com.ncns.sns.post.service.PostService;
 import dev.ncns.sns.common.domain.ResponseEntity;
 import dev.ncns.sns.common.domain.ResponseType;
@@ -47,4 +49,15 @@ public class PostController {
         return ResponseEntity.successResponse(port);
     }
 
+    @GetMapping("/{userId}")
+    public ResponseEntity<List<PostResponseDto>> getUserPosts(@PathVariable Long userId) {
+        List<PostResponseDto> response = postService.getUserPosts(userId);
+        return ResponseEntity.successResponse(port, response);
+    }
+
+    @GetMapping("/{userId}/{postId}")
+    public ResponseEntity<PostDetailResponseDto> getPostDetail(@PathVariable Long userId, Long postId) {
+        PostDetailResponseDto response = postService.getPostDetail(postId);
+        return ResponseEntity.successResponse(port, response);
+    }
 }
