@@ -1,7 +1,7 @@
 package com.ncns.sns.post.service;
 
 import com.ncns.sns.post.common.SecurityUtil;
-import com.ncns.sns.post.domain.Comments;
+import com.ncns.sns.post.domain.Comment;
 import com.ncns.sns.post.domain.Post;
 import com.ncns.sns.post.domain.PostCount;
 import com.ncns.sns.post.dto.request.CreatePostRequestDto;
@@ -49,8 +49,8 @@ public class PostService {
 
     public PostDetailResponseDto getPostDetail(Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("no post"));
-        List<Comments> commentsList = commentRepository.findAllByPostId(postId);
-        return PostDetailResponseDto.of(post, commentsList);
+        List<Comment> commentList = commentRepository.findAllByPostId(postId);
+        return PostDetailResponseDto.of(post, commentList);
     }
 
     private Post checkAuthorization(Long postId) {

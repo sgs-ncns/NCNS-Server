@@ -1,6 +1,6 @@
 package com.ncns.sns.post.dto.response;
 
-import com.ncns.sns.post.domain.Comments;
+import com.ncns.sns.post.domain.Comment;
 import com.ncns.sns.post.domain.Post;
 import lombok.Builder;
 
@@ -13,21 +13,21 @@ public class PostDetailResponseDto {
     private Long userId;
     private String content;
     private LocalDateTime createdAt;
-    private List<Comments> commentsList; // TODO:: pagination
+    private List<Comment> commentList; // TODO:: pagination
 
     @Builder
-    private PostDetailResponseDto(Post post, List<Comments> commentsList) {
+    private PostDetailResponseDto(Post post, List<Comment> commentList) {
         this.postId = post.getId();
         this.userId = post.getUserId();
         this.content = post.getContent();
         this.createdAt = post.getCreatedAt();
-        this.commentsList = commentsList;
+        this.commentList = commentList;
     }
 
-    public static PostDetailResponseDto of(Post post, List<Comments> commentsList) {
+    public static PostDetailResponseDto of(Post post, List<Comment> commentList) {
         return PostDetailResponseDto.builder()
                 .post(post)
-                .commentsList(commentsList)
+                .commentList(commentList)
                 .build();
     }
 }

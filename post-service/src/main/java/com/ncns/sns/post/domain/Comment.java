@@ -16,7 +16,7 @@ import javax.persistence.*;
 @Where(clause = "deleted_at is null")
 @Table(name = "comments")
 @Entity
-public class Comments extends BaseTime {
+public class Comment extends BaseTime {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,7 +35,7 @@ public class Comments extends BaseTime {
     private String content;
 
     @Builder
-    public Comments(Long postId, Long userId, Long parentId, String content) {
+    public Comment(Long postId, Long userId, Long parentId, String content) {
         this.postId = postId;
         this.userId = userId;
         this.parentId = parentId;
