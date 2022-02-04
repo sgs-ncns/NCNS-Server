@@ -24,15 +24,18 @@ public class PostService {
     private final PostsCountRepository postCountRepository;
     private final CommentRepository commentRepository;
 
+    @Transactional
     public void createPost(CreatePostRequestDto dto) {
         postRepository.save(dto.toEntity());
     }
 
+    @Transactional
     public void updatePost(UpdatePostRequestDto dto) {
         Post post = checkAuthorization(dto.getPostId());
         post.updatePost(dto.getContent(), dto.getHashtag());
     }
 
+    @Transactional
     public void deletePost(Long postId) {
         Post post = checkAuthorization(postId);
         postRepository.delete(post);
