@@ -41,4 +41,9 @@ public class Comment extends BaseTime {
         this.parentId = parentId;
         this.content = content;
     }
+
+    public Comment updateComment(String content) {
+        this.content = content;
+        return this;
+    }
 }
