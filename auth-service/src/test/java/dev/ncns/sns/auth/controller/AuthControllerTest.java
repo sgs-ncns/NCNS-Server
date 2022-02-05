@@ -45,8 +45,8 @@ class AuthControllerTest {
                         .content(objectMapper.writeValueAsString(loginRequestDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.accessToken").exists())
-                .andExpect(jsonPath("$.data.refreshToken").exists())
+                .andExpect(jsonPath("$.data.access_token").exists())
+                .andExpect(jsonPath("$.data.refresh_token").exists())
                 .andDo(print());
     }
 
@@ -57,8 +57,8 @@ class AuthControllerTest {
                         .content(objectMapper.writeValueAsString(loginRequestDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.accessToken").exists())
-                .andExpect(jsonPath("$.data.refreshToken").exists())
+                .andExpect(jsonPath("$.data.access_token").exists())
+                .andExpect(jsonPath("$.data.refresh_token").exists())
                 .andDo(print());
     }
 

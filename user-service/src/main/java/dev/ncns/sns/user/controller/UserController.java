@@ -37,7 +37,7 @@ public class UserController {
     public ResponseEntity<?> signUp(@Validated @RequestBody SignupRequestDto signupDto, BindingResult bindingResult) throws Exception {
         if (bindingResult.hasErrors()) {
             List<String> errors = bindingResult.getAllErrors().stream().map(e -> e.getDefaultMessage()).collect(Collectors.toList());
-            return ResponseEntity.failureResponse(port, ResponseType.USER_VALIDATION_FAILURE, errors);
+            return ResponseEntity.failureResponse(port, ResponseType.ARGUMENT_NOT_VALID, errors);
         }
         userService.signUp(signupDto.toEntity());
         return ResponseEntity.successResponse(port);
