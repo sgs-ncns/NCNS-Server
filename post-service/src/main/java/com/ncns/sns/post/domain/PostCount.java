@@ -34,4 +34,5 @@ public class PostCount {
         this.commentCount = commentCount;
     }
 
+    //TODO:: like,comment count +- methods
 }

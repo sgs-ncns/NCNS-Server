@@ -15,6 +15,7 @@ public class CommentService {
 
     public void createComment(CreateCommentRequestDto dto) {
         commentRepository.save(dto.toEntity());
+        //TODO:: comment count ++
     }
 
     public void updateComment(UpdateCommentRequestDto dto) {
@@ -25,11 +26,12 @@ public class CommentService {
     public void deleteComment(Long postId, Long commentId) {
         Comment comment = checkAuthorization(commentId);
         commentRepository.delete(comment);
+        //TODO:: comment count --
     }
 
     private Comment checkAuthorization(Long commentId) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new IllegalArgumentException("no such post"));
-        if (comment.getUserId()!=(SecurityUtil.getCurrentMemberId())) {
+        if (comment.getUserId() != (SecurityUtil.getCurrentMemberId())) {
             throw new IllegalArgumentException("not authorized");
         }
         return comment;
