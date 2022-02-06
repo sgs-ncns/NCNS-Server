@@ -1,7 +1,8 @@
-package dev.ncns.sns.gateway.util;
+package dev.ncns.sns.gateway.config.filter;
 
 import dev.ncns.sns.common.util.Constants;
 import dev.ncns.sns.common.util.JwtProvider;
+import dev.ncns.sns.gateway.util.SwaggerProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;

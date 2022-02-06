@@ -13,3 +13,5 @@ spring:
     name: user-service
   jackson:
     property-naming-strategy: SNAKE_CASE
+jwt:
+  secret: ENC(xUS0U73UD2pMlEPt8Fi6SRtZJnZjiLburd8qo+Zm060EV1yKrF3LrzuSPoRigo1z)

@@ -1,4 +1,4 @@
-package dev.ncns.sns.gateway.util;
+package dev.ncns.sns.gateway.config.filter;
 
 import dev.ncns.sns.common.util.Constants;
 import lombok.extern.slf4j.Slf4j;

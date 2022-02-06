@@ -41,6 +41,11 @@ spring:
           uri: lb://AUTH-SERVICE
           predicates:
             - Path=/api/auth/**
+        - id: user-service-signup
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/api/user,/api/user/login
+            - Method=POST
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
