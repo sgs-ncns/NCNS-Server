@@ -82,8 +82,14 @@ public class PostController {
     }
 
     @DeleteMapping("/{postId}/comment/{commentId}")
-    public ResponseEntity<Void> deleteComment(@PathVariable Long postId,Long commentId) {
-        commentService.deleteComment(postId,commentId);
+    public ResponseEntity<Void> deleteComment(@PathVariable Long postId, Long commentId) {
+        commentService.deleteComment(postId, commentId);
         return ResponseEntity.successResponse(port);
+    }
+
+    @PostMapping("/{postId}/like")
+    public ResponseEntity<String> likePost(@PathVariable Long postId) {
+        String data = postService.requestLikePost(postId);
+        return ResponseEntity.successResponse(port, data);
     }
 }
