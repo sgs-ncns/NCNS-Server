@@ -2,11 +2,13 @@ package com.ncns.sns.post.dto.request;
 
 import com.ncns.sns.post.common.SecurityUtil;
 import com.ncns.sns.post.domain.Post;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 
+@AllArgsConstructor
 @RequiredArgsConstructor
 @Getter
 public class CreatePostRequestDto {
