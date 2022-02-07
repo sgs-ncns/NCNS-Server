@@ -25,7 +25,8 @@ public class CommentService {
 
     public void createComment(CreateCommentRequestDto dto) {
         commentRepository.save(dto.toEntity());
-        //TODO:: comment count ++
+        PostCount postCount = postsCountRepository.findByPostId(dto.getPostId());
+        postCount.update(CountType.COMMENT, true);
     }
 
     public void updateComment(UpdateCommentRequestDto dto) {
@@ -36,7 +37,8 @@ public class CommentService {
     public void deleteComment(Long postId, Long commentId) {
         Comment comment = checkAuthorization(commentId);
         commentRepository.delete(comment);
-        //TODO:: comment count --
+        PostCount postCount = postsCountRepository.findByPostId(postId);
+        postCount.update(CountType.COMMENT, false);
     }
 
     private Comment checkAuthorization(Long commentId) {

@@ -2,10 +2,12 @@ package com.ncns.sns.post.dto.request;
 
 import com.ncns.sns.post.common.SecurityUtil;
 import com.ncns.sns.post.domain.Comment;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 
+@Getter
 @RequiredArgsConstructor
 public class CreateCommentRequestDto {
 
