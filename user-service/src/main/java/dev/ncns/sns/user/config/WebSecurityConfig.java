@@ -16,7 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String[] PUBLIC_URLS = {
-            "/", "/api/**", "/oauth2/**"
+            "/", "/api/**"
     };
     private static final String[] WEB_URLS = {
             "error", "/h2-console/**", "/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs", "/webjars/**"
@@ -43,15 +43,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
-                .cors()
-                .and().csrf().disable().headers().frameOptions().disable()
-                .and().authorizeRequests()
-                .mvcMatchers(PUBLIC_URLS)
-                .permitAll()
+                .csrf().disable().headers().frameOptions().disable()
+                .and()
+                .authorizeRequests().mvcMatchers(PUBLIC_URLS).permitAll()
                 .anyRequest().authenticated()
-                .and().exceptionHandling()
-                .and().sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS); // session 생성x, 사용x
+                .and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS); // session 생성x, 사용x
     }
 
 }
