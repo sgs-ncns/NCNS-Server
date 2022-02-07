@@ -61,7 +61,8 @@ public class PostController {
 
     @GetMapping("/{userId}/{postId}")
     public ResponseEntity<PostDetailResponseDto> getPostDetail(@PathVariable Long userId, Long postId) {
-        PostDetailResponseDto response = postService.getPostDetail(postId);
+        PostDetailResponseDto response = PostDetailResponseDto
+                .of(postService.getPostDetail(postId), commentService.getCommentList(postId));
         return ResponseEntity.successResponse(port, response);
     }
 

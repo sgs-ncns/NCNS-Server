@@ -54,10 +54,8 @@ public class PostService {
                 ).collect(Collectors.toList());
     }
 
-    public PostDetailResponseDto getPostDetail(Long postId) {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("no post"));
-        List<Comment> commentList = commentRepository.findAllByPostId(postId);
-        return PostDetailResponseDto.of(post, commentList);
+    public Post getPostDetail(Long postId) {
+        return postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("no post"));
     }
 
 

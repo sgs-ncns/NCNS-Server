@@ -2,16 +2,26 @@ package com.ncns.sns.post.service;
 
 import com.ncns.sns.post.common.SecurityUtil;
 import com.ncns.sns.post.domain.Comment;
+import com.ncns.sns.post.domain.CountType;
+import com.ncns.sns.post.domain.PostCount;
 import com.ncns.sns.post.dto.request.CreateCommentRequestDto;
 import com.ncns.sns.post.dto.request.UpdateCommentRequestDto;
 import com.ncns.sns.post.repository.CommentRepository;
+import com.ncns.sns.post.repository.PostsCountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
 public class CommentService {
     private final CommentRepository commentRepository;
+    private final PostsCountRepository postsCountRepository;
+
+    public List<Comment> getCommentList(Long postId) {
+        return commentRepository.findAllByPostId(postId);
+    }
 
     public void createComment(CreateCommentRequestDto dto) {
         commentRepository.save(dto.toEntity());
