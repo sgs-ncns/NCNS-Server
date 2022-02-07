@@ -1,4 +1,4 @@
-package dev.ncns.sns.common.util;
+package dev.ncns.sns.auth.util;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

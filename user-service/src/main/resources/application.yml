@@ -1,17 +1,8 @@
-# Eureka
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:9010/eureka/
-#      defaultZone: http://15.165.198.76:9010/eureka/
-    fetch-registry: true
-    register-with-eureka: true
 server:
   port: 9110
 spring:
   application:
     name: user-service
-  jackson:
-    property-naming-strategy: SNAKE_CASE
-jwt:
-  secret: ENC(xUS0U73UD2pMlEPt8Fi6SRtZJnZjiLburd8qo+Zm060EV1yKrF3LrzuSPoRigo1z)
+  config:
+    import: "optional:configserver:http://localhost:9020"
+#    import: "optional:configserver:http://15.165.198.76:9020"

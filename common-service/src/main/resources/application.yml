@@ -1,5 +1,3 @@
 spring:
   application:
     name: common-service
-jwt:
-  secret: ENC(xUS0U73UD2pMlEPt8Fi6SRtZJnZjiLburd8qo+Zm060EV1yKrF3LrzuSPoRigo1z)

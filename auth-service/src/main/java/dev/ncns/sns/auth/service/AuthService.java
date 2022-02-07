@@ -2,14 +2,12 @@ package dev.ncns.sns.auth.service;
 
 import dev.ncns.sns.auth.dto.response.AuthResponseDto;
 import dev.ncns.sns.auth.dto.response.LoginResponseDto;
+import dev.ncns.sns.auth.util.JwtProvider;
 import dev.ncns.sns.auth.util.RedisManager;
-import dev.ncns.sns.common.util.JwtProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
-@ComponentScan(basePackages = "dev.ncns.sns.common.util")
 @Service
 public class AuthService {
 
