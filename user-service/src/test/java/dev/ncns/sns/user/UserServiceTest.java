@@ -24,7 +24,7 @@ public class UserServiceTest extends UserApplicationTests{
     @Test
     void signUp() throws Exception {
         Users user = Users.builder()
-                .account(account)
+                .accountName(account)
                 .nickname(nickname)
                 .email(email)
                 .password(password)
@@ -38,7 +38,7 @@ public class UserServiceTest extends UserApplicationTests{
     void getUserProfile() throws Exception {
         UserResponseDto user = userService.getUserInfo(1L);
         System.out.println(user);
-        assertEquals("account",user.getAccount());
+        assertEquals("account",user.getAccountName());
     }
 
     @Test

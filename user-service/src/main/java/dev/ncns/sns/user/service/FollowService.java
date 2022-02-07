@@ -31,6 +31,8 @@ public class FollowService {
     @Transactional
     public void unFollow(Long followId) {
         followRepository.deleteById(followId);
+        //TODO:: current user following count --
+        //TODO:: target user follower count --
     }
 
     @Transactional
@@ -43,6 +45,8 @@ public class FollowService {
         }
         Follow follow = Follow.builder().userId(userId).targetId(targetId).build();
         followRepository.save(follow);
+        //TODO:: current user following count ++
+        //TODO:: target user follower count ++
         return "follow";
     }
 
