@@ -1,4 +1,13 @@
 dependencies {
+    implementation project(':common-service')
+
     implementation 'org.springframework.cloud:spring-cloud-starter-gateway'
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+    implementation 'org.springframework.cloud:spring-cloud-starter-config'
+
+    implementation 'io.springfox:springfox-boot-starter:3.0.0'
+
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
+    implementation 'io.jsonwebtoken:jjwt:0.9.1'
 }

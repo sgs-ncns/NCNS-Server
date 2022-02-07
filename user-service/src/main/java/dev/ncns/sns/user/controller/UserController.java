@@ -1,5 +1,6 @@
 package dev.ncns.sns.user.controller;
 
+import dev.ncns.sns.common.annotation.NonAuthorize;
 import dev.ncns.sns.common.domain.ResponseEntity;
 import dev.ncns.sns.common.domain.ResponseType;
 import dev.ncns.sns.user.common.SecurityUtil;
@@ -31,6 +32,7 @@ public class UserController {
     private final UserService userService;
     private final FollowService followService;
 
+    @NonAuthorize
     @PostMapping
     public ResponseEntity<?> signUp(@Validated @RequestBody SignupRequestDto signupDto, BindingResult bindingResult) throws Exception {
         if (bindingResult.hasErrors()) {
@@ -78,6 +80,7 @@ public class UserController {
         return ResponseEntity.successResponse(port, data);
     }
 
+    @NonAuthorize
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto dto) {
         LoginResponseDto data = new LoginResponseDto(userService.handleLoginRequest(dto));

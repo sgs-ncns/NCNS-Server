@@ -1,4 +1,4 @@
-package dev.ncns.sns.auth.common;
+package dev.ncns.sns.auth.domain;
 
 import lombok.Getter;
 

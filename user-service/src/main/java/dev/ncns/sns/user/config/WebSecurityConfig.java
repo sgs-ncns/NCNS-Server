@@ -1,7 +1,5 @@
 package dev.ncns.sns.user.config;
 
-import dev.ncns.sns.user.common.JwtUtil;
-import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,17 +11,15 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-@RequiredArgsConstructor
 @EnableWebSecurity
 @Configuration
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final JwtUtil jwtUtil;
     private static final String[] PUBLIC_URLS = {
-            "/", "/api/**", "/oauth2/**"
+            "/", "/api/**"
     };
     private static final String[] WEB_URLS = {
-            "error", "/h2-console/**", "/swagger-ui/**", "/swagger-resources/**", "v3/api-docs", "/webjars/**"
+            "error", "/h2-console/**", "/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs", "/webjars/**"
     };
 
     @Bean
@@ -47,16 +43,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
-                .cors()
-                .and().csrf().disable().headers().frameOptions().disable()
-                .and().authorizeRequests()
-                .mvcMatchers(PUBLIC_URLS)
-                .permitAll()
+                .csrf().disable().headers().frameOptions().disable()
+                .and()
+                .authorizeRequests().mvcMatchers(PUBLIC_URLS).permitAll()
                 .anyRequest().authenticated()
-                .and().exceptionHandling()
-                .and().sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // session 생성x, 사용x
-                .and().apply(new JwtSecurityConfig(jwtUtil));
+                .and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS); // session 생성x, 사용x
     }
 
 }
