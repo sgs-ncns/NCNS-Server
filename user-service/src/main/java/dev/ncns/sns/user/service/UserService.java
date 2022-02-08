@@ -43,6 +43,9 @@ public class UserService {
         if (isExistEmail(user.getEmail())) {
             throw new BadRequestException(ResponseType.USER_DUPLICATED_EMAIL);
         }
+        if (isExistAccountName(user.getAccountName())) {
+            throw new BadRequestException(ResponseType.USER_DUPLICATED_ACCOUNT_NAME);
+        }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user = userRepository.save(user);
         UserCount userCount = UserCount.builder().userId(user.getId()).build();
@@ -132,6 +135,10 @@ public class UserService {
 
     private boolean isExistEmail(String email) {
         return userRepository.existsByEmail(email);
+    }
+
+    private boolean isExistAccountName(String accountName) {
+        return userRepository.existsByAccountName(accountName);
     }
 
     private void checkPasswordMatch(String target, String password) {
