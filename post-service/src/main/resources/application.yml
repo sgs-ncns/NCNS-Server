@@ -4,7 +4,11 @@ spring:
   application:
     name: post-service
   config:
-    import: "optional:configserver:http://localhost:9020"
-#    import: "optional:configserver:http://15.165.198.76:9020"
-token:
-  key: secretkey
+#    import: "optional:configserver:http://localhost:9020"
+    import: "optional:configserver:http://15.165.198.76:9020"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh
