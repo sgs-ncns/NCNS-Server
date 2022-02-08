@@ -1,16 +1,11 @@
 package com.ncns.sns.post.service;
 
 import com.ncns.sns.post.common.SecurityUtil;
-import com.ncns.sns.post.domain.CountType;
-import com.ncns.sns.post.domain.Like;
-import com.ncns.sns.post.domain.Post;
-import com.ncns.sns.post.domain.PostCount;
+import com.ncns.sns.post.domain.*;
 import com.ncns.sns.post.dto.request.CreatePostRequestDto;
 import com.ncns.sns.post.dto.request.UpdatePostRequestDto;
 import com.ncns.sns.post.dto.response.PostResponseDto;
-import com.ncns.sns.post.repository.LikeRepository;
-import com.ncns.sns.post.repository.PostRepository;
-import com.ncns.sns.post.repository.PostsCountRepository;
+import com.ncns.sns.post.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,10 +19,18 @@ public class PostService {
     private final PostRepository postRepository;
     private final PostsCountRepository postCountRepository;
     private final LikeRepository likeRepository;
+    private final HashtagRepository hashtagRepository;
+    private final UserTagRepository userTagRepository;
 
     @Transactional
     public void createPost(CreatePostRequestDto dto) {
-        Post post = postRepository.save(dto.toEntity());
+        String hashtags = saveHashTag(dto.getHashtag());
+
+        Post post = postRepository.save(dto.toEntity(hashtags));
+
+        if (dto.getUsertag() != null) {
+            dto.getUsertag().forEach(userId -> saveUserTag(post.getId(), userId));
+        }
         postCountRepository.save(new PostCount(post.getId()));
         // TODO: user post count ++
     }
@@ -35,18 +38,34 @@ public class PostService {
     @Transactional
     public void updatePost(UpdatePostRequestDto dto) {
         Post post = checkAuthorization(dto.getPostId());
-        post.updatePost(dto.getContent(), dto.getHashtag());
+
+        userTagRepository.deleteAllByPostId(dto.getPostId());
+        dto.getUsertag().forEach(userId -> saveUserTag(dto.getPostId(), userId));
+
+        deleteHashTags(post.getHashtagList());
+
+        String newHashtags = saveHashTag(dto.getHashtag());
+
+        post.updatePost(dto.getContent(), newHashtags);
     }
 
     @Transactional
     public void deletePost(Long postId) {
         Post post = checkAuthorization(postId);
-        postRepository.delete(post);
+
+        deleteHashTags(post.getHashtagList());
+
+        userTagRepository.deleteAllByPostId(postId);
+
         PostCount postCount = postCountRepository.getById(postId);
         postCountRepository.deleteById(postCount.getId());
+
+        postRepository.delete(post);
+
         // TODO: user post count --
     }
 
+    @Transactional(readOnly = true)
     public List<PostResponseDto> getUserPosts(Long userId) {
         return postRepository.findAllByUserId(userId).stream()
                 .map(posts -> {
@@ -63,7 +82,7 @@ public class PostService {
     @Transactional
     public String requestLikePost(Long postId) {
         Long likeData = likeRepository.isLiked(postId, SecurityUtil.getCurrentMemberId());
-        return likeData == null ? like(postId) : disLike(likeData,postId);
+        return likeData == null ? like(postId) : disLike(likeData, postId);
     }
 
     private Post checkAuthorization(Long postId) {
@@ -74,15 +93,13 @@ public class PostService {
         return post;
     }
 
-    @Transactional
-    private String disLike(Long like,Long postId) {
+    private String disLike(Long like, Long postId) {
         likeRepository.deleteById(like);
         PostCount postCount = postCountRepository.findByPostId(postId);
-        postCount.update(CountType.LIKE,false);
+        postCount.update(CountType.LIKE, false);
         return "disLike";
     }
 
-    @Transactional
     private String like(Long postId) {
         Like like = Like.builder()
                 .postId(postId)
@@ -90,8 +107,33 @@ public class PostService {
                 .build();
         likeRepository.save(like);
         PostCount postCount = postCountRepository.findByPostId(postId);
-        postCount.update(CountType.LIKE,true);
+        postCount.update(CountType.LIKE, true);
         return "like";
     }
 
+    private void saveUserTag(Long postId, Long userId) {
+        UserTag userTag = UserTag.builder()
+                .postId(postId)
+                .userId(userId)
+                .build();
+        userTagRepository.save(userTag);
+    }
+
+    private String saveHashTag(List<String> hashtagList) {
+        return hashtagList == null ? null :
+                hashtagList.stream().map(hash -> {
+                    Hashtag hashtag = hashtagRepository.findByContent(hash)
+                            .orElse(new Hashtag(hash, 0));
+                    hashtag.update(true);
+                    return hash;
+                }).collect(Collectors.joining(","));
+    }
+
+    private void deleteHashTags(List<String> hashtagList) {
+        hashtagList.forEach(hash -> {
+            Hashtag hashtag = hashtagRepository.findByContent(hash)
+                    .orElseThrow(() -> new IllegalArgumentException("no hashtag"));
+            hashtag.update(false);
+        });
+    }
 }
