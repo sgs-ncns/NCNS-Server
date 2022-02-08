@@ -19,7 +19,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             "/", "/api/**"
     };
     private static final String[] WEB_URLS = {
-            "error", "/h2-console/**", "/swagger-ui/**", "/swagger-resources/**", "v3/api-docs", "/webjars/**"
+            "error", "/h2-console/**", "/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs", "/webjars/**"
     };
 
     @Bean
