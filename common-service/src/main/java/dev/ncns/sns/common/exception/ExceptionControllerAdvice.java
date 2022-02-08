@@ -33,6 +33,13 @@ public class ExceptionControllerAdvice {
         return ResponseEntity.failureResponse(port, exception.getResponseType());
     }
 
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(UnauthorizedException.class)
+    public <T> ResponseEntity<T> handleUnauthorizedException(UnauthorizedException exception) {
+        printLog(exception);
+        return ResponseEntity.failureResponse(port, exception.getResponseType());
+    }
+
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NotFoundException.class)
     public <T> ResponseEntity<T> handleNotFoundException(NotFoundException exception) {

@@ -8,6 +8,7 @@ import dev.ncns.sns.auth.dto.validate.LocalLoginValidation;
 import dev.ncns.sns.auth.dto.validate.SocialLoginValidation;
 import dev.ncns.sns.auth.service.AuthService;
 import dev.ncns.sns.auth.util.CookieManager;
+import dev.ncns.sns.common.annotation.Authorize;
 import dev.ncns.sns.common.domain.ResponseEntity;
 import dev.ncns.sns.common.util.Constants;
 import lombok.RequiredArgsConstructor;
@@ -56,6 +57,7 @@ public class AuthController {
         return login(loginResponse, httpServletResponse);
     }
 
+    @Authorize
     @DeleteMapping
     public ResponseEntity<Void> logout(HttpServletRequest httpServletRequest) {
         String authorization = httpServletRequest.getHeader(Constants.AUTH_HEADER_KEY);

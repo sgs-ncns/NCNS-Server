@@ -4,26 +4,29 @@ import dev.ncns.sns.user.domain.AuthType;
 import dev.ncns.sns.user.domain.Status;
 import dev.ncns.sns.user.domain.Users;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 
 @Getter
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class SignupRequestDto {
-    @NotBlank(message = "NAME_IS_MANDATORY")
-    private String accountName;
 
-    @NotBlank(message = "NAME_IS_MANDATORY")
-    private String nickname;
+    private static final String emailFormat = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+.[A-Za-z]{2,6}$";
 
-    @NotBlank(message = "EMAIL_IS_MANDATORY")
-    @Email(message = "NOT_VALID_EMAIL")
-    private String email;
+    @NotBlank(message = "계정은 공백일 수 없습니다.")
+    private final String accountName;
 
-    @NotBlank(message = "PASSWORD_IS_MANDATORY")
-    private String password;
+    @NotBlank(message = "이름은 공백일 수 없습니다.")
+    private final String nickname;
+
+    @NotBlank(message = "이메일은 공백일 수 없습니다.")
+    @Pattern(regexp = emailFormat, message = "유효하지 않은 이메일 형식입니다.")
+    private final String email;
+
+    @NotBlank(message = "비밀번호는 공백일 수 없습니다.")
+    private final String password;
 
     public Users toEntity() {
         return Users.builder()
@@ -35,4 +38,5 @@ public class SignupRequestDto {
                 .authType(AuthType.LOCAL)
                 .build();
     }
+
 }

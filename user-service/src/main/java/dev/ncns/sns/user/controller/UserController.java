@@ -2,7 +2,6 @@ package dev.ncns.sns.user.controller;
 
 import dev.ncns.sns.common.annotation.NonAuthorize;
 import dev.ncns.sns.common.domain.ResponseEntity;
-import dev.ncns.sns.common.domain.ResponseType;
 import dev.ncns.sns.user.common.SecurityUtil;
 import dev.ncns.sns.user.dto.request.LoginRequestDto;
 import dev.ncns.sns.user.dto.request.ProfileUpdateRequestDto;
@@ -14,14 +13,15 @@ import dev.ncns.sns.user.service.FollowService;
 import dev.ncns.sns.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.validation.BindingResult;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
+@ComponentScan(basePackages = "dev.ncns.sns.common.exception")
 @RequestMapping(value = "/api/user")
 @RestController
 public class UserController {
@@ -34,17 +34,13 @@ public class UserController {
 
     @NonAuthorize
     @PostMapping
-    public ResponseEntity<?> signUp(@Validated @RequestBody SignupRequestDto signupDto, BindingResult bindingResult) throws Exception {
-        if (bindingResult.hasErrors()) {
-            List<String> errors = bindingResult.getAllErrors().stream().map(e -> e.getDefaultMessage()).collect(Collectors.toList());
-            return ResponseEntity.failureResponse(port, ResponseType.ARGUMENT_NOT_VALID, errors);
-        }
+    public ResponseEntity<?> signUp(@Validated @RequestBody SignupRequestDto signupDto) {
         userService.signUp(signupDto.toEntity());
         return ResponseEntity.successResponse(port);
     }
 
     @DeleteMapping
-    public ResponseEntity<Void> signOut() throws Exception {
+    public ResponseEntity<Void> signOut() {
         userService.signOut();
         return ResponseEntity.successResponse(port, "Unregister Success!");
     }
@@ -56,7 +52,7 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<UserResponseDto> getProfile(@PathVariable final Long userId) throws Exception {
+    public ResponseEntity<UserResponseDto> getProfile(@PathVariable final Long userId) {
         UserResponseDto userInfo = userService.getUserInfo(userId);
         return ResponseEntity.successResponse(port, userInfo);
     }
@@ -80,10 +76,12 @@ public class UserController {
         return ResponseEntity.successResponse(port, data);
     }
 
+    @ApiIgnore
     @NonAuthorize
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto dto) {
         LoginResponseDto data = new LoginResponseDto(userService.handleLoginRequest(dto));
         return ResponseEntity.successResponse(port, data);
     }
+
 }

@@ -1,5 +1,7 @@
 package dev.ncns.sns.user.service;
 
+import dev.ncns.sns.common.domain.ResponseType;
+import dev.ncns.sns.common.exception.BadRequestException;
 import dev.ncns.sns.user.domain.Follow;
 import dev.ncns.sns.user.repository.FollowRepository;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +13,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Service
 public class FollowService {
+
     private final FollowRepository followRepository;
 
     @Transactional(readOnly = true)
@@ -23,26 +26,14 @@ public class FollowService {
         return followRepository.findUserIdByTargetId(userId);
     }
 
-    @Transactional(readOnly = true)
-    private Long isFollowing(Long userId, Long targetId) {
-        return followRepository.isExist(userId, targetId);
-    }
-
-    @Transactional
-    public void unFollow(Long followId) {
-        followRepository.deleteById(followId);
-        //TODO:: current user following count --
-        //TODO:: target user follower count --
-    }
-
     @Transactional
     public String requestFollow(Long userId, Long targetId) {
         isSameUser(userId, targetId);
-        Long followData = isFollowing(userId, targetId);
-        if (followData != null) {
-            unFollow(followData);
-            return "unfollow";
-        }
+        Long followData = followRepository.findFollowId(userId, targetId);
+        return followData == null ? follow(userId, targetId) : unFollow(followData);
+    }
+
+    private String follow(Long userId, Long targetId) {
         Follow follow = Follow.builder().userId(userId).targetId(targetId).build();
         followRepository.save(follow);
         //TODO:: current user following count ++
@@ -50,9 +41,17 @@ public class FollowService {
         return "follow";
     }
 
+    private String unFollow(Long followId) {
+        followRepository.deleteById(followId);
+        //TODO:: current user following count --
+        //TODO:: target user follower count --
+        return "unfollow";
+    }
+
     private void isSameUser(Long userId, Long targetId) {
-        if (userId == targetId) {
-            throw new IllegalArgumentException("unvalid request");
+        if (userId.equals(targetId)) {
+            throw new BadRequestException(ResponseType.REQUEST_NOT_VALID);
         }
     }
+
 }
