@@ -1,5 +1,8 @@
 package dev.ncns.sns.user.service;
 
+import dev.ncns.sns.common.domain.ResponseType;
+import dev.ncns.sns.common.exception.BadRequestException;
+import dev.ncns.sns.common.exception.NotFoundException;
 import dev.ncns.sns.user.common.SecurityUtil;
 import dev.ncns.sns.user.domain.AuthType;
 import dev.ncns.sns.user.domain.Users;
@@ -19,6 +22,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Service
 public class UserService {
+
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -29,37 +33,25 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    // TODO: orElse(null) -> custom exception
     @Transactional(readOnly = true)
-    public Users getUserById(Long id) {
-        return userRepository.findById(id).orElse(null);
-    }
-
-    @Transactional(readOnly = true)
-    public Users getUserByEmail(String email) {
-        return userRepository.findByEmail(email).orElse(null);
+    public UserResponseDto getUserInfo(Long id) {
+        Users user = getUserById(id);
+        return new UserResponseDto(user);
     }
 
     @Transactional
-    public void signUp(Users user) throws Exception {
-        final boolean isValidEmail = !userRepository.existsByEmail(user.getEmail());
-        if (!isValidEmail) {
-            throw new Exception("email already exists");
+    public void signUp(Users user) {
+        if (isExistEmail(user.getEmail())) {
+            throw new BadRequestException(ResponseType.USER_DUPLICATED_EMAIL);
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
     }
 
     @Transactional
-    public void signOut() throws Exception {
-        Users user = userRepository.findById(SecurityUtil.getCurrentMemberId()).orElseThrow(() -> new Exception("no such user"));
+    public void signOut() {
+        Users user = getUserById(SecurityUtil.getCurrentMemberId());
         userRepository.delete(user);
-    }
-
-    @Transactional(readOnly = true)
-    public UserResponseDto getUserInfo(Long id) throws Exception {
-        Users user = userRepository.findById(id).orElseThrow(() -> new Exception("account not exists"));
-        return new UserResponseDto(user);
     }
 
     @Transactional
@@ -70,13 +62,13 @@ public class UserService {
 
     public List<UserSummaryResponseDto> getFollowingList(List<Long> followingIdList) {
         return followingIdList.stream()
-                .map(id -> new UserSummaryResponseDto(userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("no such user"))))
+                .map(id -> new UserSummaryResponseDto(getUserById(id)))
                 .collect(Collectors.toList());
     }
 
     public List<UserSummaryResponseDto> getFollowerList(List<Long> followerIdList) {
         return followerIdList.stream()
-                .map(id -> new UserSummaryResponseDto(userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("no such user"))))
+                .map(id -> new UserSummaryResponseDto(getUserById(id)))
                 .collect(Collectors.toList());
     }
 
@@ -93,34 +85,54 @@ public class UserService {
         }
     }
 
-    public Long socialLogin(String email, AuthType authType) {
-        Users user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("no such user"));
-        if (!((user.getAuthType() == authType))) {
-            throw new IllegalArgumentException("sign up with different auth");
-        }
+    private Long socialLogin(String email, AuthType authType) {
+        Users user = getUserByEmail(email);
+        checkAuthTypeMatch(user.getAuthType(), authType);
         return user.getId();
     }
 
-
-    public Long localLogin(String email, String password) {
-        Users user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("no such user"));
-        if (!(user.getAuthType() == AuthType.LOCAL)) {
-            throw new IllegalArgumentException("sign up with different auth");
-        }
-        if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new IllegalArgumentException("password does not match");
-        }
+    private Long localLogin(String email, String password) {
+        Users user = getUserByEmail(email);
+        checkAuthTypeMatch(user.getAuthType(), AuthType.LOCAL);
+        checkPasswordMatch(password, user.getPassword());
         return user.getId();
     }
 
-    public Long accountLogin(String accountName, String password) {
-        Users user = userRepository.findByAccountName(accountName)
-                .orElseThrow(() -> new IllegalArgumentException("no such user"));
-        if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new IllegalArgumentException("password does not match");
-        }
+    private Long accountLogin(String accountName, String password) {
+        Users user = getUserByAccountName(accountName);
+        checkPasswordMatch(password, user.getPassword());
         return user.getId();
     }
+
+    private Users getUserById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(ResponseType.USER_NOT_EXIST_ID));
+    }
+
+    private Users getUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException(ResponseType.USER_NOT_EXIST_EMAIL));
+    }
+
+    private Users getUserByAccountName(String accountName) {
+        return userRepository.findByAccountName(accountName)
+                .orElseThrow(() -> new NotFoundException(ResponseType.USER_NOT_EXIST_ACCOUNT_NAME));
+    }
+
+    private boolean isExistEmail(String email) {
+        return userRepository.existsByEmail(email);
+    }
+
+    private void checkPasswordMatch(String target, String password) {
+        if (!passwordEncoder.matches(target, password)) {
+            throw new BadRequestException(ResponseType.USER_NOT_MATCH_PASSWORD);
+        }
+    }
+
+    private void checkAuthTypeMatch(AuthType target, AuthType authType) {
+        if (target == authType) {
+            throw new BadRequestException(ResponseType.USER_NOT_MATCH_AUTH_TYPE);
+        }
+    }
+
 }

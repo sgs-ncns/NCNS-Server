@@ -39,6 +39,10 @@ public class ResponseEntity<T> {
         return new ResponseEntity<>(port, type.getCode(), type.getMessage(), null);
     }
 
+    public static <T> ResponseEntity<T> failureResponse(String port, ResponseType type, String message) {
+        return new ResponseEntity<>(port, type.getCode(), message, null);
+    }
+
     public static <T> ResponseEntity<T> failureResponse(String port, ResponseType type, T data) {
         return new ResponseEntity<>(port, type.getCode(), type.getMessage(), data);
     }

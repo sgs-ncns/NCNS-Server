@@ -19,11 +19,11 @@ public class SwaggerGatewayFilter extends AbstractGatewayFilterFactory {
             ServerHttpRequest request = exchange.getRequest();
             String path = request.getURI().getPath();
 
-            log.info("[Swagger] - " + request.getMethod() + " " + request.getURI());
-
             if (!StringUtils.endsWithIgnoreCase(path, SwaggerProvider.API_URI)) {
                 return chain.filter(exchange);
             }
+
+            log.info("[Swagger] - " + request.getMethod() + " " + request.getURI());
 
             ServerHttpRequest newRequest = request.mutate().path(SwaggerProvider.API_URI).build();
             ServerWebExchange newWebExchange = exchange.mutate().request(newRequest).build();

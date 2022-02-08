@@ -8,10 +8,12 @@ import dev.ncns.sns.auth.dto.validate.LocalLoginValidation;
 import dev.ncns.sns.auth.dto.validate.SocialLoginValidation;
 import dev.ncns.sns.auth.service.AuthService;
 import dev.ncns.sns.auth.util.CookieManager;
+import dev.ncns.sns.common.annotation.Authorize;
 import dev.ncns.sns.common.domain.ResponseEntity;
 import dev.ncns.sns.common.util.Constants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @RequiredArgsConstructor
+@ComponentScan(basePackages = "dev.ncns.sns.common.exception")
 @RequestMapping(value = "/api/auth")
 @RestController
 public class AuthController {
@@ -54,6 +57,7 @@ public class AuthController {
         return login(loginResponse, httpServletResponse);
     }
 
+    @Authorize
     @DeleteMapping
     public ResponseEntity<Void> logout(HttpServletRequest httpServletRequest) {
         String authorization = httpServletRequest.getHeader(Constants.AUTH_HEADER_KEY);
