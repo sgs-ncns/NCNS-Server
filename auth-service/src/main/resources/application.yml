@@ -4,9 +4,14 @@ spring:
   application:
     name: auth-service
   config:
-    import: "optional:configserver:http://localhost:9020"
-#    import: "optional:configserver:http://15.165.198.76:9020"
+#    import: "optional:configserver:http://localhost:9020"
+    import: "optional:configserver:http://15.165.198.76:9020"
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh
 ---
 # Redis
 spring:
