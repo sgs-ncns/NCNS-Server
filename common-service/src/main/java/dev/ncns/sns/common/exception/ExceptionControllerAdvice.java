@@ -4,7 +4,6 @@ import dev.ncns.sns.common.domain.ResponseEntity;
 import dev.ncns.sns.common.domain.ResponseType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -53,10 +52,10 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public <T> ResponseEntity<T> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
         String message = exception.getFieldErrors().stream()
-                .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                .collect(Collectors.joining(" "));
+                .map(e -> e.getField() + " - " + e.getDefaultMessage())
+                .collect(Collectors.joining(", "));
         printLog(exception.getClass().getName(), message);
-        return ResponseEntity.failureResponse(port, ResponseType.ARGUMENT_NOT_VALID, exception.getFieldError().getDefaultMessage());
+        return ResponseEntity.failureResponse(port, ResponseType.ARGUMENT_NOT_VALID, message);
     }
 
     private void printLog(BusinessException exception) {

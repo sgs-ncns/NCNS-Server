@@ -1,5 +1,6 @@
 package dev.ncns.sns.auth.util;
 
+import dev.ncns.sns.common.domain.ResponseType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,8 +34,8 @@ public class JwtProviderTest {
     @Test
     public void validateTokenTest() {
         String accessToken = jwtProvider.createAccessToken(userId);
-        boolean result = jwtProvider.validateToken(accessToken);
-        System.out.println("Validate Result : " + (result ? "Usable" : "Unusable"));
+        ResponseType responseType = jwtProvider.validateToken(accessToken);
+        System.out.println("Validate Result : " + (responseType.equals(ResponseType.SUCCESS) ? "Usable" : "Unusable"));
     }
 
     @Test

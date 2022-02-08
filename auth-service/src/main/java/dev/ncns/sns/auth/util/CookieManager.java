@@ -1,5 +1,7 @@
 package dev.ncns.sns.auth.util;
 
+import dev.ncns.sns.common.domain.ResponseType;
+import dev.ncns.sns.common.exception.NotFoundException;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.Cookie;
@@ -24,7 +26,7 @@ public class CookieManager {
         return Arrays.stream(cookies)
                 .filter(cookie -> cookie.getName().equals(name))
                 .findAny()
-                .orElse(null);
+                .orElseThrow(() -> new NotFoundException(ResponseType.AUTH_NOT_FOUND_COOKIE_KEY));
     }
 
 }

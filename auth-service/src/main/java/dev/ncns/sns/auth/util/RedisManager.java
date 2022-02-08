@@ -1,12 +1,13 @@
 package dev.ncns.sns.auth.util;
 
+import dev.ncns.sns.common.domain.ResponseType;
+import dev.ncns.sns.common.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
-import java.util.NoSuchElementException;
 
 @RequiredArgsConstructor
 @Component
@@ -18,7 +19,7 @@ public class RedisManager {
         ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
         String value = valueOperations.get(key);
         if (value == null) {
-            throw new NoSuchElementException("Not Found Key");
+            throw new NotFoundException(ResponseType.AUTH_NOT_FOUND_REDIS_KEY);
         }
         return value;
     }
@@ -29,7 +30,9 @@ public class RedisManager {
     }
 
     public void deleteValue(String key) {
-        redisTemplate.delete(key);
+        if (Boolean.FALSE.equals(redisTemplate.delete(key))) {
+            throw new NotFoundException(ResponseType.AUTH_NOT_FOUND_REDIS_KEY);
+        }
     }
 
 }
