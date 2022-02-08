@@ -9,6 +9,7 @@ import com.ncns.sns.post.dto.response.PostDetailResponseDto;
 import com.ncns.sns.post.dto.response.PostResponseDto;
 import com.ncns.sns.post.service.CommentService;
 import com.ncns.sns.post.service.PostService;
+import dev.ncns.sns.common.annotation.NonAuthorize;
 import dev.ncns.sns.common.domain.ResponseEntity;
 import dev.ncns.sns.common.domain.ResponseType;
 import lombok.RequiredArgsConstructor;
@@ -53,12 +54,14 @@ public class PostController {
         return ResponseEntity.successResponse(port);
     }
 
+    @NonAuthorize
     @GetMapping("/{userId}")
     public ResponseEntity<List<PostResponseDto>> getUserPosts(@PathVariable Long userId) {
         List<PostResponseDto> response = postService.getUserPosts(userId);
         return ResponseEntity.successResponse(port, response);
     }
 
+    @NonAuthorize
     @GetMapping("/{userId}/{postId}")
     public ResponseEntity<PostDetailResponseDto> getPostDetail(@PathVariable Long userId, Long postId) {
         PostDetailResponseDto response = PostDetailResponseDto
