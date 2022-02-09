@@ -90,6 +90,9 @@ public class UserService {
     @Transactional
     public void updatePostCount(UpdateUserPostCountDto dto) {
         UserCount userCount = userCountRepository.findByUserId(dto.getUserId());
+        if(userCount.getPostCount()<=0 && dto.getIsUp()==false) {
+            throw new BadRequestException(ResponseType.REQUEST_NOT_VALID);
+        }
         userCount.update(CountType.POST, dto.getIsUp());
     }
 

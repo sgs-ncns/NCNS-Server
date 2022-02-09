@@ -58,9 +58,11 @@ public class FollowService {
 
     private void updateFollowCount(Long userId, Long targetId, boolean isUp) {
         UserCount userCount = userCountRepository.findByUserId(userId);
-        userCount.update(CountType.FOLLOWING, isUp);
         UserCount targetCount = userCountRepository.findByUserId(targetId);
+        if (isUp == false && (userCount.getFollowingCount() <= 0 || targetCount.getFollowerCount() <= 0)) {
+            throw new BadRequestException(ResponseType.REQUEST_NOT_VALID);
+        }
+        userCount.update(CountType.FOLLOWING, isUp);
         targetCount.update(CountType.FOLLOWER, isUp);
     }
 }
-

@@ -39,8 +39,8 @@ public class PostService {
             dto.getUsertag().forEach(userId -> saveUserTag(post.getId(), userId));
         }
         postCountRepository.save(new PostCount(post.getId()));
-        // TODO: user post count ++
-        userFeignClient.updateUserPostCount(new UpdateUserPostCountDto(post.getUserId(),true));
+
+        userFeignClient.updateUserPostCount(new UpdateUserPostCountDto(post.getUserId(), true));
     }
 
     @Transactional
@@ -70,8 +70,7 @@ public class PostService {
 
         postRepository.delete(post);
 
-        // TODO: user post count --
-        userFeignClient.updateUserPostCount(new UpdateUserPostCountDto(post.getUserId(),false));
+        userFeignClient.updateUserPostCount(new UpdateUserPostCountDto(post.getUserId(), false));
     }
 
     @Transactional(readOnly = true)
@@ -105,6 +104,9 @@ public class PostService {
     private String disLike(Long like, Long postId) {
         likeRepository.deleteById(like);
         PostCount postCount = postCountRepository.findByPostId(postId);
+        if (postCount.getLikeCount() <= 0) {
+            throw new BadRequestException(ResponseType.REQUEST_NOT_VALID);
+        }
         postCount.update(CountType.LIKE, false);
         return "disLike";
     }

@@ -45,6 +45,9 @@ public class CommentService {
         Comment comment = checkAuthorization(commentId);
         commentRepository.delete(comment);
         PostCount postCount = postsCountRepository.findByPostId(postId);
+        if (postCount.getCommentCount() <= 0) {
+            throw new BadRequestException(ResponseType.REQUEST_NOT_VALID);
+        }
         postCount.update(CountType.COMMENT, false);
     }
 
