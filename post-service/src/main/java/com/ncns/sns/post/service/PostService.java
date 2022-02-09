@@ -8,6 +8,9 @@ import com.ncns.sns.post.dto.request.UpdatePostRequestDto;
 import com.ncns.sns.post.dto.request.UpdateUserPostCountDto;
 import com.ncns.sns.post.dto.response.PostResponseDto;
 import com.ncns.sns.post.repository.*;
+import dev.ncns.sns.common.domain.ResponseType;
+import dev.ncns.sns.common.exception.BadRequestException;
+import dev.ncns.sns.common.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -81,8 +84,8 @@ public class PostService {
                 ).collect(Collectors.toList());
     }
 
-    public Post getPostDetail(Long postId) {
-        return postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("no post"));
+    public Post getPostById(Long postId) {
+        return postRepository.findById(postId).orElseThrow(() -> new NotFoundException(ResponseType.POST_NOT_EXIST));
     }
 
     @Transactional
@@ -92,9 +95,9 @@ public class PostService {
     }
 
     private Post checkAuthorization(Long postId) {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("no such post"));
+        Post post = getPostById(postId);
         if (!post.getUserId().equals(SecurityUtil.getCurrentMemberId())) {
-            throw new IllegalArgumentException("not authorized");
+            throw new BadRequestException(ResponseType.POST_NOT_AUTHOR);
         }
         return post;
     }
@@ -139,7 +142,7 @@ public class PostService {
     private void deleteHashTags(List<String> hashtagList) {
         hashtagList.forEach(hash -> {
             Hashtag hashtag = hashtagRepository.findByContent(hash)
-                    .orElseThrow(() -> new IllegalArgumentException("no hashtag"));
+                    .orElseThrow(() -> new NotFoundException(ResponseType.POST_NOT_EXIST));
             hashtag.update(false);
         });
     }

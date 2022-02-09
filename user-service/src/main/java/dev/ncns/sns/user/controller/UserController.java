@@ -67,7 +67,7 @@ public class UserController {
     @GetMapping("/{userId}/followers")
     public ResponseEntity<List<UserSummaryResponseDto>> getFollowerList(@PathVariable Long userId) {
         List<UserSummaryResponseDto> followerList = userService.getFollowerList(followService.getFollowerIdList(userId));
-        return ResponseEntity.successResponse(port, followerList);
+        return ResponseEntity.successResponse(port, "follower list", followerList);
     }
 
     @PostMapping("/follow/{targetId}")

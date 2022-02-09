@@ -37,6 +37,11 @@ public enum ResponseType {
     USER_DUPLICATED_ACCOUNT_NAME("15", "중복된 계정 이름입니다."),
     USER_NOT_MATCH_PASSWORD("16", "비밀번호가 일치하지 않습니다."),
     USER_NOT_MATCH_AUTH_TYPE("17", "가입 인증 유형이 일치하지 않습니다."),
+
+    // POST
+    POST_NOT_EXIST("11", "존재하지 않은 게시글입니다."),
+    POST_NOT_EXIST_COMMENT("12", "존재하지 않은 댓글입니다."),
+    POST_NOT_AUTHOR("13", "작성자가 아닙니다."),
     ;
 
     private final String code;
