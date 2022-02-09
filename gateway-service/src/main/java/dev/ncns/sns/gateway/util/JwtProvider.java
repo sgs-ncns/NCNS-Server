@@ -1,12 +1,12 @@
 package dev.ncns.sns.gateway.util;
 
-import dev.ncns.sns.common.util.Constants;
+import dev.ncns.sns.gateway.domain.ResponseType;
+import dev.ncns.sns.gateway.exception.BadRequestException;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Base64;
-import java.util.Date;
 
 @Component
 public class JwtProvider {
@@ -17,22 +17,23 @@ public class JwtProvider {
         this.secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
     }
 
-    public boolean validateToken(String token) {
+    public ResponseType validateToken(String token) {
+        ResponseType responseType;
         try {
-            Claims claims = getClaims(token);
-            return !isExpirationDate(claims.getExpiration());
+            getClaims(token);
+            responseType = ResponseType.SUCCESS;
         } catch (MalformedJwtException exception) {
-            System.out.println("위조된 토큰입니다.");
+            responseType = ResponseType.JWT_MALFORMED;
         } catch (UnsupportedJwtException exception) {
-            System.out.println("지원하지 않는 토큰입니다.");
+            responseType = ResponseType.JWT_UNSUPPORTED;
         } catch (SignatureException exception) {
-            System.out.println("시그니처 검증에 실패한 토큰입니다.");
+            responseType = ResponseType.JWT_SIGNATURE;
         } catch (ExpiredJwtException exception) {
-            System.out.println("만료된 토큰입니다.");
+            responseType = ResponseType.JWT_EXPIRED;
         } catch (IllegalArgumentException exception) {
-            System.out.println("잘못된 토큰입니다.");
+            responseType = ResponseType.JWT_NULL_OR_EMPTY;
         }
-        return false;
+        return responseType;
     }
 
     public String getSubject(String token) {
@@ -45,7 +46,7 @@ public class JwtProvider {
 
     public String getAccessToken(String authorization) {
         if (!authorization.startsWith(Constants.AUTH_HEADER_VALUE_PREFIX)) {
-            throw new IllegalArgumentException("Not start with Bearer");
+            throw new BadRequestException(ResponseType.JWT_HEADER_PREFIX);
         }
         return authorization.replace(Constants.AUTH_HEADER_VALUE_PREFIX, "");
     }
@@ -55,10 +56,6 @@ public class JwtProvider {
                 .setSigningKey(secretKey)
                 .parseClaimsJws(token)
                 .getBody();
-    }
-
-    private boolean isExpirationDate(Date expiration) {
-        return expiration.before(new Date());
     }
 
 }
