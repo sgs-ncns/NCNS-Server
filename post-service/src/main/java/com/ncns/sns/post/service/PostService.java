@@ -1,9 +1,11 @@
 package com.ncns.sns.post.service;
 
 import com.ncns.sns.post.common.SecurityUtil;
+import com.ncns.sns.post.controller.UserFeignClient;
 import com.ncns.sns.post.domain.*;
 import com.ncns.sns.post.dto.request.CreatePostRequestDto;
 import com.ncns.sns.post.dto.request.UpdatePostRequestDto;
+import com.ncns.sns.post.dto.request.UpdateUserPostCountDto;
 import com.ncns.sns.post.dto.response.PostResponseDto;
 import com.ncns.sns.post.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,8 @@ public class PostService {
     private final HashtagRepository hashtagRepository;
     private final UserTagRepository userTagRepository;
 
+    private final UserFeignClient userFeignClient;
+
     @Transactional
     public void createPost(CreatePostRequestDto dto) {
         String hashtags = saveHashTag(dto.getHashtag());
@@ -33,6 +37,7 @@ public class PostService {
         }
         postCountRepository.save(new PostCount(post.getId()));
         // TODO: user post count ++
+        userFeignClient.updateUserPostCount(new UpdateUserPostCountDto(post.getUserId(),true));
     }
 
     @Transactional
@@ -63,6 +68,7 @@ public class PostService {
         postRepository.delete(post);
 
         // TODO: user post count --
+        userFeignClient.updateUserPostCount(new UpdateUserPostCountDto(post.getUserId(),false));
     }
 
     @Transactional(readOnly = true)
@@ -100,6 +106,7 @@ public class PostService {
         return "disLike";
     }
 
+    @Transactional
     private String like(Long postId) {
         Like like = Like.builder()
                 .postId(postId)
