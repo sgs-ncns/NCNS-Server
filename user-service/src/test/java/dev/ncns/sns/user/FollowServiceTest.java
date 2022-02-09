@@ -12,15 +12,14 @@ public class FollowServiceTest extends UserApplicationTests {
 
     @Test
     public void requestFollow() {
-        followService.requestFollow(1L, 2L);
-        followService.requestFollow(1L, 3L);
-        followService.requestFollow(3L, 1L);
+        followService.requestFollow(2L, 1L);
         followService.requestFollow(2L, 3L);
+        followService.requestFollow(1L, 3L);
     }
 
     @Test
     public void getFollowingList() {
-        Long userId = 1L;
+        Long userId = 2L;
 
         List<Long> followingIdList = followService.getFollowingIdList(userId);
         for (Long id : followingIdList) {
@@ -30,11 +29,12 @@ public class FollowServiceTest extends UserApplicationTests {
 
     @Test
     public void getFollowerList() {
-        Long userId = 1L;
+        Long userId = 3L;
 
         List<Long> followerIdList = followService.getFollowerIdList(userId);
         for (Long id : followerIdList) {
             System.out.println(id);
         }
     }
+
 }
