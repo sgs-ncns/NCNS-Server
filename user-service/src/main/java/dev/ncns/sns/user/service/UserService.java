@@ -32,16 +32,10 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)
-    public List<UserResponseDto> getAllUserInfo() {
-        return userRepository.findAll().stream()
-                .map(UserResponseDto::new)
-                .collect(Collectors.toList());
-    }
-
-    @Transactional(readOnly = true)
-    public UserResponseDto getUserInfo(Long id) {
-        Users user = getUserById(id);
-        return new UserResponseDto(user);
+    public UserResponseDto getUserInfo(Long userId) {
+        Users user = getUserById(userId);
+        UserCount userCount = userCountRepository.findByUserId(userId);
+        return UserResponseDto.of(user,userCount);
     }
 
     @Transactional
@@ -50,12 +44,15 @@ public class UserService {
             throw new BadRequestException(ResponseType.USER_DUPLICATED_EMAIL);
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
+        user = userRepository.save(user);
+        UserCount userCount = UserCount.builder().userId(user.getId()).build();
+        userCountRepository.save(userCount);
     }
 
     @Transactional
     public void signOut() {
         Users user = getUserById(SecurityUtil.getCurrentMemberId());
+        userCountRepository.deleteByUserId(user.getId());
         userRepository.delete(user);
     }
 
