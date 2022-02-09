@@ -17,7 +17,7 @@ public class Hashtag {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, length = 50, unique = true)
     private String content;
 
     @Column(nullable = false)
@@ -27,5 +27,13 @@ public class Hashtag {
     public Hashtag(String content, int count) {
         this.content = content;
         this.count = count;
+    }
+
+    public void update(boolean isUp) {
+        if (isUp) {
+            this.count++;
+        } else {
+            this.count--;
+        }
     }
 }

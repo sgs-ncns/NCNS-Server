@@ -8,6 +8,8 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
+import java.util.Arrays;
+import java.util.List;
 
 
 @Getter
@@ -47,5 +49,9 @@ public class Post extends BaseTime {
         this.content = content;
         this.hashtag = hashtag;
         return this;
+    }
+
+    public List<String> getHashtagList() {
+        return Arrays.asList(this.hashtag.split(","));
     }
 }

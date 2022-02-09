@@ -10,6 +10,7 @@ import com.ncns.sns.post.repository.CommentRepository;
 import com.ncns.sns.post.repository.PostsCountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -23,17 +24,20 @@ public class CommentService {
         return commentRepository.findAllByPostId(postId);
     }
 
+    @Transactional
     public void createComment(CreateCommentRequestDto dto) {
         commentRepository.save(dto.toEntity());
         PostCount postCount = postsCountRepository.findByPostId(dto.getPostId());
         postCount.update(CountType.COMMENT, true);
     }
 
+    @Transactional
     public void updateComment(UpdateCommentRequestDto dto) {
         Comment comment = checkAuthorization(dto.getCommentId());
         comment.updateComment(dto.getConent());
     }
 
+    @Transactional
     public void deleteComment(Long postId, Long commentId) {
         Comment comment = checkAuthorization(commentId);
         commentRepository.delete(comment);

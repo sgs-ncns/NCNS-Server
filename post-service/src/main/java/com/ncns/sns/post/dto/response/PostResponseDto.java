@@ -22,6 +22,7 @@ public class PostResponseDto {
         this.userId = post.getUserId();
         this.images = post.getImage();
         this.content = post.getContent();
+        this.createdAt = post.getCreatedAt();
         this.likeCount = postCount.getLikeCount();
         this.commentCount = postCount.getCommentCount();
     }

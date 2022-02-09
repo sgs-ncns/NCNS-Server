@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 @AllArgsConstructor
 @RequiredArgsConstructor
@@ -18,9 +19,11 @@ public class CreatePostRequestDto {
 
     private String content;
 
-    private String hashtag;
+    private List<String> hashtag;
 
-    public Post toEntity() {
+    private List<Long> usertag;
+
+    public Post toEntity(String hashtag) {
         return Post.builder()
                 .userId(SecurityUtil.getCurrentMemberId())
                 .image(image)
