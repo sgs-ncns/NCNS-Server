@@ -41,10 +41,6 @@ public class ExceptionHandler implements ErrorWebExceptionHandler {
             printLog((BusinessException) ex);
             httpStatus = HttpStatus.UNAUTHORIZED;
             responseEntity = ResponseEntity.failureResponse(((BusinessException) ex).getResponseType());
-        } else if (ex instanceof NotFoundException) {
-            printLog((BusinessException) ex);
-            httpStatus = HttpStatus.NOT_FOUND;
-            responseEntity = ResponseEntity.failureResponse(((BusinessException) ex).getResponseType());
         } else {
             printLog(ex.getClass().getName(), ex.getMessage());
             ex.printStackTrace();
