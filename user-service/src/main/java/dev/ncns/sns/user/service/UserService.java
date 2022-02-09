@@ -35,7 +35,7 @@ public class UserService {
     public UserResponseDto getUserInfo(Long userId) {
         Users user = getUserById(userId);
         UserCount userCount = userCountRepository.findByUserId(userId);
-        return UserResponseDto.of(user,userCount);
+        return UserResponseDto.of(user, userCount);
     }
 
     @Transactional
@@ -90,7 +90,7 @@ public class UserService {
     @Transactional
     public void updatePostCount(UpdateUserPostCountDto dto) {
         UserCount userCount = userCountRepository.findByUserId(dto.getUserId());
-        if(userCount.getPostCount()<=0 && dto.getIsUp()==false) {
+        if (userCount.getPostCount() <= 0 && dto.getIsUp() == false) {
             throw new BadRequestException(ResponseType.REQUEST_NOT_VALID);
         }
         userCount.update(CountType.POST, dto.getIsUp());

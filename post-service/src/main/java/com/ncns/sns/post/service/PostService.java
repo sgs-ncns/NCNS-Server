@@ -1,11 +1,9 @@
 package com.ncns.sns.post.service;
 
 import com.ncns.sns.post.common.SecurityUtil;
-import com.ncns.sns.post.controller.UserFeignClient;
 import com.ncns.sns.post.domain.*;
 import com.ncns.sns.post.dto.request.CreatePostRequestDto;
 import com.ncns.sns.post.dto.request.UpdatePostRequestDto;
-import com.ncns.sns.post.dto.request.UpdateUserPostCountDto;
 import com.ncns.sns.post.dto.response.PostResponseDto;
 import com.ncns.sns.post.repository.*;
 import dev.ncns.sns.common.domain.ResponseType;
@@ -27,8 +25,6 @@ public class PostService {
     private final HashtagRepository hashtagRepository;
     private final UserTagRepository userTagRepository;
 
-    private final UserFeignClient userFeignClient;
-
     @Transactional
     public void createPost(CreatePostRequestDto dto) {
         String hashtags = saveHashTag(dto.getHashtag());
@@ -39,8 +35,6 @@ public class PostService {
             dto.getUsertag().forEach(userId -> saveUserTag(post.getId(), userId));
         }
         postCountRepository.save(new PostCount(post.getId()));
-
-        userFeignClient.updateUserPostCount(new UpdateUserPostCountDto(post.getUserId(), true));
     }
 
     @Transactional
@@ -69,8 +63,6 @@ public class PostService {
         postCountRepository.deleteById(postCount.getId());
 
         postRepository.delete(post);
-
-        userFeignClient.updateUserPostCount(new UpdateUserPostCountDto(post.getUserId(), false));
     }
 
     @Transactional(readOnly = true)

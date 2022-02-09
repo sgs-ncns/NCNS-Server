@@ -1,10 +1,8 @@
 package com.ncns.sns.post.controller;
 
 
-import com.ncns.sns.post.dto.request.CreateCommentRequestDto;
-import com.ncns.sns.post.dto.request.CreatePostRequestDto;
-import com.ncns.sns.post.dto.request.UpdateCommentRequestDto;
-import com.ncns.sns.post.dto.request.UpdatePostRequestDto;
+import com.ncns.sns.post.common.SecurityUtil;
+import com.ncns.sns.post.dto.request.*;
 import com.ncns.sns.post.dto.response.PostDetailResponseDto;
 import com.ncns.sns.post.dto.response.PostResponseDto;
 import com.ncns.sns.post.service.CommentService;
@@ -30,10 +28,12 @@ public class PostController {
 
     private final PostService postService;
     private final CommentService commentService;
+    private final UserFeignClient userFeignClient;
 
     @PostMapping
     public ResponseEntity<?> createPost(@Validated @RequestBody CreatePostRequestDto dto) {
         postService.createPost(dto);
+        userFeignClient.updateUserPostCount(new UpdateUserPostCountDto(SecurityUtil.getCurrentMemberId(), true));
         return ResponseEntity.successResponse(port);
     }
 
@@ -46,6 +46,7 @@ public class PostController {
     @DeleteMapping("/{postId}")
     public ResponseEntity<Void> deletePost(@PathVariable Long postId) {
         postService.deletePost(postId);
+        userFeignClient.updateUserPostCount(new UpdateUserPostCountDto(SecurityUtil.getCurrentMemberId(), false));
         return ResponseEntity.successResponse(port);
     }
 
