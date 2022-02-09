@@ -11,17 +11,16 @@ import com.ncns.sns.post.service.CommentService;
 import com.ncns.sns.post.service.PostService;
 import dev.ncns.sns.common.annotation.NonAuthorize;
 import dev.ncns.sns.common.domain.ResponseEntity;
-import dev.ncns.sns.common.domain.ResponseType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.validation.BindingResult;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
+@ComponentScan(basePackages = "dev.ncns.sns.common.exception")
 @RequestMapping(value = "/api/post")
 @RestController
 public class PostController {
@@ -33,11 +32,7 @@ public class PostController {
     private final CommentService commentService;
 
     @PostMapping
-    public ResponseEntity<?> createPost(@Validated @RequestBody CreatePostRequestDto dto, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            List<String> errors = bindingResult.getAllErrors().stream().map(e -> e.getDefaultMessage()).collect(Collectors.toList());
-            return ResponseEntity.failureResponse(port, ResponseType.USER_VALIDATION_FAILURE, errors);
-        }
+    public ResponseEntity<?> createPost(@Validated @RequestBody CreatePostRequestDto dto) {
         postService.createPost(dto);
         return ResponseEntity.successResponse(port);
     }
@@ -70,11 +65,7 @@ public class PostController {
     }
 
     @PostMapping("/{postId}/comment")
-    public ResponseEntity<?> createComment(@Validated @RequestBody CreateCommentRequestDto dto, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            List<String> errors = bindingResult.getAllErrors().stream().map(e -> e.getDefaultMessage()).collect(Collectors.toList());
-            return ResponseEntity.failureResponse(port, ResponseType.USER_VALIDATION_FAILURE, errors);
-        }
+    public ResponseEntity<?> createComment(@Validated @RequestBody CreateCommentRequestDto dto) {
         commentService.createComment(dto);
         return ResponseEntity.successResponse(port);
     }
