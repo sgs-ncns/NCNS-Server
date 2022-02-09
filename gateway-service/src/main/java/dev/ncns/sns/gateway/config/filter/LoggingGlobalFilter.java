@@ -1,6 +1,6 @@
 package dev.ncns.sns.gateway.config.filter;
 
-import dev.ncns.sns.common.util.Constants;
+import dev.ncns.sns.gateway.util.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
