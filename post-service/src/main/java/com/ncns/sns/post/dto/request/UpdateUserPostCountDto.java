@@ -1,11 +1,15 @@
 package com.ncns.sns.post.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class UpdateUserPostCountDto {
 
+    @JsonProperty
     private final Long userId;
-    private final boolean isUp;
+
+    @JsonProperty
+    private final Boolean isUp;
 
 }

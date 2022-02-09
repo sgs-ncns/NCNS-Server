@@ -6,6 +6,6 @@ import lombok.Getter;
 public class UpdateUserPostCountDto {
 
     private Long userId;
-    private boolean isUp;
+    private Boolean isUp;
 
 }

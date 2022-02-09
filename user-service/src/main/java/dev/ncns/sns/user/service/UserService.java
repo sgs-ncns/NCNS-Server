@@ -90,7 +90,7 @@ public class UserService {
     @Transactional
     public void updatePostCount(UpdateUserPostCountDto dto) {
         UserCount userCount = userCountRepository.findByUserId(dto.getUserId());
-        userCount.update(CountType.POST, dto.isUp());
+        userCount.update(CountType.POST, dto.getIsUp());
     }
 
     private Long socialLogin(String email, AuthType authType) {

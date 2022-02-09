@@ -85,6 +85,7 @@ public class UserController {
         return ResponseEntity.successResponse(port, data);
     }
 
+    @NonAuthorize
     @PostMapping("/count/post")
     public ResponseEntity<Void> updateUserPostCount(@RequestBody UpdateUserPostCountDto dto){
         userService.updatePostCount(dto);
