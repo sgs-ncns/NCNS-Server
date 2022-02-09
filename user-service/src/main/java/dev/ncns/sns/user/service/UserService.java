@@ -5,11 +5,15 @@ import dev.ncns.sns.common.exception.BadRequestException;
 import dev.ncns.sns.common.exception.NotFoundException;
 import dev.ncns.sns.user.common.SecurityUtil;
 import dev.ncns.sns.user.domain.AuthType;
+import dev.ncns.sns.user.domain.CountType;
+import dev.ncns.sns.user.domain.UserCount;
 import dev.ncns.sns.user.domain.Users;
 import dev.ncns.sns.user.dto.request.LoginRequestDto;
 import dev.ncns.sns.user.dto.request.ProfileUpdateRequestDto;
+import dev.ncns.sns.user.dto.request.UpdateUserPostCountDto;
 import dev.ncns.sns.user.dto.response.UserResponseDto;
 import dev.ncns.sns.user.dto.response.UserSummaryResponseDto;
+import dev.ncns.sns.user.repository.UserCountRepository;
 import dev.ncns.sns.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,19 +28,14 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final UserCountRepository userCountRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)
-    public List<UserResponseDto> getAllUserInfo() {
-        return userRepository.findAll().stream()
-                .map(UserResponseDto::new)
-                .collect(Collectors.toList());
-    }
-
-    @Transactional(readOnly = true)
-    public UserResponseDto getUserInfo(Long id) {
-        Users user = getUserById(id);
-        return new UserResponseDto(user);
+    public UserResponseDto getUserInfo(Long userId) {
+        Users user = getUserById(userId);
+        UserCount userCount = userCountRepository.findByUserId(userId);
+        return UserResponseDto.of(user, userCount);
     }
 
     @Transactional
@@ -45,12 +44,15 @@ public class UserService {
             throw new BadRequestException(ResponseType.USER_DUPLICATED_EMAIL);
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
+        user = userRepository.save(user);
+        UserCount userCount = UserCount.builder().userId(user.getId()).build();
+        userCountRepository.save(userCount);
     }
 
     @Transactional
     public void signOut() {
         Users user = getUserById(SecurityUtil.getCurrentMemberId());
+        userCountRepository.deleteByUserId(user.getId());
         userRepository.delete(user);
     }
 
@@ -83,6 +85,15 @@ public class UserService {
             default:
                 return accountLogin(dto.getAccountName(), dto.getPassword());
         }
+    }
+
+    @Transactional
+    public void updatePostCount(UpdateUserPostCountDto dto) {
+        UserCount userCount = userCountRepository.findByUserId(dto.getUserId());
+        if (userCount.getPostCount() <= 0 && dto.getIsUp() == false) {
+            throw new BadRequestException(ResponseType.REQUEST_NOT_VALID);
+        }
+        userCount.update(CountType.POST, dto.getIsUp());
     }
 
     private Long socialLogin(String email, AuthType authType) {

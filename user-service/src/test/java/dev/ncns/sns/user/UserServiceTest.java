@@ -2,6 +2,7 @@ package dev.ncns.sns.user;
 
 import dev.ncns.sns.user.domain.AuthType;
 import dev.ncns.sns.user.domain.Status;
+import dev.ncns.sns.user.domain.UserCount;
 import dev.ncns.sns.user.domain.Users;
 import dev.ncns.sns.user.dto.response.UserResponseDto;
 import dev.ncns.sns.user.service.UserService;
@@ -16,9 +17,9 @@ public class UserServiceTest extends UserApplicationTests {
     @Autowired
     private UserService userService;
 
-    String accountName = "account";
-    String nickname = "nick";
-    String email = "nick@gmail.com";
+    String accountName = "king";
+    String nickname = "king";
+    String email = "king@gmail.com";
     String password = "1234";
 
     @Test
@@ -36,17 +37,14 @@ public class UserServiceTest extends UserApplicationTests {
 
     @Test
     void getUserProfile() throws Exception {
-        UserResponseDto user = userService.getUserInfo(1L);
-        System.out.println(user);
-        assertEquals("account", user.getAccountName());
+        UserResponseDto user = userService.getUserInfo(2L);
+        System.out.println(user.getAccountName());
+        assertEquals("follower", user.getAccountName());
+        assertEquals(2, user.getFollowingCount());
     }
 
-    @Test
-    void getAllUserInfo() {
-        List<UserResponseDto> userList = userService.getAllUserInfo();
-        for (UserResponseDto user : userList) {
-            System.out.println(user.getId());
-        }
-    }
+//    @Test
+    void postCount() {
 
+    }
 }

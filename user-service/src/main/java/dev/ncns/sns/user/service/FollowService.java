@@ -2,8 +2,11 @@ package dev.ncns.sns.user.service;
 
 import dev.ncns.sns.common.domain.ResponseType;
 import dev.ncns.sns.common.exception.BadRequestException;
+import dev.ncns.sns.user.domain.CountType;
 import dev.ncns.sns.user.domain.Follow;
+import dev.ncns.sns.user.domain.UserCount;
 import dev.ncns.sns.user.repository.FollowRepository;
+import dev.ncns.sns.user.repository.UserCountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +18,7 @@ import java.util.List;
 public class FollowService {
 
     private final FollowRepository followRepository;
+    private final UserCountRepository userCountRepository;
 
     @Transactional(readOnly = true)
     public List<Long> getFollowingIdList(Long userId) {
@@ -29,22 +33,20 @@ public class FollowService {
     @Transactional
     public String requestFollow(Long userId, Long targetId) {
         isSameUser(userId, targetId);
-        Long followData = followRepository.findFollowId(userId, targetId);
+        Follow followData = followRepository.findByUserIdAndTargetId(userId, targetId);
         return followData == null ? follow(userId, targetId) : unFollow(followData);
     }
 
     private String follow(Long userId, Long targetId) {
         Follow follow = Follow.builder().userId(userId).targetId(targetId).build();
         followRepository.save(follow);
-        //TODO:: current user following count ++
-        //TODO:: target user follower count ++
+        updateFollowCount(userId, targetId, true);
         return "follow";
     }
 
-    private String unFollow(Long followId) {
-        followRepository.deleteById(followId);
-        //TODO:: current user following count --
-        //TODO:: target user follower count --
+    private String unFollow(Follow followData) {
+        updateFollowCount(followData.getUserId(), followData.getTargetId(), false);
+        followRepository.delete(followData);
         return "unfollow";
     }
 
@@ -54,4 +56,13 @@ public class FollowService {
         }
     }
 
+    private void updateFollowCount(Long userId, Long targetId, boolean isUp) {
+        UserCount userCount = userCountRepository.findByUserId(userId);
+        UserCount targetCount = userCountRepository.findByUserId(targetId);
+        if (isUp == false && (userCount.getFollowingCount() <= 0 || targetCount.getFollowerCount() <= 0)) {
+            throw new BadRequestException(ResponseType.REQUEST_NOT_VALID);
+        }
+        userCount.update(CountType.FOLLOWING, isUp);
+        targetCount.update(CountType.FOLLOWER, isUp);
+    }
 }

@@ -1,27 +1,24 @@
 package com.ncns.sns.post.controller;
 
 
-import com.ncns.sns.post.dto.request.CreateCommentRequestDto;
-import com.ncns.sns.post.dto.request.CreatePostRequestDto;
-import com.ncns.sns.post.dto.request.UpdateCommentRequestDto;
-import com.ncns.sns.post.dto.request.UpdatePostRequestDto;
+import com.ncns.sns.post.common.SecurityUtil;
+import com.ncns.sns.post.dto.request.*;
 import com.ncns.sns.post.dto.response.PostDetailResponseDto;
 import com.ncns.sns.post.dto.response.PostResponseDto;
 import com.ncns.sns.post.service.CommentService;
 import com.ncns.sns.post.service.PostService;
 import dev.ncns.sns.common.annotation.NonAuthorize;
 import dev.ncns.sns.common.domain.ResponseEntity;
-import dev.ncns.sns.common.domain.ResponseType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.validation.BindingResult;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
+@ComponentScan(basePackages = "dev.ncns.sns.common.exception")
 @RequestMapping(value = "/api/post")
 @RestController
 public class PostController {
@@ -31,14 +28,12 @@ public class PostController {
 
     private final PostService postService;
     private final CommentService commentService;
+    private final UserFeignClient userFeignClient;
 
     @PostMapping
-    public ResponseEntity<?> createPost(@Validated @RequestBody CreatePostRequestDto dto, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            List<String> errors = bindingResult.getAllErrors().stream().map(e -> e.getDefaultMessage()).collect(Collectors.toList());
-            return ResponseEntity.failureResponse(port, ResponseType.USER_VALIDATION_FAILURE, errors);
-        }
+    public ResponseEntity<?> createPost(@Validated @RequestBody CreatePostRequestDto dto) {
         postService.createPost(dto);
+        userFeignClient.updateUserPostCount(new UpdateUserPostCountDto(SecurityUtil.getCurrentMemberId(), true));
         return ResponseEntity.successResponse(port);
     }
 
@@ -51,6 +46,7 @@ public class PostController {
     @DeleteMapping("/{postId}")
     public ResponseEntity<Void> deletePost(@PathVariable Long postId) {
         postService.deletePost(postId);
+        userFeignClient.updateUserPostCount(new UpdateUserPostCountDto(SecurityUtil.getCurrentMemberId(), false));
         return ResponseEntity.successResponse(port);
     }
 
@@ -65,16 +61,12 @@ public class PostController {
     @GetMapping("/{userId}/{postId}")
     public ResponseEntity<PostDetailResponseDto> getPostDetail(@PathVariable Long userId, Long postId) {
         PostDetailResponseDto response = PostDetailResponseDto
-                .of(postService.getPostDetail(postId), commentService.getCommentList(postId));
+                .of(postService.getPostById(postId), commentService.getCommentList(postId));
         return ResponseEntity.successResponse(port, response);
     }
 
     @PostMapping("/{postId}/comment")
-    public ResponseEntity<?> createComment(@Validated @RequestBody CreateCommentRequestDto dto, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            List<String> errors = bindingResult.getAllErrors().stream().map(e -> e.getDefaultMessage()).collect(Collectors.toList());
-            return ResponseEntity.failureResponse(port, ResponseType.USER_VALIDATION_FAILURE, errors);
-        }
+    public ResponseEntity<?> createComment(@Validated @RequestBody CreateCommentRequestDto dto) {
         commentService.createComment(dto);
         return ResponseEntity.successResponse(port);
     }

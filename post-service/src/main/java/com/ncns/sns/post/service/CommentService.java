@@ -8,6 +8,9 @@ import com.ncns.sns.post.dto.request.CreateCommentRequestDto;
 import com.ncns.sns.post.dto.request.UpdateCommentRequestDto;
 import com.ncns.sns.post.repository.CommentRepository;
 import com.ncns.sns.post.repository.PostsCountRepository;
+import dev.ncns.sns.common.domain.ResponseType;
+import dev.ncns.sns.common.exception.BadRequestException;
+import dev.ncns.sns.common.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,13 +45,17 @@ public class CommentService {
         Comment comment = checkAuthorization(commentId);
         commentRepository.delete(comment);
         PostCount postCount = postsCountRepository.findByPostId(postId);
+        if (postCount.getCommentCount() <= 0) {
+            throw new BadRequestException(ResponseType.REQUEST_NOT_VALID);
+        }
         postCount.update(CountType.COMMENT, false);
     }
 
     private Comment checkAuthorization(Long commentId) {
-        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new IllegalArgumentException("no such post"));
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new NotFoundException(ResponseType.POST_NOT_EXIST_COMMENT));
         if (comment.getUserId() != (SecurityUtil.getCurrentMemberId())) {
-            throw new IllegalArgumentException("not authorized");
+            throw new BadRequestException(ResponseType.POST_NOT_AUTHOR);
         }
         return comment;
     }
