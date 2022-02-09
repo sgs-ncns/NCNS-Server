@@ -1,4 +1,4 @@
-package dev.ncns.sns.gateway.config.domain;
+package dev.ncns.sns.gateway.domain;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,11 @@ public enum ResponseType {
     JWT_SIGNATURE("07", "시그니처 검증에 실패한 토큰입니다."),
     JWT_EXPIRED("08", "만료된 토큰입니다."),
     JWT_NULL_OR_EMPTY("09", "토큰이 없거나 값이 비어있습니다."),
-    JWT_HEADER_PREFIX("10", "토큰 값은 'Bearer' 로 시작해야 합니다.");
+    JWT_HEADER_PREFIX("10", "토큰 값은 'Bearer' 로 시작해야 합니다."),
+
+    // GATEWAY
+    GATEWAY_NOT_FOUND_REDIS_KEY("11", "Redis에서 해당 Key를 찾을 수 없습니다."),
+    GATEWAY_BLACK_LIST_TOKEN("12", "이미 로그아웃된 사용자입니다. 다시 로그인해주세요.");
 
     private final String code;
     private final String message;

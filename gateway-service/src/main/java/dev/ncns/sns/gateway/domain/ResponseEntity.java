@@ -1,4 +1,4 @@
-package dev.ncns.sns.gateway.config.domain;
+package dev.ncns.sns.gateway.domain;
 
 import dev.ncns.sns.gateway.util.Constants;
 import lombok.Getter;
