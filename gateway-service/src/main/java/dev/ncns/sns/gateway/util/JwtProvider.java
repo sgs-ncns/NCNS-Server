@@ -1,7 +1,7 @@
 package dev.ncns.sns.gateway.util;
 
-import dev.ncns.sns.gateway.config.domain.ResponseType;
-import dev.ncns.sns.gateway.config.exception.BadRequestException;
+import dev.ncns.sns.gateway.domain.ResponseType;
+import dev.ncns.sns.gateway.exception.BadRequestException;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

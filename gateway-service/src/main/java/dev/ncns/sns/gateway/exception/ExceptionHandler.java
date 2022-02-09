@@ -1,8 +1,8 @@
-package dev.ncns.sns.gateway.config.exception;
+package dev.ncns.sns.gateway.exception;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dev.ncns.sns.gateway.config.domain.ResponseEntity;
-import dev.ncns.sns.gateway.config.domain.ResponseType;
+import dev.ncns.sns.gateway.domain.ResponseEntity;
+import dev.ncns.sns.gateway.domain.ResponseType;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;
@@ -36,14 +36,14 @@ public class ExceptionHandler implements ErrorWebExceptionHandler {
         if (ex instanceof BadRequestException) {
             printLog((BusinessException) ex);
             httpStatus = HttpStatus.BAD_REQUEST;
-            responseEntity = ResponseEntity.failureResponse(((BadRequestException) ex).getResponseType());
+            responseEntity = ResponseEntity.failureResponse(((BusinessException) ex).getResponseType());
         } else if (ex instanceof UnauthorizedException) {
             printLog((BusinessException) ex);
             httpStatus = HttpStatus.UNAUTHORIZED;
-            responseEntity = ResponseEntity.failureResponse(((UnauthorizedException) ex).getResponseType());
-        } else if (ex instanceof BusinessException) {
+            responseEntity = ResponseEntity.failureResponse(((BusinessException) ex).getResponseType());
+        } else if (ex instanceof NotFoundException) {
             printLog((BusinessException) ex);
-            httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+            httpStatus = HttpStatus.NOT_FOUND;
             responseEntity = ResponseEntity.failureResponse(((BusinessException) ex).getResponseType());
         } else {
             printLog(ex.getClass().getName(), ex.getMessage());

@@ -1,6 +1,6 @@
-package dev.ncns.sns.gateway.config.exception;
+package dev.ncns.sns.gateway.exception;
 
-import dev.ncns.sns.gateway.config.domain.ResponseType;
+import dev.ncns.sns.gateway.domain.ResponseType;
 import lombok.Getter;
 
 @Getter

@@ -1,10 +1,12 @@
 package dev.ncns.sns.gateway.config.filter;
 
-import dev.ncns.sns.gateway.config.domain.ResponseType;
-import dev.ncns.sns.gateway.config.exception.BadRequestException;
-import dev.ncns.sns.gateway.config.exception.UnauthorizedException;
+import dev.ncns.sns.gateway.domain.ResponseType;
+import dev.ncns.sns.gateway.exception.BadRequestException;
+import dev.ncns.sns.gateway.exception.NotFoundException;
+import dev.ncns.sns.gateway.exception.UnauthorizedException;
 import dev.ncns.sns.gateway.util.Constants;
 import dev.ncns.sns.gateway.util.JwtProvider;
+import dev.ncns.sns.gateway.util.RedisManager;
 import dev.ncns.sns.gateway.util.SwaggerProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +26,7 @@ import java.util.List;
 public class AuthorizationGatewayFilter extends AbstractGatewayFilterFactory {
 
     private final JwtProvider jwtProvider;
+    private final RedisManager redisManager;
 
     @Override
     public GatewayFilter apply(Object config) {
@@ -42,6 +45,7 @@ public class AuthorizationGatewayFilter extends AbstractGatewayFilterFactory {
 
             String userId = jwtProvider.getSubject(accessToken);
             log.info("[Authorization] - " + "UserId is " + userId);
+            checkBlackListToken(userId);
 
             ServerHttpRequest newRequest = request.mutate().header(Constants.USER_HEADER_KEY, userId).build();
             ServerWebExchange newWebExchange = exchange.mutate().request(newRequest).build();
@@ -63,6 +67,16 @@ public class AuthorizationGatewayFilter extends AbstractGatewayFilterFactory {
             throw new UnauthorizedException(ResponseType.REQUEST_UNAUTHORIZED);
         }
         return authorization.get(0);
+    }
+
+    private void checkBlackListToken(String userId) {
+        try {
+            redisManager.getValue(jwtProvider.getBlackListTokenValue(userId));
+            log.info("[Authorization] - " + "This token is already logout.");
+            throw new BadRequestException(ResponseType.GATEWAY_BLACK_LIST_TOKEN);
+        } catch (NotFoundException exception) {
+            return;
+        }
     }
 
 }
