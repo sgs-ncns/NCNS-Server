@@ -2,7 +2,6 @@ package dev.ncns.sns.gateway.config.filter;
 
 import dev.ncns.sns.gateway.domain.ResponseType;
 import dev.ncns.sns.gateway.exception.BadRequestException;
-import dev.ncns.sns.gateway.exception.NotFoundException;
 import dev.ncns.sns.gateway.exception.UnauthorizedException;
 import dev.ncns.sns.gateway.util.Constants;
 import dev.ncns.sns.gateway.util.JwtProvider;
@@ -45,7 +44,7 @@ public class AuthorizationGatewayFilter extends AbstractGatewayFilterFactory {
 
             String userId = jwtProvider.getSubject(accessToken);
             log.info("[Authorization] - " + "UserId is " + userId);
-            checkBlackListToken(userId);
+            checkBlackListToken(userId, accessToken);
 
             ServerHttpRequest newRequest = request.mutate().header(Constants.USER_HEADER_KEY, userId).build();
             ServerWebExchange newWebExchange = exchange.mutate().request(newRequest).build();
@@ -69,13 +68,11 @@ public class AuthorizationGatewayFilter extends AbstractGatewayFilterFactory {
         return authorization.get(0);
     }
 
-    private void checkBlackListToken(String userId) {
-        try {
-            redisManager.getValue(jwtProvider.getBlackListTokenValue(userId));
+    private void checkBlackListToken(String userId, String accessToken) {
+        String blackListToken = redisManager.getBlackListValue(jwtProvider.getBlackListTokenValue(userId));
+        if (accessToken.equals(blackListToken)) {
             log.info("[Authorization] - " + "This token is already logout.");
             throw new BadRequestException(ResponseType.GATEWAY_BLACK_LIST_TOKEN);
-        } catch (NotFoundException exception) {
-            return;
         }
     }
 

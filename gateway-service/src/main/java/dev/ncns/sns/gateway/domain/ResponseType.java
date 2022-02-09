@@ -22,8 +22,7 @@ public enum ResponseType {
     JWT_HEADER_PREFIX("10", "토큰 값은 'Bearer' 로 시작해야 합니다."),
 
     // GATEWAY
-    GATEWAY_NOT_FOUND_REDIS_KEY("11", "Redis에서 해당 Key를 찾을 수 없습니다."),
-    GATEWAY_BLACK_LIST_TOKEN("12", "이미 로그아웃된 사용자입니다. 다시 로그인해주세요.");
+    GATEWAY_BLACK_LIST_TOKEN("11", "이미 로그아웃된 사용자입니다. 다시 로그인해주세요.");
 
     private final String code;
     private final String message;
