@@ -36,7 +36,7 @@ subprojects {
     }
 
     dependencies {
-        List.of("auth", "user", "post").stream()
+        List.of("auth", "user", "post", "feed").stream()
                 .filter(p -> project.name.contains(p))
                 .forEach({
                     project.dependencies {
