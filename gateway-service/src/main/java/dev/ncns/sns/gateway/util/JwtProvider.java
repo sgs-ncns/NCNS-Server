@@ -4,10 +4,12 @@ import dev.ncns.sns.gateway.domain.ResponseType;
 import dev.ncns.sns.gateway.exception.BadRequestException;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import java.util.Base64;
 
+@RefreshScope
 @Component
 public class JwtProvider {
 
