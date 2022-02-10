@@ -16,7 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String[] PUBLIC_URLS = {
-            "/", "/api/**"
+            "/", "/api/**", "/actuator/**"
     };
     private static final String[] WEB_URLS = {
             "error", "/h2-console/**", "/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs", "/webjars/**"

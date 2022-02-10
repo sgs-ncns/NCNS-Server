@@ -5,11 +5,13 @@ import dev.ncns.sns.common.exception.BadRequestException;
 import dev.ncns.sns.common.util.Constants;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import java.util.Base64;
 import java.util.Date;
 
+@RefreshScope
 @Component
 public class JwtProvider {
 
