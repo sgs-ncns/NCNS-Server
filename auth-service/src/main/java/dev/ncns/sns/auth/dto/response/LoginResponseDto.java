@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class LoginResponseDto {
 
-    private final Long id;
+    private final Long userId;
+    private final String accountName;
 
 }

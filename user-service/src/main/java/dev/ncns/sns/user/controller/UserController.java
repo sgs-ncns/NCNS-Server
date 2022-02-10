@@ -80,14 +80,14 @@ public class UserController {
     @ApiIgnore
     @NonAuthorize
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto dto) {
-        LoginResponseDto data = new LoginResponseDto(userService.handleLoginRequest(dto));
-        return ResponseEntity.successResponse(port, data);
+    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto loginRequest) {
+        LoginResponseDto loginResponse = userService.handleLoginRequest(loginRequest);
+        return ResponseEntity.successResponse(port, loginResponse);
     }
 
     @NonAuthorize
     @PostMapping("/count/post")
-    public ResponseEntity<Void> updateUserPostCount(@RequestBody UpdateUserPostCountDto dto){
+    public ResponseEntity<Void> updateUserPostCount(@RequestBody UpdateUserPostCountDto dto) {
         userService.updatePostCount(dto);
         return ResponseEntity.successResponse(port);
     }

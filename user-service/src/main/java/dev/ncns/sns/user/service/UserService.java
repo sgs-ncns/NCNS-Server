@@ -11,6 +11,7 @@ import dev.ncns.sns.user.domain.Users;
 import dev.ncns.sns.user.dto.request.LoginRequestDto;
 import dev.ncns.sns.user.dto.request.ProfileUpdateRequestDto;
 import dev.ncns.sns.user.dto.request.UpdateUserPostCountDto;
+import dev.ncns.sns.user.dto.response.LoginResponseDto;
 import dev.ncns.sns.user.dto.response.UserResponseDto;
 import dev.ncns.sns.user.dto.response.UserSummaryResponseDto;
 import dev.ncns.sns.user.repository.UserCountRepository;
@@ -77,45 +78,45 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    public Long handleLoginRequest(LoginRequestDto dto) {
-        AuthType authType = dto.getAuthType();
+    public LoginResponseDto handleLoginRequest(LoginRequestDto loginRequest) {
+        AuthType authType = loginRequest.getAuthType();
         switch (authType) {
             case GOOGLE:
             case APPLE:
-                return socialLogin(dto.getEmail(), authType);
+                return socialLogin(loginRequest.getEmail(), authType);
             case LOCAL:
-                return localLogin(dto.getEmail(), dto.getPassword());
+                return localLogin(loginRequest.getEmail(), loginRequest.getPassword());
             default:
-                return accountLogin(dto.getAccountName(), dto.getPassword());
+                return accountLogin(loginRequest.getAccountName(), loginRequest.getPassword());
         }
     }
 
     @Transactional
     public void updatePostCount(UpdateUserPostCountDto dto) {
         UserCount userCount = userCountRepository.findByUserId(dto.getUserId());
-        if (userCount.getPostCount() <= 0 && dto.getIsUp() == false) {
+        if (userCount.getPostCount() <= 0 && !dto.getIsUp()) {
             throw new BadRequestException(ResponseType.REQUEST_NOT_VALID);
         }
         userCount.update(CountType.POST, dto.getIsUp());
     }
 
-    private Long socialLogin(String email, AuthType authType) {
+    private LoginResponseDto socialLogin(String email, AuthType authType) {
         Users user = getUserByEmail(email);
         checkAuthTypeMatch(user.getAuthType(), authType);
-        return user.getId();
+        return LoginResponseDto.of(user.getId(), user.getAccountName());
     }
 
-    private Long localLogin(String email, String password) {
+    private LoginResponseDto localLogin(String email, String password) {
         Users user = getUserByEmail(email);
         checkAuthTypeMatch(user.getAuthType(), AuthType.LOCAL);
         checkPasswordMatch(password, user.getPassword());
-        return user.getId();
+        return LoginResponseDto.of(user.getId(), user.getAccountName());
     }
 
-    private Long accountLogin(String accountName, String password) {
+    private LoginResponseDto accountLogin(String accountName, String password) {
         Users user = getUserByAccountName(accountName);
         checkPasswordMatch(password, user.getPassword());
-        return user.getId();
+        return LoginResponseDto.of(user.getId(), user.getAccountName());
     }
 
     private Users getUserById(Long id) {
@@ -148,7 +149,7 @@ public class UserService {
     }
 
     private void checkAuthTypeMatch(AuthType target, AuthType authType) {
-        if (target == authType) {
+        if (!authType.equals(target)) {
             throw new BadRequestException(ResponseType.USER_NOT_MATCH_AUTH_TYPE);
         }
     }
