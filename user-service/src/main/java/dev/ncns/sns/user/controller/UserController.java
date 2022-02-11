@@ -35,8 +35,8 @@ public class UserController {
 
     @NonAuthorize
     @PostMapping
-    public ResponseEntity<?> signUp(@Validated @RequestBody SignupRequestDto signupDto) {
-        userService.signUp(signupDto.toEntity());
+    public ResponseEntity<Void> signUp(@Validated @RequestBody SignupRequestDto signupRequest) {
+        userService.signUp(signupRequest);
         return ResponseEntity.successResponse(port);
     }
 

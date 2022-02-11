@@ -32,7 +32,7 @@ public class LoginRequestDto {
     @Null(groups = SocialLoginValidation.class)
     private final String password;
 
-    @NotNull(message = "소셜로그인 타입을 지정하세요.", groups = SocialLoginValidation.class)
+    @NotNull(message = "가입 유형을 지정하세요.", groups = SocialLoginValidation.class)
     @Null(groups = {LocalLoginValidation.class, AccountLoginValidation.class})
     private AuthType authType;
 

@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 @Getter
@@ -28,6 +29,9 @@ public class SignupRequestDto {
     @NotBlank(message = "비밀번호는 공백일 수 없습니다.")
     private final String password;
 
+    @NotNull(message = "가입 유형을 지정하세요.")
+    private final AuthType authType;
+
     public Users toEntity() {
         return Users.builder()
                 .accountName(accountName)
@@ -35,7 +39,7 @@ public class SignupRequestDto {
                 .email(email)
                 .password(password)
                 .status(Status.USER)
-                .authType(AuthType.LOCAL)
+                .authType(authType)
                 .build();
     }
 

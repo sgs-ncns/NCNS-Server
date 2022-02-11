@@ -10,6 +10,7 @@ import dev.ncns.sns.user.domain.UserCount;
 import dev.ncns.sns.user.domain.Users;
 import dev.ncns.sns.user.dto.request.LoginRequestDto;
 import dev.ncns.sns.user.dto.request.ProfileUpdateRequestDto;
+import dev.ncns.sns.user.dto.request.SignupRequestDto;
 import dev.ncns.sns.user.dto.request.UpdateUserPostCountDto;
 import dev.ncns.sns.user.dto.response.LoginResponseDto;
 import dev.ncns.sns.user.dto.response.UserResponseDto;
@@ -40,7 +41,8 @@ public class UserService {
     }
 
     @Transactional
-    public void signUp(Users user) {
+    public void signUp(SignupRequestDto signupRequest) {
+        Users user = signupRequest.toEntity();
         if (isExistEmail(user.getEmail())) {
             throw new BadRequestException(ResponseType.USER_DUPLICATED_EMAIL);
         }
