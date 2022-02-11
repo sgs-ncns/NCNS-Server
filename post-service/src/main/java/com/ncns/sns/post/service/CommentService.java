@@ -6,6 +6,7 @@ import com.ncns.sns.post.domain.CountType;
 import com.ncns.sns.post.domain.PostCount;
 import com.ncns.sns.post.dto.request.CreateCommentRequestDto;
 import com.ncns.sns.post.dto.request.UpdateCommentRequestDto;
+import com.ncns.sns.post.dto.response.CommentResponseDto;
 import com.ncns.sns.post.repository.CommentRepository;
 import com.ncns.sns.post.repository.PostsCountRepository;
 import dev.ncns.sns.common.domain.ResponseType;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -23,8 +25,10 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final PostsCountRepository postsCountRepository;
 
-    public List<Comment> getCommentList(Long postId) {
-        return commentRepository.findAllByPostId(postId);
+    public List<CommentResponseDto> getCommentList(Long postId) {
+        return commentRepository.findAllByPostId(postId)    // TODO: pagination
+                .stream().map(CommentResponseDto::new)
+                .collect(Collectors.toList());
     }
 
     @Transactional
@@ -37,17 +41,17 @@ public class CommentService {
     @Transactional
     public void updateComment(UpdateCommentRequestDto dto) {
         Comment comment = checkAuthorization(dto.getCommentId());
-        comment.updateComment(dto.getConent());
+        comment.updateComment(dto.getContent());
     }
 
     @Transactional
-    public void deleteComment(Long postId, Long commentId) {
+    public void deleteComment(Long commentId) {
         Comment comment = checkAuthorization(commentId);
-        commentRepository.delete(comment);
-        PostCount postCount = postsCountRepository.findByPostId(postId);
+        PostCount postCount = postsCountRepository.findByPostId(comment.getPostId());
         if (postCount.getCommentCount() <= 0) {
             throw new BadRequestException(ResponseType.REQUEST_NOT_VALID);
         }
+        commentRepository.delete(comment);
         postCount.update(CountType.COMMENT, false);
     }
 

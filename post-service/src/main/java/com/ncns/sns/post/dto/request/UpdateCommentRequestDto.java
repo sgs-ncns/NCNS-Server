@@ -7,5 +7,5 @@ import lombok.RequiredArgsConstructor;
 @Getter
 public class UpdateCommentRequestDto {
     private final Long commentId;
-    private final String conent;
+    private final String content;
 }

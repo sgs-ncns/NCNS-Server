@@ -26,6 +26,6 @@ public class CommentServiceTest {
 
     @Test
     void deleteComment() {
-        commentService.deleteComment(9L,2L);
+        commentService.deleteComment(2L);
     }
 }
