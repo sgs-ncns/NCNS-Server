@@ -6,15 +6,15 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Getter
 @RequiredArgsConstructor
 public class CreateCommentRequestDto {
-
-    @NotBlank
+    @NotNull
     private final Long postId;
     @NotBlank
-    private final String conent;
+    private final String content;
 
     private Long parentId;
 
@@ -23,7 +23,7 @@ public class CreateCommentRequestDto {
                 .postId(postId)
                 .userId(SecurityUtil.getCurrentMemberId())
                 .parentId(parentId)
-                .content(conent)
+                .content(content)
                 .build();
     }
 }
