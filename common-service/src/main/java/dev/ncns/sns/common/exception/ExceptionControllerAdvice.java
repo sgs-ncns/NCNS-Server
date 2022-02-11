@@ -65,6 +65,15 @@ public class ExceptionControllerAdvice {
         return ResponseEntity.failureResponse(port, ResponseType.ARGUMENT_NOT_VALID, message);
     }
 
+    @ExceptionHandler(FeignClientException.class)
+    public org.springframework.http.ResponseEntity
+            <ResponseEntity<Void>> handleFeignClientException(FeignClientException exception) {
+        printLog(exception.getClass().getName(), exception.getMessage());
+        return org.springframework.http.ResponseEntity
+                .status(exception.getStatus())
+                .body(ResponseEntity.failureResponse(exception.getResponseCode(), exception.getMessage()));
+    }
+
     private void printLog(BusinessException exception) {
         log.error(String.format("[Error] %s: %s", exception.getClass().getName(), exception.getResponseType().getMessage()));
     }
