@@ -6,5 +6,5 @@ import lombok.Getter;
 public enum Status {
     USER,
     ADMIN,
-    BLACK
+    BLACK   // 신고 누적으로 차단된 사용자
 }

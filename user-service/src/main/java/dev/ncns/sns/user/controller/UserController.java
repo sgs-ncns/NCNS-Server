@@ -77,6 +77,7 @@ public class UserController {
         return ResponseEntity.successResponse(port, data);
     }
 
+    /** Auth 서버로부터 로그인 정보 검증을 요청받는 Endpoint 입니다. */
     @ApiIgnore
     @NonAuthorize
     @PostMapping("/login")
@@ -85,6 +86,7 @@ public class UserController {
         return ResponseEntity.successResponse(port, data);
     }
 
+    /** Post 서버로부터 post 생성/삭제 시 post count 컬럼 업데이트를 요청받는 Endpoint 입니다. */
     @NonAuthorize
     @PostMapping("/count/post")
     public ResponseEntity<Void> updateUserPostCount(@RequestBody UpdateUserPostCountDto dto){

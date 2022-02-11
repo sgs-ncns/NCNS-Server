@@ -11,7 +11,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebMvcConfig implements WebMvcConfigurer {
 
     private final AuthorizationInterceptor authorizationInterceptor;
-
+    /** /api/user 하위로 들어오는 요청에 대해 커스텀 인터셉터를 적용합니다. **/
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(authorizationInterceptor)

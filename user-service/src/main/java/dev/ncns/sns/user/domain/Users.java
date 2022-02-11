@@ -24,10 +24,10 @@ public class Users extends BaseTime {
     private Long id;
 
     @Column(nullable = false, unique = true, length = 50)
-    private String accountName;
+    private String accountName;  // @accountName 계정명
 
     @Column(nullable = false, length = 50)
-    private String nickname;
+    private String nickname;    // 사용자 이름
 
     @Column(nullable = false, unique = true, length = 320)
     private String email;
@@ -44,7 +44,7 @@ public class Users extends BaseTime {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 10)
-    private AuthType authType;
+    private AuthType authType;  // 회원가입 및 로그인 타입
 
     @Column
     private LocalDateTime accessAt;

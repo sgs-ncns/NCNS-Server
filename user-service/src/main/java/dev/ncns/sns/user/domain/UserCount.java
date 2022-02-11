@@ -15,6 +15,11 @@ import javax.persistence.*;
 @Entity
 public class UserCount {
 
+    /**
+     * count 전용 테이블입니다.
+     * profile 조회 시 사용되는 작성글 수, 팔로워 수, 팔로잉 수 가 포함돼있습니다.
+     * count 시 select 쿼리를 줄이기 위해 모델링 되었습니다.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

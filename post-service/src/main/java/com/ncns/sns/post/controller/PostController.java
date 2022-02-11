@@ -57,6 +57,7 @@ public class PostController {
         return ResponseEntity.successResponse(port, response);
     }
 
+    /** 게시글 상세 조회 시 댓글을 포함한 정보를 보여주는 Endpoint 입니다. */
     @NonAuthorize
     @GetMapping("/{userId}/{postId}")
     public ResponseEntity<PostDetailResponseDto> getPostDetail(@PathVariable Long userId, Long postId) {

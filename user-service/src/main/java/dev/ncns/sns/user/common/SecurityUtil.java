@@ -7,6 +7,9 @@ public class SecurityUtil {
     private SecurityUtil() {
     }
 
+    /**
+     * 인터셉터를 통해 Security Context 에 저장된 인증 정보를 가져옵니다.
+     */
     public static Long getCurrentMemberId() {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || authentication.getName() == null) {

@@ -15,9 +15,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @Configuration
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
+    /** 서버 내 유효한 url 입니다. **/
     private static final String[] PUBLIC_URLS = {
             "/", "/api/**", "/actuator/**"
     };
+
+    /** swagger 접근을 위한 url 입니다. **/
     private static final String[] WEB_URLS = {
             "error", "/h2-console/**", "/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs", "/webjars/**"
     };

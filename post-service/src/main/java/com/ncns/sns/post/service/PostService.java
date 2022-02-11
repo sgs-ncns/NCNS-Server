@@ -25,6 +25,13 @@ public class PostService {
     private final HashtagRepository hashtagRepository;
     private final UserTagRepository userTagRepository;
 
+    /**
+     * 게시글 등록 요청입니다.
+     * 게시글에 포함된 이미지 링크, 글 내용, 해시태그 리스트, 계정 태그 리스트를 받습니다.
+     * 해시태그는 saveHashTag 메서드에서 생성 혹은 업데이트 처리 후 , 로 concat 되어 String 으로 반환됩니다.
+     * 계정 태그는 각각 객체로 변환해 저장합니다.
+     * 새 post 와 post count 를 생성합니다.
+     */
     @Transactional
     public void createPost(CreatePostRequestDto dto) {
         String hashtags = saveHashTag(dto.getHashtag());
@@ -51,6 +58,12 @@ public class PostService {
         post.updatePost(dto.getContent(), newHashtags);
     }
 
+    /**
+     * 게시글 삭제 요청입니다.
+     * 삭제 요청자와 게시글 작성자가 동일한지 검토합니다.
+     * 유효한 요청이라면 해시태그 테이블을 업데이트하고 해당 게시글의 계정 태그 정보를 전부 삭제합니다.
+     * Post 와 Post count 를 삭제 처리 합니다.
+     */
     @Transactional
     public void deletePost(Long postId) {
         Post post = checkAuthorization(postId);
@@ -65,6 +78,10 @@ public class PostService {
         postRepository.delete(post);
     }
 
+    /**
+     * 피드에 사용되는 메서드입니다.
+     * Post 와 count 정보가 포함됩니다.
+     */
     @Transactional(readOnly = true)
     public List<PostResponseDto> getUserPosts(Long userId) {
         return postRepository.findAllByUserId(userId).stream()
@@ -75,6 +92,10 @@ public class PostService {
                 ).collect(Collectors.toList());
     }
 
+    /**
+     * 게시글 상세보기(댓글 보기)에 사용되는 메서드입니다.
+     * count 정보는 제외됩니다.
+     */
     public Post getPostById(Long postId) {
         return postRepository.findById(postId).orElseThrow(() -> new NotFoundException(ResponseType.POST_NOT_EXIST));
     }

@@ -20,6 +20,13 @@ import javax.servlet.http.HttpServletResponse;
 @Component
 public class AuthorizationInterceptor implements HandlerInterceptor {
 
+    /**
+     * Gateway 에서 토큰을 파싱해 받아온 유저 정보를 Authorized_User 헤더로 전송해줍니다.
+     * 해당 인증 정보를 받아 Spring Context 에 저장하는 인터셉터입니다.
+     * 인증 정보 없이 요청을 한다면 UnauthorizedException 이 발생합니다.
+     * 인증 정보가 불필요한 Endpoint 는 @NonAuthorize 어노테이션을 추가하면 인터셉터를 거치지 않습니다.
+     **/
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         if (isNonAuthorize(handler)) {
