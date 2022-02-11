@@ -100,6 +100,11 @@ public class PostService {
         return postRepository.findById(postId).orElseThrow(() -> new NotFoundException(ResponseType.POST_NOT_EXIST));
     }
 
+    /**
+     * 게시글 좋아요 요청 메서드입니다.
+     * 좋아요 상태를 확인 후 토글합니다.
+     * 좋아요 정보를 추가/삭제하고, count 를 업데이트합니다.
+     */
     @Transactional
     public String requestLikePost(Long postId) {
         Long likeData = likeRepository.isLiked(postId, SecurityUtil.getCurrentMemberId());
@@ -143,7 +148,10 @@ public class PostService {
                 .build();
         userTagRepository.save(userTag);
     }
-
+    /**
+     * 요청에 해시태그가 포함되어 있지 않다면 null 을, 있다면 로직 처리 후 String 을 반환합니다.
+     * 리스트의 각 해시태그에 대해 기존 데이터 존재 여부를 확인하고 없다면 새 객체를 생성, 있다면 count++을 수행합니다.
+     */
     private String saveHashTag(List<String> hashtagList) {
         return hashtagList == null ? null :
                 hashtagList.stream().map(hash -> {

@@ -50,13 +50,14 @@ public class PostController {
         return ResponseEntity.successResponse(port);
     }
 
+    /** 유저 프로필 시 피드 정보를 보여주는 Endpoint 입니다. */
     @GetMapping
     public ResponseEntity<List<PostResponseDto>> getUserPosts(@RequestParam Long userId) {
         List<PostResponseDto> response = postService.getUserPosts(userId);
         return ResponseEntity.successResponse(port, response);
     }
 
-    /** 게시글 상세 조회 시 댓글을 포함한 정보를 보여주는 Endpoint 입니다. */
+    /** 게시글 상세 조회 시 게시글과 댓글을 포함한 정보를 보여주는 Endpoint 입니다. */
     @GetMapping("/{postId}")
     public ResponseEntity<PostDetailResponseDto> getPostDetail(@PathVariable Long postId) {
         PostDetailResponseDto response = PostDetailResponseDto
