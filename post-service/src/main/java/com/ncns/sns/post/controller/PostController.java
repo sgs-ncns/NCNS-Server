@@ -37,7 +37,7 @@ public class PostController {
         return ResponseEntity.successResponse(port);
     }
 
-    @PatchMapping("/{postId")
+    @PatchMapping
     public ResponseEntity<Void> updatePost(@RequestBody UpdatePostRequestDto dto) {
         postService.updatePost(dto);
         return ResponseEntity.successResponse(port);
@@ -50,40 +50,38 @@ public class PostController {
         return ResponseEntity.successResponse(port);
     }
 
-    @NonAuthorize
-    @GetMapping("/{userId}")
-    public ResponseEntity<List<PostResponseDto>> getUserPosts(@PathVariable Long userId) {
+    @GetMapping
+    public ResponseEntity<List<PostResponseDto>> getUserPosts(@RequestParam Long userId) {
         List<PostResponseDto> response = postService.getUserPosts(userId);
         return ResponseEntity.successResponse(port, response);
     }
 
-    @NonAuthorize
-    @GetMapping("/{userId}/{postId}")
-    public ResponseEntity<PostDetailResponseDto> getPostDetail(@PathVariable Long userId, Long postId) {
+    @GetMapping("/{postId}")
+    public ResponseEntity<PostDetailResponseDto> getPostDetail(@PathVariable Long postId) {
         PostDetailResponseDto response = PostDetailResponseDto
                 .of(postService.getPostById(postId), commentService.getCommentList(postId));
         return ResponseEntity.successResponse(port, response);
     }
 
-    @PostMapping("/{postId}/comment")
+    @PostMapping("/comment")
     public ResponseEntity<?> createComment(@Validated @RequestBody CreateCommentRequestDto dto) {
         commentService.createComment(dto);
         return ResponseEntity.successResponse(port);
     }
 
-    @PatchMapping("/{postId}/comment/{commentId}")
+    @PatchMapping("/comment")
     public ResponseEntity<Void> updateComment(@RequestBody UpdateCommentRequestDto dto) {
         commentService.updateComment(dto);
         return ResponseEntity.successResponse(port);
     }
 
-    @DeleteMapping("/{postId}/comment/{commentId}")
-    public ResponseEntity<Void> deleteComment(@PathVariable Long postId, Long commentId) {
-        commentService.deleteComment(postId, commentId);
+    @DeleteMapping("/comment/{commentId}")
+    public ResponseEntity<Void> deleteComment(@PathVariable Long commentId) {
+        commentService.deleteComment(commentId);
         return ResponseEntity.successResponse(port);
     }
 
-    @PostMapping("/{postId}/like")
+    @PostMapping("/like/{postId}")
     public ResponseEntity<String> likePost(@PathVariable Long postId) {
         String data = postService.requestLikePost(postId);
         return ResponseEntity.successResponse(port, data);

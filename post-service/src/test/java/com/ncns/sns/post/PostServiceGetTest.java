@@ -38,7 +38,7 @@ public class PostServiceGetTest {
     @Test
     void getPostDetail() {
         PostDetailResponseDto dto = PostDetailResponseDto
-                .of(postService.getPostDetail(9L),commentService.getCommentList(9L));
+                .of(postService.getPostById(9L),commentService.getCommentList(9L));
 //        dto.getCommentList().forEach(comment -> System.out.println(comment.getContent()));
     }
 }

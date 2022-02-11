@@ -3,9 +3,11 @@ package com.ncns.sns.post.dto.response;
 import com.ncns.sns.post.domain.Post;
 import com.ncns.sns.post.domain.PostCount;
 import lombok.Builder;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 
+@Getter
 public class PostResponseDto {
 
     private Long postId;
