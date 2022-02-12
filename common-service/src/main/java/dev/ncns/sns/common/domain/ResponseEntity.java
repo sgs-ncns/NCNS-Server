@@ -5,9 +5,18 @@ import lombok.Getter;
 @Getter
 public class ResponseEntity<T> {
 
-    private final String responseCode;
-    private final String message;
-    private final T data;
+    private String responseCode;
+    private String message;
+    private T data;
+
+    public ResponseEntity() {
+    }
+
+    public ResponseEntity(String responseCode, String message, T data) {
+        this.responseCode = responseCode;
+        this.message = message;
+        this.data = data;
+    }
 
     public ResponseEntity(String port, String code, String message, T data) {
         this.responseCode = getResponseCode(port, code);
@@ -43,8 +52,8 @@ public class ResponseEntity<T> {
         return new ResponseEntity<>(port, type.getCode(), message, null);
     }
 
-    public static <T> ResponseEntity<T> failureResponse(String port, ResponseType type, T data) {
-        return new ResponseEntity<>(port, type.getCode(), type.getMessage(), data);
+    public static <T> ResponseEntity<T> failureResponse(String responseCode, String message) {
+        return new ResponseEntity<>(responseCode, message, null);
     }
 
     private static String getResponseCode(String port, String code) {

@@ -1,5 +1,6 @@
 package dev.ncns.sns.auth.controller;
 
+import dev.ncns.sns.auth.domain.AuthType;
 import dev.ncns.sns.auth.dto.request.LoginRequestDto;
 import dev.ncns.sns.auth.dto.response.AuthResponseDto;
 import dev.ncns.sns.auth.dto.response.LoginResponseDto;
@@ -33,28 +34,29 @@ public class AuthController {
     private final AuthService authService;
     private final CookieManager cookieManager;
 
+    private final UserFeignClient userFeignClient;
+
     @PostMapping("/local")
     public ResponseEntity<AuthResponseDto> localLogin(@Validated(LocalLoginValidation.class)
                                                       @RequestBody LoginRequestDto loginRequest,
                                                       HttpServletResponse httpServletResponse) {
-        LoginResponseDto loginResponse = new LoginResponseDto(1L); // TODO: user-service 이메일 로그인 호출
-        return login(loginResponse, httpServletResponse);
+        loginRequest.setAuthType(AuthType.LOCAL);
+        return login(loginRequest, httpServletResponse);
     }
 
     @PostMapping("/account")
     public ResponseEntity<AuthResponseDto> accountLogin(@Validated(AccountLoginValidation.class)
                                                         @RequestBody LoginRequestDto loginRequest,
                                                         HttpServletResponse httpServletResponse) {
-        LoginResponseDto loginResponse = new LoginResponseDto(1L); // TODO: user-service 계정 로그인 호출
-        return login(loginResponse, httpServletResponse);
+        loginRequest.setAuthType(AuthType.ACCOUNT);
+        return login(loginRequest, httpServletResponse);
     }
 
     @PostMapping("/social")
     public ResponseEntity<AuthResponseDto> socialLogin(@Validated(SocialLoginValidation.class)
                                                        @RequestBody LoginRequestDto loginRequest,
                                                        HttpServletResponse httpServletResponse) {
-        LoginResponseDto loginResponse = new LoginResponseDto(1L); // TODO: user-service 소셜 로그인 호출
-        return login(loginResponse, httpServletResponse);
+        return login(loginRequest, httpServletResponse);
     }
 
     @Authorize
@@ -68,9 +70,10 @@ public class AuthController {
         return ResponseEntity.successResponse(port);
     }
 
-    private ResponseEntity<AuthResponseDto> login(LoginResponseDto loginResponse,
+    private ResponseEntity<AuthResponseDto> login(LoginRequestDto loginRequest,
                                                   HttpServletResponse httpServletResponse) {
-        AuthResponseDto authResponse = authService.issueToken(loginResponse);
+        ResponseEntity<LoginResponseDto> loginResponse = userFeignClient.login(loginRequest);
+        AuthResponseDto authResponse = authService.issueToken(loginResponse.getData());
 
         Cookie refreshToken = cookieManager.createCookie(Constants.REFRESH_TOKEN_NAME, authResponse.getRefreshToken());
         httpServletResponse.addCookie(refreshToken);

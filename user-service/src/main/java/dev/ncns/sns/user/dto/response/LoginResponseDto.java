@@ -1,10 +1,25 @@
 package dev.ncns.sns.user.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.RequiredArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
 
-@RequiredArgsConstructor
+@Getter
 public class LoginResponseDto {
-    @JsonProperty
-    private final Long id;
+
+    private final Long userId;
+    private final String accountName;
+
+    @Builder
+    public LoginResponseDto(Long userId, String accountName) {
+        this.userId = userId;
+        this.accountName = accountName;
+    }
+
+    public static LoginResponseDto of(Long userId, String accountName) {
+        return LoginResponseDto.builder()
+                .userId(userId)
+                .accountName(accountName)
+                .build();
+    }
+
 }
