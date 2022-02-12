@@ -48,11 +48,8 @@ public class AuthService {
         compareToken(refreshToken, cachedRefreshToken);
 
         String newAccessToken = jwtProvider.createAccessToken(userId);
-        String newRefreshToken = jwtProvider.createRefreshToken(userId);
 
-        redisManager.setValue(jwtProvider.getRefreshTokenKey(userId), newRefreshToken, JwtProvider.REFRESH_TOKEN_VALIDITY);
-
-        return AuthResponseDto.of(newAccessToken, newRefreshToken);
+        return AuthResponseDto.of(newAccessToken, refreshToken);
     }
 
     private void validateToken(String token) {

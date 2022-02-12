@@ -64,7 +64,7 @@ public class AuthController {
         return login(loginRequest, httpServletResponse);
     }
 
-    @Operation(summary = "로그아웃")
+    @Operation(summary = "로그아웃", description = "Header Authorization에 담긴 AccessToken으로 로그아웃")
     @Authorize
     @DeleteMapping
     public ResponseEntity<Void> logout(HttpServletRequest httpServletRequest,
@@ -76,6 +76,15 @@ public class AuthController {
         httpServletResponse.addCookie(cookieManager.deleteCookie(refreshToken));
 
         return ResponseEntity.successResponse(port);
+    }
+
+    @Operation(summary = "AccessToken 재발급", description = "Cookie에 저장된 RefreshToken 검증 후 AccessToken 재발급")
+    @GetMapping
+    public ResponseEntity<AuthResponseDto> reissue(HttpServletRequest httpServletRequest) {
+        Cookie refreshToken = cookieManager.getCookie(httpServletRequest, Constants.REFRESH_TOKEN_NAME);
+        AuthResponseDto authResponse = authService.reissueToken(refreshToken.getValue());
+
+        return ResponseEntity.successResponse(port, authResponse);
     }
 
     private ResponseEntity<AuthLoginResponseDto> login(LoginRequestDto loginRequest,
