@@ -2,6 +2,7 @@ package dev.ncns.sns.auth.controller;
 
 import dev.ncns.sns.auth.domain.AuthType;
 import dev.ncns.sns.auth.dto.request.LoginRequestDto;
+import dev.ncns.sns.auth.dto.response.AuthLoginResponseDto;
 import dev.ncns.sns.auth.dto.response.AuthResponseDto;
 import dev.ncns.sns.auth.dto.response.LoginResponseDto;
 import dev.ncns.sns.auth.dto.validate.AccountLoginValidation;
@@ -12,6 +13,7 @@ import dev.ncns.sns.auth.util.CookieManager;
 import dev.ncns.sns.common.annotation.Authorize;
 import dev.ncns.sns.common.domain.ResponseEntity;
 import dev.ncns.sns.common.util.Constants;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.ComponentScan;
@@ -36,26 +38,29 @@ public class AuthController {
 
     private final UserFeignClient userFeignClient;
 
+    @Operation(summary = "자체 로그인", description = "email + password 로그인")
     @PostMapping("/local")
-    public ResponseEntity<AuthResponseDto> localLogin(@Validated(LocalLoginValidation.class)
-                                                      @RequestBody LoginRequestDto loginRequest,
-                                                      HttpServletResponse httpServletResponse) {
+    public ResponseEntity<AuthLoginResponseDto> localLogin(@Validated(LocalLoginValidation.class)
+                                                           @RequestBody LoginRequestDto loginRequest,
+                                                           HttpServletResponse httpServletResponse) {
         loginRequest.setAuthType(AuthType.LOCAL);
         return login(loginRequest, httpServletResponse);
     }
 
+    @Operation(summary = "계정 이름 로그인", description = "account name + password 로그인")
     @PostMapping("/account")
-    public ResponseEntity<AuthResponseDto> accountLogin(@Validated(AccountLoginValidation.class)
-                                                        @RequestBody LoginRequestDto loginRequest,
-                                                        HttpServletResponse httpServletResponse) {
+    public ResponseEntity<AuthLoginResponseDto> accountLogin(@Validated(AccountLoginValidation.class)
+                                                             @RequestBody LoginRequestDto loginRequest,
+                                                             HttpServletResponse httpServletResponse) {
         loginRequest.setAuthType(AuthType.ACCOUNT);
         return login(loginRequest, httpServletResponse);
     }
 
+    @Operation(summary = "소셜 로그인", description = "email + auth type 로그인")
     @PostMapping("/social")
-    public ResponseEntity<AuthResponseDto> socialLogin(@Validated(SocialLoginValidation.class)
-                                                       @RequestBody LoginRequestDto loginRequest,
-                                                       HttpServletResponse httpServletResponse) {
+    public ResponseEntity<AuthLoginResponseDto> socialLogin(@Validated(SocialLoginValidation.class)
+                                                            @RequestBody LoginRequestDto loginRequest,
+                                                            HttpServletResponse httpServletResponse) {
         return login(loginRequest, httpServletResponse);
     }
 
@@ -70,15 +75,16 @@ public class AuthController {
         return ResponseEntity.successResponse(port);
     }
 
-    private ResponseEntity<AuthResponseDto> login(LoginRequestDto loginRequest,
-                                                  HttpServletResponse httpServletResponse) {
+    private ResponseEntity<AuthLoginResponseDto> login(LoginRequestDto loginRequest,
+                                                       HttpServletResponse httpServletResponse) {
         ResponseEntity<LoginResponseDto> loginResponse = userFeignClient.login(loginRequest);
         AuthResponseDto authResponse = authService.issueToken(loginResponse.getData());
+        AuthLoginResponseDto authLoginResponse = AuthLoginResponseDto.of(authResponse, loginResponse.getData());
 
         Cookie refreshToken = cookieManager.createCookie(Constants.REFRESH_TOKEN_NAME, authResponse.getRefreshToken());
         httpServletResponse.addCookie(refreshToken);
 
-        return ResponseEntity.successResponse(port, authResponse);
+        return ResponseEntity.successResponse(port, authLoginResponse);
     }
 
 }
