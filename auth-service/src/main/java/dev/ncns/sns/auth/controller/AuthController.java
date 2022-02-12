@@ -10,11 +10,10 @@ import dev.ncns.sns.auth.dto.validate.SocialLoginValidation;
 import dev.ncns.sns.auth.service.AuthService;
 import dev.ncns.sns.auth.util.CookieManager;
 import dev.ncns.sns.common.annotation.Authorize;
+import dev.ncns.sns.common.controller.ApiController;
 import dev.ncns.sns.common.domain.ResponseEntity;
 import dev.ncns.sns.common.util.Constants;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,13 +22,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @RequiredArgsConstructor
-@ComponentScan(basePackages = "dev.ncns.sns.common.exception")
 @RequestMapping(value = "/api/auth")
 @RestController
-public class AuthController {
-
-    @Value("${server.port}")
-    private String port;
+public class AuthController extends ApiController {
 
     private final AuthService authService;
     private final CookieManager cookieManager;
@@ -67,7 +62,7 @@ public class AuthController {
 
         authService.discardToken(authorization, refreshToken.getValue());
 
-        return ResponseEntity.successResponse(port);
+        return getSuccessResponse();
     }
 
     private ResponseEntity<AuthResponseDto> login(LoginRequestDto loginRequest,
@@ -78,7 +73,7 @@ public class AuthController {
         Cookie refreshToken = cookieManager.createCookie(Constants.REFRESH_TOKEN_NAME, authResponse.getRefreshToken());
         httpServletResponse.addCookie(refreshToken);
 
-        return ResponseEntity.successResponse(port, authResponse);
+        return getSuccessResponse(authResponse);
     }
 
 }
