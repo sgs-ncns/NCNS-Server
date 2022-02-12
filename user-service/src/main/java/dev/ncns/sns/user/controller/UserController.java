@@ -3,10 +3,8 @@ package dev.ncns.sns.user.controller;
 import dev.ncns.sns.common.annotation.NonAuthorize;
 import dev.ncns.sns.common.domain.ResponseEntity;
 import dev.ncns.sns.user.common.SecurityUtil;
-import dev.ncns.sns.user.dto.request.LoginRequestDto;
-import dev.ncns.sns.user.dto.request.ProfileUpdateRequestDto;
-import dev.ncns.sns.user.dto.request.SignupRequestDto;
-import dev.ncns.sns.user.dto.request.UpdateUserPostCountDto;
+import dev.ncns.sns.user.dto.request.*;
+import dev.ncns.sns.user.dto.response.CheckResponseDto;
 import dev.ncns.sns.user.dto.response.LoginResponseDto;
 import dev.ncns.sns.user.dto.response.UserResponseDto;
 import dev.ncns.sns.user.dto.response.UserSummaryResponseDto;
@@ -83,6 +81,22 @@ public class UserController {
         Long currentUserId = SecurityUtil.getCurrentMemberId();
         String data = followService.requestFollow(currentUserId, targetId);
         return ResponseEntity.successResponse(port, data);
+    }
+
+    @Operation(summary = "이메일 중복 체크")
+    @NonAuthorize
+    @PostMapping("/email")
+    public ResponseEntity<CheckResponseDto> checkDuplicateEmail(@RequestBody CheckEmailRequestDto checkEmailRequest) {
+        CheckResponseDto checkResponse = userService.isDuplicateEmail(checkEmailRequest);
+        return ResponseEntity.successResponse(port, checkResponse);
+    }
+
+    @Operation(summary = "계정 이름 중복 체크")
+    @NonAuthorize
+    @PostMapping("/account")
+    public ResponseEntity<CheckResponseDto> checkDuplicateAccountName(@RequestBody CheckAccountRequestDto checkAccountRequest) {
+        CheckResponseDto checkResponse = userService.isDuplicateAccountName(checkAccountRequest);
+        return ResponseEntity.successResponse(port, checkResponse);
     }
 
     @ApiIgnore

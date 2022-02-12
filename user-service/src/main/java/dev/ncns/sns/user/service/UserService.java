@@ -8,10 +8,8 @@ import dev.ncns.sns.user.domain.AuthType;
 import dev.ncns.sns.user.domain.CountType;
 import dev.ncns.sns.user.domain.UserCount;
 import dev.ncns.sns.user.domain.Users;
-import dev.ncns.sns.user.dto.request.LoginRequestDto;
-import dev.ncns.sns.user.dto.request.ProfileUpdateRequestDto;
-import dev.ncns.sns.user.dto.request.SignupRequestDto;
-import dev.ncns.sns.user.dto.request.UpdateUserPostCountDto;
+import dev.ncns.sns.user.dto.request.*;
+import dev.ncns.sns.user.dto.response.CheckResponseDto;
 import dev.ncns.sns.user.dto.response.LoginResponseDto;
 import dev.ncns.sns.user.dto.response.UserResponseDto;
 import dev.ncns.sns.user.dto.response.UserSummaryResponseDto;
@@ -100,6 +98,16 @@ public class UserService {
             throw new BadRequestException(ResponseType.REQUEST_NOT_VALID);
         }
         userCount.update(CountType.POST, dto.getIsUp());
+    }
+
+    public CheckResponseDto isDuplicateEmail(CheckEmailRequestDto checkEmailRequest) {
+        boolean result = isExistEmail(checkEmailRequest.getEmail());
+        return CheckResponseDto.of(result);
+    }
+
+    public CheckResponseDto isDuplicateAccountName(CheckAccountRequestDto checkAccountRequest) {
+        boolean result = isExistAccountName(checkAccountRequest.getAccountName());
+        return CheckResponseDto.of(result);
     }
 
     private LoginResponseDto socialLogin(String email, AuthType authType) {
