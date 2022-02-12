@@ -12,7 +12,7 @@ import javax.validation.constraints.Pattern;
 
 @Getter
 @RequiredArgsConstructor
-public class SignupRequestDto {
+public class SignUpRequestDto {
 
     private static final String emailFormat = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+.[A-Za-z]{2,6}$";
 

@@ -39,8 +39,8 @@ public class UserService {
     }
 
     @Transactional
-    public void signUp(SignupRequestDto signupRequest) {
-        Users user = signupRequest.toEntity();
+    public void signUp(SignUpRequestDto signUpRequest) {
+        Users user = signUpRequest.toEntity();
         if (isExistEmail(user.getEmail())) {
             throw new BadRequestException(ResponseType.USER_DUPLICATED_EMAIL);
         }
@@ -61,7 +61,7 @@ public class UserService {
     }
 
     @Transactional
-    public void updateProfile(ProfileUpdateRequestDto dto) {
+    public void updateProfile(UpdateProfileRequestDto dto) {
         Users user = userRepository.getById(SecurityUtil.getCurrentMemberId());
         user.updateProfile(dto.getAccountName(), dto.getNickname(), dto.getIntroduce());
     }

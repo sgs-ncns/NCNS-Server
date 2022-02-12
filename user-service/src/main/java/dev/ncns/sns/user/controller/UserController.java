@@ -35,8 +35,8 @@ public class UserController {
     @Operation(summary = "회원가입")
     @NonAuthorize
     @PostMapping
-    public ResponseEntity<Void> signUp(@Validated @RequestBody SignupRequestDto signupRequest) {
-        userService.signUp(signupRequest);
+    public ResponseEntity<Void> signUp(@Validated @RequestBody SignUpRequestDto signUpRequest) {
+        userService.signUp(signUpRequest);
         return ResponseEntity.successResponse(port);
     }
 
@@ -49,8 +49,8 @@ public class UserController {
 
     @Operation(summary = "사용자 정보 수정")
     @PatchMapping
-    public ResponseEntity<Void> updateProfile(@RequestBody ProfileUpdateRequestDto dto) {
-        userService.updateProfile(dto);
+    public ResponseEntity<Void> updateProfile(@RequestBody UpdateProfileRequestDto updateProfileRequest) {
+        userService.updateProfile(updateProfileRequest);
         return ResponseEntity.successResponse(port);
     }
 

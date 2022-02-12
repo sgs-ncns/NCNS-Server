@@ -1,7 +1,7 @@
 package dev.ncns.sns.user;
 
 import dev.ncns.sns.user.domain.AuthType;
-import dev.ncns.sns.user.dto.request.SignupRequestDto;
+import dev.ncns.sns.user.dto.request.SignUpRequestDto;
 import dev.ncns.sns.user.dto.response.UserResponseDto;
 import dev.ncns.sns.user.service.UserService;
 import org.junit.jupiter.api.Test;
@@ -20,7 +20,7 @@ public class UserServiceTest extends UserApplicationTests {
 
     @Test
     void signUp() throws Exception {
-        SignupRequestDto request = new SignupRequestDto(accountName, nickname, email, password, AuthType.LOCAL);
+        SignUpRequestDto request = new SignUpRequestDto(accountName, nickname, email, password, AuthType.LOCAL);
         userService.signUp(request);
     }
 
