@@ -56,7 +56,7 @@ public class AuthController {
         return login(loginRequest, httpServletResponse);
     }
 
-    @Operation(summary = "소셜 로그인", description = "email + auth type 로그인")
+    @Operation(summary = "소셜 로그인", description = "email + auth type(APPLE|GOOGLE) 로그인")
     @PostMapping("/social")
     public ResponseEntity<AuthLoginResponseDto> socialLogin(@Validated(SocialLoginValidation.class)
                                                             @RequestBody LoginRequestDto loginRequest,
@@ -64,13 +64,16 @@ public class AuthController {
         return login(loginRequest, httpServletResponse);
     }
 
+    @Operation(summary = "로그아웃")
     @Authorize
     @DeleteMapping
-    public ResponseEntity<Void> logout(HttpServletRequest httpServletRequest) {
+    public ResponseEntity<Void> logout(HttpServletRequest httpServletRequest,
+                                       HttpServletResponse httpServletResponse) {
         String authorization = httpServletRequest.getHeader(Constants.AUTH_HEADER_KEY);
         Cookie refreshToken = cookieManager.getCookie(httpServletRequest, Constants.REFRESH_TOKEN_NAME);
 
         authService.discardToken(authorization, refreshToken.getValue());
+        httpServletResponse.addCookie(cookieManager.deleteCookie(refreshToken));
 
         return ResponseEntity.successResponse(port);
     }
