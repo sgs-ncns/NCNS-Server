@@ -1,16 +1,12 @@
 package dev.ncns.sns.user.domain;
 
-
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Getter
 @ToString
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "user_count")
 @Entity
 public class UserCount {
@@ -31,39 +27,58 @@ public class UserCount {
     @Column(nullable = false)
     private Long followingCount;
 
+    @Column(nullable = false)
+    private Long subscribingCount;
+
     @Builder
     public UserCount(Long userId) {
         this.userId = userId;
         this.postCount = 0L;
         this.followerCount = 0L;
         this.followingCount = 0L;
+        this.subscribingCount = 0L;
     }
 
-    public void update(CountType countType, boolean isUp) {
+    public void updateCount(CountType countType, boolean isUp) {
         if (isUp) {
-            switch (countType) {
-                case POST:
-                    this.postCount++;
-                    return;
-                case FOLLOWER:
-                    this.followerCount++;
-                    return;
-                case FOLLOWING:
-                    this.followingCount++;
-                    return;
-            }
+            increaseCount(countType);
         } else {
-            switch (countType) {
-                case POST:
-                    this.postCount--;
-                    return;
-                case FOLLOWER:
-                    this.followerCount--;
-                    return;
-                case FOLLOWING:
-                    this.followingCount--;
-                    return;
-            }
+            decreaseCount(countType);
         }
     }
+
+    private void increaseCount(CountType countType) {
+        switch (countType) {
+            case POST:
+                this.postCount++;
+                break;
+            case FOLLOWER:
+                this.followerCount++;
+                break;
+            case FOLLOWING:
+                this.followingCount++;
+                break;
+            case SUBSCRIBING:
+                this.subscribingCount++;
+                break;
+        }
+    }
+
+    private void decreaseCount(CountType countType) {
+        switch (countType) {
+            case POST:
+                this.postCount--;
+                break;
+            case FOLLOWER:
+                this.followerCount--;
+                break;
+            case FOLLOWING:
+                this.followingCount--;
+                break;
+            case SUBSCRIBING:
+                this.subscribingCount--;
+                break;
+        }
+    }
+
 }

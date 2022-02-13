@@ -3,7 +3,6 @@ package dev.ncns.sns.user.service;
 import dev.ncns.sns.common.domain.ResponseType;
 import dev.ncns.sns.common.exception.BadRequestException;
 import dev.ncns.sns.common.exception.NotFoundException;
-import dev.ncns.sns.user.common.SecurityUtil;
 import dev.ncns.sns.user.domain.AuthType;
 import dev.ncns.sns.user.domain.CountType;
 import dev.ncns.sns.user.domain.UserCount;
@@ -15,6 +14,7 @@ import dev.ncns.sns.user.dto.response.UserResponseDto;
 import dev.ncns.sns.user.dto.response.UserSummaryResponseDto;
 import dev.ncns.sns.user.repository.UserCountRepository;
 import dev.ncns.sns.user.repository.UserRepository;
+import dev.ncns.sns.user.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -55,14 +55,14 @@ public class UserService {
 
     @Transactional
     public void signOut() {
-        Users user = getUserById(SecurityUtil.getCurrentMemberId());
+        Users user = getUserById(SecurityUtil.getCurrentUserId());
         userCountRepository.deleteByUserId(user.getId());
         userRepository.delete(user);
     }
 
     @Transactional
     public void updateProfile(UpdateProfileRequestDto dto) {
-        Users user = userRepository.getById(SecurityUtil.getCurrentMemberId());
+        Users user = userRepository.getById(SecurityUtil.getCurrentUserId());
         user.updateProfile(dto.getAccountName(), dto.getNickname(), dto.getIntroduce());
     }
 
@@ -74,6 +74,12 @@ public class UserService {
 
     public List<UserSummaryResponseDto> getFollowerList(List<Long> followerIdList) {
         return followerIdList.stream()
+                .map(id -> new UserSummaryResponseDto(getUserById(id)))
+                .collect(Collectors.toList());
+    }
+
+    public List<UserSummaryResponseDto> getUserSummaryList(List<Long> userIdList) {
+        return userIdList.stream()
                 .map(id -> new UserSummaryResponseDto(getUserById(id)))
                 .collect(Collectors.toList());
     }
@@ -97,7 +103,7 @@ public class UserService {
         if (userCount.getPostCount() <= 0 && !dto.getIsUp()) {
             throw new BadRequestException(ResponseType.REQUEST_NOT_VALID);
         }
-        userCount.update(CountType.POST, dto.getIsUp());
+        userCount.updateCount(CountType.POST, dto.getIsUp());
     }
 
     public CheckResponseDto isDuplicateEmail(CheckEmailRequestDto checkEmailRequest) {
@@ -108,6 +114,12 @@ public class UserService {
     public CheckResponseDto isDuplicateAccountName(CheckAccountRequestDto checkAccountRequest) {
         boolean result = isExistAccountName(checkAccountRequest.getAccountName());
         return CheckResponseDto.of(result);
+    }
+
+    public void checkExistUser(Long userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new NotFoundException(ResponseType.USER_NOT_EXIST_ID);
+        }
     }
 
     private LoginResponseDto socialLogin(String email, AuthType authType) {

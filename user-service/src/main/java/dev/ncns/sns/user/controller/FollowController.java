@@ -2,10 +2,10 @@ package dev.ncns.sns.user.controller;
 
 import dev.ncns.sns.common.controller.ApiController;
 import dev.ncns.sns.common.domain.ResponseEntity;
-import dev.ncns.sns.user.common.SecurityUtil;
 import dev.ncns.sns.user.dto.response.UserSummaryResponseDto;
 import dev.ncns.sns.user.service.FollowService;
 import dev.ncns.sns.user.service.UserService;
+import dev.ncns.sns.user.util.SecurityUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -37,7 +37,7 @@ public class FollowController extends ApiController {
     @Operation(summary = "팔로우/언팔로우 요청", description = "팔로우 중인 경우 -> 언팔로우 요청, 팔로우 중이 아닌 경우 -> 팔로우 요청")
     @PostMapping("/follow/{targetId}")
     public ResponseEntity<String> requestFollow(@PathVariable final Long targetId) {
-        Long currentUserId = SecurityUtil.getCurrentMemberId();
+        Long currentUserId = SecurityUtil.getCurrentUserId();
         String data = followService.requestFollow(currentUserId, targetId);
         return getSuccessResponse(data);
     }

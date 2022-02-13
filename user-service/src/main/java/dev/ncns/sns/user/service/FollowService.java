@@ -62,7 +62,8 @@ public class FollowService {
         if (isUp == false && (userCount.getFollowingCount() <= 0 || targetCount.getFollowerCount() <= 0)) {
             throw new BadRequestException(ResponseType.REQUEST_NOT_VALID);
         }
-        userCount.update(CountType.FOLLOWING, isUp);
-        targetCount.update(CountType.FOLLOWER, isUp);
+        userCount.updateCount(CountType.FOLLOWING, isUp);
+        targetCount.updateCount(CountType.FOLLOWER, isUp);
     }
+
 }
