@@ -39,6 +39,10 @@ public class FeedDocument {
     @NotNull
     private List<Long> followings;
 
+    @Field("subscribing")
+    @NotNull
+    private List<Long> subscribing;
+
     @Field("feeds")
     @NotNull
     private List<Feed> feeds;
@@ -47,13 +51,12 @@ public class FeedDocument {
     public FeedDocument(Long userId) {
         this.userId = userId;
         this.followings = new ArrayList<Long>();
+        this.subscribing = new ArrayList<Long>();
         this.feeds = new ArrayList<Feed>();
-        // TODO: 수정
     }
 
     public void updateFeed(List<Feed> newFeeds) {
         this.feeds.addAll(newFeeds);
-        // TODO:: newFeeds.foreach(f -> 기존피드.push(f))
     }
 
     public void updateFollowings(Long followingId, boolean isAdd) {
@@ -61,7 +64,9 @@ public class FeedDocument {
             this.followings.add(followingId);
         }
         else {
-            this.followings.remove(followingId); // TODO: By index 인지 Object인지
+            this.followings.remove(followingId); // TODO: By index 인지 Object인지 테스트
         }
     }
+
+    // TODO: subscribe update
 }

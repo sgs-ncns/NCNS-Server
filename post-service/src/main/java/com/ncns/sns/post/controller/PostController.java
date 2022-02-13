@@ -2,12 +2,13 @@ package com.ncns.sns.post.controller;
 
 
 import com.ncns.sns.post.common.SecurityUtil;
+import com.ncns.sns.post.domain.Post;
 import com.ncns.sns.post.dto.request.*;
 import com.ncns.sns.post.dto.response.PostDetailResponseDto;
 import com.ncns.sns.post.dto.response.PostResponseDto;
 import com.ncns.sns.post.service.CommentService;
+import com.ncns.sns.post.service.FeedFeignService;
 import com.ncns.sns.post.service.PostService;
-import dev.ncns.sns.common.annotation.NonAuthorize;
 import dev.ncns.sns.common.domain.ResponseEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,12 +29,16 @@ public class PostController {
 
     private final PostService postService;
     private final CommentService commentService;
+    private final FeedFeignService feedFeignService;
     private final UserFeignClient userFeignClient;
+    private final FeedFeignClient feedFeignClient;
 
     @PostMapping
     public ResponseEntity<?> createPost(@Validated @RequestBody CreatePostRequestDto dto) {
-        postService.createPost(dto);
+        Post post = postService.createPost(dto);
         userFeignClient.updateUserPostCount(new UpdateUserPostCountDto(SecurityUtil.getCurrentMemberId(), true));
+        PostResponseDto postDto = feedFeignService.createSubscribeFeed(post);
+        feedFeignClient.updateSubscribeFeed(postDto);
         return ResponseEntity.successResponse(port);
     }
 
@@ -85,5 +90,11 @@ public class PostController {
     public ResponseEntity<String> likePost(@PathVariable Long postId) {
         String data = postService.requestLikePost(postId);
         return ResponseEntity.successResponse(port, data);
+    }
+
+    @PostMapping("/feed")
+    public List<PostResponseDto> getNewFeeds(@RequestBody FeedPullRequestDto dto) {
+        List<PostResponseDto> newFeeds = feedFeignService.getNewFeeds(dto);
+        return newFeeds;
     }
 }
