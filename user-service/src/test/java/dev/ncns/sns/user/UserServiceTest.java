@@ -1,15 +1,11 @@
 package dev.ncns.sns.user;
 
 import dev.ncns.sns.user.domain.AuthType;
-import dev.ncns.sns.user.domain.Status;
-import dev.ncns.sns.user.domain.UserCount;
-import dev.ncns.sns.user.domain.Users;
+import dev.ncns.sns.user.dto.request.SignupRequestDto;
 import dev.ncns.sns.user.dto.response.UserResponseDto;
 import dev.ncns.sns.user.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -24,15 +20,8 @@ public class UserServiceTest extends UserApplicationTests {
 
     @Test
     void signUp() throws Exception {
-        Users user = Users.builder()
-                .accountName(accountName)
-                .nickname(nickname)
-                .email(email)
-                .password(password)
-                .status(Status.USER)
-                .authType(AuthType.LOCAL)
-                .build();
-        userService.signUp(user);
+        SignupRequestDto request = new SignupRequestDto(accountName, nickname, email, password, AuthType.LOCAL);
+        userService.signUp(request);
     }
 
     @Test
@@ -43,8 +32,4 @@ public class UserServiceTest extends UserApplicationTests {
         assertEquals(2, user.getFollowingCount());
     }
 
-//    @Test
-    void postCount() {
-
-    }
 }
