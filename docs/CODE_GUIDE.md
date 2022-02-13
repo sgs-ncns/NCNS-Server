@@ -45,6 +45,7 @@
   
 ## 2. 담당 서버 및 기능
   - **Config 서버**
+    - Spring Cloud 에서 사용되는 설정 관리를  서버입니다.
     - discovery client 등 모든 서비스에서 중복되는 설정을 중앙화했습니다.
     - 배포 환경별 DB 설정 관리합니다.
     - spring actuator를 이용해 실시간 변경 사항 반영합니다.
@@ -82,7 +83,9 @@
 common 모듈에는 전역적으로 사용되는 `ResponseEntity`, `Exception Handler`, `Authorize annotaion` 등이 포함되었습니다.<br><br>
 <관련 코드>
 
- common
+ [common-module](https://github.com/sgs-ncns/NCNS-Server/tree/review-document-yoojeong/common-service/src/main/java/dev/ncns/sns/common) <br>
+ [common-module/ResponseEntity](https://github.com/sgs-ncns/NCNS-Server/blob/review-document-yoojeong/common-service/src/main/java/dev/ncns/sns/common/domain/ResponseEntity.java) <br>
+ [common-module/ExceptionControllerAdvice](https://github.com/sgs-ncns/NCNS-Server/blob/review-document-yoojeong/common-service/src/main/java/dev/ncns/sns/common/exception/ExceptionControllerAdvice.java)
  
 #### 2) Authorized User
 대부분의 CUD 요청은 게이트웨이에서 토큰을 파싱해 헤더에 담아둔 인증 정보를 기반으로 권한을 검증합니다.<br>
@@ -91,7 +94,8 @@ common 모듈에는 전역적으로 사용되는 `ResponseEntity`, `Exception Ha
 서버간 통신이나 회원가입 등 인증정보를 필요로 하지 않는 특정 요청들이 있고, 클라이언트 요청과 관련된 공통 작업이기 때문에 `filter`가 아닌 `Interceptor`를 선택했습니다.
 
 <관련 코드>
- interceptor
+
+ [AuthorizationInterceptor](https://github.com/sgs-ncns/NCNS-Server/blob/review-document-yoojeong/user-service/src/main/java/dev/ncns/sns/user/config/interceptor/AuthorizationInterceptor.java)
  
 #### 3) ERD 설계
 댓글, 좋아요, 팔로우/팔로워 등 많은 row를 가질 확률이 높은 테이블들이 있습니다.<br>
@@ -101,9 +105,9 @@ SNS 서비스는 read 요청이 빈번하기 때문에 count 쿼리의 부담이
 
 <관련 코드>
 
-  post
-  hashtag
-  postservice
+  [post entity](https://github.com/sgs-ncns/NCNS-Server/blob/review-document-yoojeong/post-service/src/main/java/com/ncns/sns/post/domain/Post.java)  <br>
+  [hashtag entity](https://github.com/sgs-ncns/NCNS-Server/blob/review-document-yoojeong/post-service/src/main/java/com/ncns/sns/post/domain/Hashtag.java) <br>
+  [postservice](https://github.com/sgs-ncns/NCNS-Server/blob/review-document-yoojeong/post-service/src/main/java/com/ncns/sns/post/service/PostService.java) <br>
 
 #### 4) `CQRS(Command and Query Responsibility Segregation)` 정책 적용
 위에서 언급했듯 sns 서비스의 특성상 read 요청이 매우 많습니다. 때문에 MSA 구조의 장점을 살려 CUD(Command)와 R(Query)의 책임을 분리하는 CQRS 패턴을 적용했습니다.<br>
@@ -115,7 +119,8 @@ SNS 서비스는 read 요청이 빈번하기 때문에 count 쿼리의 부담이
  
  <관련 코드>
  
- feed
+ [FeedController](https://github.com/sgs-ncns/NCNS-Server/blob/review-document-yoojeong/feed-service/src/main/java/dev/ncns/sns/feed/controller/FeedController.java) <br>
+ [Post/FeedFeignService](https://github.com/sgs-ncns/NCNS-Server/blob/review-document-yoojeong/post-service/src/main/java/com/ncns/sns/post/service/FeedFeignService.java)
  
  ## (appendix) 그 외의 고민들
  
