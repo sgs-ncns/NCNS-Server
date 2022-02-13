@@ -3,10 +3,7 @@ package dev.ncns.sns.user.controller;
 import dev.ncns.sns.common.annotation.NonAuthorize;
 import dev.ncns.sns.common.domain.ResponseEntity;
 import dev.ncns.sns.user.common.SecurityUtil;
-import dev.ncns.sns.user.dto.request.LoginRequestDto;
-import dev.ncns.sns.user.dto.request.ProfileUpdateRequestDto;
-import dev.ncns.sns.user.dto.request.SignupRequestDto;
-import dev.ncns.sns.user.dto.request.UpdateUserPostCountDto;
+import dev.ncns.sns.user.dto.request.*;
 import dev.ncns.sns.user.dto.response.LoginResponseDto;
 import dev.ncns.sns.user.dto.response.UserResponseDto;
 import dev.ncns.sns.user.dto.response.UserSummaryResponseDto;
@@ -32,6 +29,7 @@ public class UserController {
 
     private final UserService userService;
     private final FollowService followService;
+    private final FeedFeignClient feedFeignClient;
 
     @NonAuthorize
     @PostMapping
@@ -71,10 +69,13 @@ public class UserController {
     }
 
     @PostMapping("/follow/{targetId}")
-    public ResponseEntity<String> requestFollow(@PathVariable final Long targetId) {
+    public ResponseEntity<String> requestFollow(@PathVariable Long targetId) {
         Long currentUserId = SecurityUtil.getCurrentMemberId();
-        String data = followService.requestFollow(currentUserId, targetId);
-        return ResponseEntity.successResponse(port, data);
+        Boolean isAdd = followService.requestFollow(currentUserId, targetId);
+
+        FollowUpdateRequestDto dto = FollowUpdateRequestDto.of(currentUserId,targetId,isAdd);
+        feedFeignClient.updateFollowingList(dto);
+        return ResponseEntity.successResponse(port, isAdd ? "follow" : "unfollow");
     }
 
     /** Auth 서버로부터 로그인 정보 검증을 요청받는 Endpoint 입니다. */

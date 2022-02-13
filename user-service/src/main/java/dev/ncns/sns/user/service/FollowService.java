@@ -36,10 +36,23 @@ public class FollowService {
      * 팔로우 정보를 추가/삭제하고, 나의 팔로잉 수와 상대의 팔로워 수를 업데이트합니다.
      */
     @Transactional
-    public String requestFollow(Long userId, Long targetId) {
+    public Boolean requestFollow(Long userId, Long targetId) {
         isSameUser(userId, targetId);
         Follow followData = followRepository.findByUserIdAndTargetId(userId, targetId);
         return followData == null ? follow(userId, targetId) : unFollow(followData);
+    }
+
+    private Boolean follow(Long userId, Long targetId) {
+        Follow follow = Follow.builder().userId(userId).targetId(targetId).build();
+        followRepository.save(follow);
+        updateFollowCount(userId, targetId, true);
+        return true;
+    }
+
+    private Boolean unFollow(Follow followData) {
+        updateFollowCount(followData.getUserId(), followData.getTargetId(), false);
+        followRepository.delete(followData);
+        return false;
     }
 
     private void isSameUser(Long userId, Long targetId) {
@@ -47,20 +60,6 @@ public class FollowService {
             throw new BadRequestException(ResponseType.REQUEST_NOT_VALID);
         }
     }
-
-    private String follow(Long userId, Long targetId) {
-        Follow follow = Follow.builder().userId(userId).targetId(targetId).build();
-        followRepository.save(follow);
-        updateFollowCount(userId, targetId, true);
-        return "follow";
-    }
-
-    private String unFollow(Follow followData) {
-        updateFollowCount(followData.getUserId(), followData.getTargetId(), false);
-        followRepository.delete(followData);
-        return "unfollow";
-    }
-
 
     private void updateFollowCount(Long userId, Long targetId, boolean isUp) {
         UserCount userCount = userCountRepository.findByUserId(userId);

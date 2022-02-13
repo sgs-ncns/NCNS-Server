@@ -33,7 +33,7 @@ public class PostService {
      * 새 post 와 post count 를 생성합니다.
      */
     @Transactional
-    public void createPost(CreatePostRequestDto dto) {
+    public Post createPost(CreatePostRequestDto dto) {
         String hashtags = saveHashTag(dto.getHashtag());
 
         Post post = postRepository.save(dto.toEntity(hashtags));
@@ -42,6 +42,8 @@ public class PostService {
             dto.getUsertag().forEach(userId -> saveUserTag(post.getId(), userId));
         }
         postCountRepository.save(new PostCount(post.getId()));
+        // TODO: Post 객체 feign -> Kafka Topic 전송으로 전환
+        return post;
     }
 
     @Transactional
