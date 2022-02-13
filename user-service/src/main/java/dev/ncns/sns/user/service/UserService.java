@@ -10,7 +10,9 @@ import dev.ncns.sns.user.domain.UserCount;
 import dev.ncns.sns.user.domain.Users;
 import dev.ncns.sns.user.dto.request.LoginRequestDto;
 import dev.ncns.sns.user.dto.request.ProfileUpdateRequestDto;
+import dev.ncns.sns.user.dto.request.SignupRequestDto;
 import dev.ncns.sns.user.dto.request.UpdateUserPostCountDto;
+import dev.ncns.sns.user.dto.response.LoginResponseDto;
 import dev.ncns.sns.user.dto.response.UserResponseDto;
 import dev.ncns.sns.user.dto.response.UserSummaryResponseDto;
 import dev.ncns.sns.user.repository.UserCountRepository;
@@ -87,19 +89,17 @@ public class UserService {
                 .map(id -> new UserSummaryResponseDto(getUserById(id)))
                 .collect(Collectors.toList());
     }
+
     /**
      * Auth 서버에서 로그인 요청 정보를 받아 검증합니다.
      * 소셜로 회원가입한 사용자는 소셜 로그인/이메일 로그인/계정 로그인을 사용 할 수 있습니다.
      * 자체 회원가입을 이용한 사용자는 이메일 로그인/계정 로그인만 사용할 수 있습니다.
-     *
+     * <p>
      * 소셜 로그인(Google, Apple) 을 요청한 경우 가입 여부와 소셜로 가입한 사용자인지를 검증합니다.
      * 이메일/계정 로그인 요청은 가입 여부와 비밀번호 일치 여부를 검증합니다.
      */
     public LoginResponseDto handleLoginRequest(LoginRequestDto loginRequest) {
         AuthType authType = loginRequest.getAuthType();
-
-    public Long handleLoginRequest(LoginRequestDto dto) {
-        AuthType authType = dto.getAuthType();
         switch (authType) {
             case GOOGLE:
             case APPLE:
