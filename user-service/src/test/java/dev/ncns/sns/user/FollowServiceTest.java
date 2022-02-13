@@ -1,5 +1,6 @@
 package dev.ncns.sns.user;
 
+import dev.ncns.sns.user.dto.response.UserSummaryResponseDto;
 import dev.ncns.sns.user.service.FollowService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +22,9 @@ public class FollowServiceTest extends UserApplicationTests {
     public void getFollowingList() {
         Long userId = 2L;
 
-        List<Long> followingIdList = followService.getFollowingIdList(userId);
-        for (Long id : followingIdList) {
-            System.out.println(id);
+        List<UserSummaryResponseDto> followingIdList = followService.getFollowingList(userId);
+        for (UserSummaryResponseDto user : followingIdList) {
+            System.out.println(user.getId());
         }
     }
 
@@ -31,10 +32,9 @@ public class FollowServiceTest extends UserApplicationTests {
     public void getFollowerList() {
         Long userId = 3L;
 
-        List<Long> followerIdList = followService.getFollowerIdList(userId);
-        for (Long id : followerIdList) {
-            System.out.println(id);
+        List<UserSummaryResponseDto> followerIdList = followService.getFollowerList(userId);
+        for (UserSummaryResponseDto user : followerIdList) {
+            System.out.println(user.getId());
         }
     }
-
 }

@@ -39,15 +39,7 @@ public class UserCount {
         this.subscribingCount = 0L;
     }
 
-    public void updateCount(CountType countType, boolean isUp) {
-        if (isUp) {
-            increaseCount(countType);
-        } else {
-            decreaseCount(countType);
-        }
-    }
-
-    private void increaseCount(CountType countType) {
+    public void increaseCount(CountType countType) {
         switch (countType) {
             case POST:
                 this.postCount++;
@@ -64,7 +56,7 @@ public class UserCount {
         }
     }
 
-    private void decreaseCount(CountType countType) {
+    public void decreaseCount(CountType countType) {
         switch (countType) {
             case POST:
                 this.postCount--;

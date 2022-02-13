@@ -12,7 +12,6 @@ import dev.ncns.sns.user.dto.response.CheckResponseDto;
 import dev.ncns.sns.user.dto.response.LoginResponseDto;
 import dev.ncns.sns.user.dto.response.UserResponseDto;
 import dev.ncns.sns.user.dto.response.UserSummaryResponseDto;
-import dev.ncns.sns.user.repository.UserCountRepository;
 import dev.ncns.sns.user.repository.UserRepository;
 import dev.ncns.sns.user.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
@@ -28,13 +27,14 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final UserCountRepository userCountRepository;
+
+    private final UserCountService userCountService;
     private final PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)
     public UserResponseDto getUserInfo(Long userId) {
         Users user = getUserById(userId);
-        UserCount userCount = userCountRepository.findByUserId(userId);
+        UserCount userCount = userCountService.getUserCount(userId);
         return UserResponseDto.of(user, userCount);
     }
 
@@ -49,15 +49,13 @@ public class UserService {
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user = userRepository.save(user);
-        UserCount userCount = UserCount.builder().userId(user.getId()).build();
-        userCountRepository.save(userCount);
+        userCountService.createUserCount(user.getId());
     }
 
     @Transactional
-    public void signOut() {
-        Users user = getUserById(SecurityUtil.getCurrentUserId());
-        userCountRepository.deleteByUserId(user.getId());
-        userRepository.delete(user);
+    public void signOut(Long userId) {
+        userCountService.deleteUserCount(userId);
+        userRepository.delete(getUserById(userId));
     }
 
     @Transactional
@@ -66,22 +64,14 @@ public class UserService {
         user.updateProfile(dto.getAccountName(), dto.getNickname(), dto.getIntroduce());
     }
 
-    public List<UserSummaryResponseDto> getFollowingList(List<Long> followingIdList) {
-        return followingIdList.stream()
-                .map(id -> new UserSummaryResponseDto(getUserById(id)))
-                .collect(Collectors.toList());
+    public CheckResponseDto isDuplicateEmail(CheckEmailRequestDto checkEmailRequest) {
+        boolean result = isExistEmail(checkEmailRequest.getEmail());
+        return CheckResponseDto.of(result);
     }
 
-    public List<UserSummaryResponseDto> getFollowerList(List<Long> followerIdList) {
-        return followerIdList.stream()
-                .map(id -> new UserSummaryResponseDto(getUserById(id)))
-                .collect(Collectors.toList());
-    }
-
-    public List<UserSummaryResponseDto> getUserSummaryList(List<Long> userIdList) {
-        return userIdList.stream()
-                .map(id -> new UserSummaryResponseDto(getUserById(id)))
-                .collect(Collectors.toList());
+    public CheckResponseDto isDuplicateAccountName(CheckAccountRequestDto checkAccountRequest) {
+        boolean result = isExistAccountName(checkAccountRequest.getAccountName());
+        return CheckResponseDto.of(result);
     }
 
     public LoginResponseDto handleLoginRequest(LoginRequestDto loginRequest) {
@@ -99,27 +89,19 @@ public class UserService {
 
     @Transactional
     public void updatePostCount(UpdateUserPostCountDto dto) {
-        UserCount userCount = userCountRepository.findByUserId(dto.getUserId());
-        if (userCount.getPostCount() <= 0 && !dto.getIsUp()) {
-            throw new BadRequestException(ResponseType.REQUEST_NOT_VALID);
-        }
-        userCount.updateCount(CountType.POST, dto.getIsUp());
-    }
-
-    public CheckResponseDto isDuplicateEmail(CheckEmailRequestDto checkEmailRequest) {
-        boolean result = isExistEmail(checkEmailRequest.getEmail());
-        return CheckResponseDto.of(result);
-    }
-
-    public CheckResponseDto isDuplicateAccountName(CheckAccountRequestDto checkAccountRequest) {
-        boolean result = isExistAccountName(checkAccountRequest.getAccountName());
-        return CheckResponseDto.of(result);
+        userCountService.updateUserCount(dto.getUserId(), CountType.POST, dto.getIsUp());
     }
 
     public void checkExistUser(Long userId) {
         if (!userRepository.existsById(userId)) {
             throw new NotFoundException(ResponseType.USER_NOT_EXIST_ID);
         }
+    }
+
+    public List<UserSummaryResponseDto> getUserSummaryList(List<Long> userIdList) {
+        return userIdList.stream()
+                .map(id -> new UserSummaryResponseDto(getUserById(id)))
+                .collect(Collectors.toList());
     }
 
     private LoginResponseDto socialLogin(String email, AuthType authType) {

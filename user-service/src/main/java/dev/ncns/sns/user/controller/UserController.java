@@ -7,7 +7,10 @@ import dev.ncns.sns.user.dto.request.*;
 import dev.ncns.sns.user.dto.response.CheckResponseDto;
 import dev.ncns.sns.user.dto.response.LoginResponseDto;
 import dev.ncns.sns.user.dto.response.UserResponseDto;
+import dev.ncns.sns.user.service.FollowService;
+import dev.ncns.sns.user.service.SubscribeService;
 import dev.ncns.sns.user.service.UserService;
+import dev.ncns.sns.user.util.SecurityUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -20,6 +23,8 @@ import springfox.documentation.annotations.ApiIgnore;
 public class UserController extends ApiController {
 
     private final UserService userService;
+    private final FollowService followService;
+    private final SubscribeService subscribeService;
 
     @Operation(summary = "회원가입")
     @NonAuthorize
@@ -32,7 +37,12 @@ public class UserController extends ApiController {
     @Operation(summary = "회원탈퇴")
     @DeleteMapping
     public ResponseEntity<Void> signOut() {
-        userService.signOut();
+        Long currentUserId = SecurityUtil.getCurrentUserId();
+        userService.checkExistUser(currentUserId);
+        followService.deleteFollow(currentUserId);
+        subscribeService.deleteSubscribe(currentUserId);
+        // TODO: post 삭제
+        userService.signOut(currentUserId);
         return getSuccessResponse();
     }
 

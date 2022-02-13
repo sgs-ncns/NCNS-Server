@@ -5,7 +5,6 @@ import dev.ncns.sns.common.exception.BadRequestException;
 import dev.ncns.sns.user.domain.CountType;
 import dev.ncns.sns.user.domain.Subscribe;
 import dev.ncns.sns.user.domain.SubscribeStatus;
-import dev.ncns.sns.user.domain.UserCount;
 import dev.ncns.sns.user.dto.response.StatusResponseDto;
 import dev.ncns.sns.user.dto.response.UserSummaryResponseDto;
 import dev.ncns.sns.user.repository.FollowRepository;
@@ -20,11 +19,11 @@ import java.util.List;
 @Service
 public class SubscribeService {
 
-    private final UserService userService;
-    private final UserCountService userCountService;
-
     private final SubscribeRepository subscribeRepository;
     private final FollowRepository followRepository;
+
+    private final UserService userService;
+    private final UserCountService userCountService;
 
     @Transactional(readOnly = true)
     public List<UserSummaryResponseDto> getSubscribingList(Long userId) {
@@ -35,13 +34,27 @@ public class SubscribeService {
     @Transactional
     public StatusResponseDto requestSubscribe(Long userId, Long targetId) {
         checkSameUser(userId, targetId);
+        userService.checkExistUser(targetId);
         checkFollowTarget(userId, targetId);
         Subscribe subscribe = subscribeRepository.findByUserIdAndTargetId(userId, targetId);
         return subscribe == null ? subscribe(userId, targetId) : unsubscribe(subscribe);
     }
 
+    @Transactional
+    public void deleteSubscribe(Long userId) {
+        subscribeRepository.deleteAllByUserId(userId);
+
+        List<Long> subscriberList = getSubscriberIdList(userId);
+        userCountService.decreaseSubscribingCount(subscriberList);
+        subscribeRepository.deleteAllByTargetId(userId);
+    }
+
     private List<Long> getSubscribingIdList(Long userId) {
         return subscribeRepository.findTargetIdByUserId(userId);
+    }
+
+    private List<Long> getSubscriberIdList(Long userId) {
+        return subscribeRepository.findUserIdByTargetId(userId);
     }
 
     private void checkSameUser(Long userId, Long targetId) {
@@ -70,11 +83,7 @@ public class SubscribeService {
     }
 
     private void updateSubscribeCount(Long userId, boolean isUp) {
-        UserCount userCount = userCountService.getUserCount(userId);
-        if (!isUp) {
-            userCountService.checkNegativeNumber(userCount.getSubscribingCount());
-        }
-        userCount.updateCount(CountType.SUBSCRIBING, isUp);
+        userCountService.updateUserCount(userId, CountType.SUBSCRIBING, isUp);
     }
 
 }
