@@ -31,23 +31,23 @@ public class FollowService {
     }
 
     @Transactional
-    public String requestFollow(Long userId, Long targetId) {
+    public Boolean requestFollow(Long userId, Long targetId) {
         isSameUser(userId, targetId);
         Follow followData = followRepository.findByUserIdAndTargetId(userId, targetId);
         return followData == null ? follow(userId, targetId) : unFollow(followData);
     }
 
-    private String follow(Long userId, Long targetId) {
+    private Boolean follow(Long userId, Long targetId) {
         Follow follow = Follow.builder().userId(userId).targetId(targetId).build();
         followRepository.save(follow);
         updateFollowCount(userId, targetId, true);
-        return "follow";
+        return true;
     }
 
-    private String unFollow(Follow followData) {
+    private Boolean unFollow(Follow followData) {
         updateFollowCount(followData.getUserId(), followData.getTargetId(), false);
         followRepository.delete(followData);
-        return "unfollow";
+        return false;
     }
 
     private void isSameUser(Long userId, Long targetId) {

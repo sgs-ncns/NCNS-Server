@@ -1,7 +1,9 @@
 package dev.ncns.sns.feed.controller;
 
+import dev.ncns.sns.common.annotation.NonAuthorize;
 import dev.ncns.sns.common.domain.ResponseEntity;
 import dev.ncns.sns.feed.dto.request.CreateFeedDocumentRequestDto;
+import dev.ncns.sns.feed.dto.request.FollowUpdateRequestDto;
 import dev.ncns.sns.feed.service.FeedService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,6 +29,12 @@ public class FeedController {
     public ResponseEntity<Void> createFeedDocument(@Validated @RequestBody CreateFeedDocumentRequestDto dto) {
         feedService.createFeedDocument(dto);
         return ResponseEntity.successResponse(port);
+    }
+
+    @NonAuthorize
+    @PostMapping("/follow")
+    public void updateFollowingList(@RequestBody FollowUpdateRequestDto dto) {
+        feedService.updateFollowings(dto);
     }
 
 }
