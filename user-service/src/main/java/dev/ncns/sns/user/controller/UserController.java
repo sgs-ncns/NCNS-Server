@@ -35,8 +35,8 @@ public class UserController {
 
     @NonAuthorize
     @PostMapping
-    public ResponseEntity<?> signUp(@Validated @RequestBody SignupRequestDto signupDto) {
-        userService.signUp(signupDto.toEntity());
+    public ResponseEntity<Void> signUp(@Validated @RequestBody SignupRequestDto signupRequest) {
+        userService.signUp(signupRequest);
         return ResponseEntity.successResponse(port);
     }
 
@@ -81,15 +81,15 @@ public class UserController {
     @ApiIgnore
     @NonAuthorize
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto dto) {
-        LoginResponseDto data = new LoginResponseDto(userService.handleLoginRequest(dto));
-        return ResponseEntity.successResponse(port, data);
+    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto loginRequest) {
+        LoginResponseDto loginResponse = userService.handleLoginRequest(loginRequest);
+        return ResponseEntity.successResponse(port, loginResponse);
     }
 
     /** Post 서버로부터 post 생성/삭제 시 post count 컬럼 업데이트를 요청받는 Endpoint 입니다. */
     @NonAuthorize
     @PostMapping("/count/post")
-    public ResponseEntity<Void> updateUserPostCount(@RequestBody UpdateUserPostCountDto dto){
+    public ResponseEntity<Void> updateUserPostCount(@RequestBody UpdateUserPostCountDto dto) {
         userService.updatePostCount(dto);
         return ResponseEntity.successResponse(port);
     }

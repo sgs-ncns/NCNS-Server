@@ -4,8 +4,10 @@ import lombok.Getter;
 
 @Getter
 public enum AuthType {
+
     GOOGLE,
     APPLE,
     LOCAL,
-    UNKNOWN
+    ACCOUNT
+
 }

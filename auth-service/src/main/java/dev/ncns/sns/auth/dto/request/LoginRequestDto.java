@@ -4,8 +4,8 @@ import dev.ncns.sns.auth.domain.AuthType;
 import dev.ncns.sns.auth.dto.validate.AccountLoginValidation;
 import dev.ncns.sns.auth.dto.validate.LocalLoginValidation;
 import dev.ncns.sns.auth.dto.validate.SocialLoginValidation;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -13,7 +13,7 @@ import javax.validation.constraints.Null;
 import javax.validation.constraints.Pattern;
 
 @Getter
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class LoginRequestDto {
 
     private static final String emailFormat = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+.[A-Za-z]{2,6}$";
@@ -32,8 +32,12 @@ public class LoginRequestDto {
     @Null(groups = SocialLoginValidation.class)
     private final String password;
 
-    @NotNull(message = "소셜로그인 타입을 지정하세요.", groups = SocialLoginValidation.class)
+    @NotNull(message = "가입 유형을 지정하세요.", groups = SocialLoginValidation.class)
     @Null(groups = {LocalLoginValidation.class, AccountLoginValidation.class})
-    private final AuthType authType;
+    private AuthType authType;
+
+    public void setAuthType(AuthType authType) {
+        this.authType = authType;
+    }
 
 }

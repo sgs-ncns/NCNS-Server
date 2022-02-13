@@ -17,7 +17,7 @@ public class AuthService {
     private final RedisManager redisManager;
 
     public AuthResponseDto issueToken(LoginResponseDto loginResponse) {
-        String userId = loginResponse.getId().toString();
+        String userId = loginResponse.getUserId().toString();
         String accessToken = jwtProvider.createAccessToken(userId);
         String refreshToken = jwtProvider.createRefreshToken(userId);
 
