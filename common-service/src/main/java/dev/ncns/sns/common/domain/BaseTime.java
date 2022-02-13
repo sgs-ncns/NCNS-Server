@@ -1,4 +1,4 @@
-package dev.ncns.sns.user.domain;
+package dev.ncns.sns.common.domain;
 
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
@@ -25,4 +25,5 @@ public class BaseTime {
 
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
+
 }

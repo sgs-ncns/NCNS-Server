@@ -92,4 +92,12 @@ public class UserController extends ApiController {
         return getSuccessResponse();
     }
 
+    @ApiIgnore
+    @GetMapping("/access")
+    public ResponseEntity<Void> updateUserAccessAt() {
+        Long currentUserId = SecurityUtil.getCurrentUserId();
+        userService.updateUserAccessAt(currentUserId);
+        return getSuccessResponse();
+    }
+
 }

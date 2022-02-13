@@ -2,7 +2,7 @@ package dev.ncns.sns.user.dto.request;
 
 import dev.ncns.sns.user.domain.AuthType;
 import dev.ncns.sns.user.domain.Status;
-import dev.ncns.sns.user.domain.Users;
+import dev.ncns.sns.user.domain.User;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -32,8 +32,8 @@ public class SignUpRequestDto {
     @NotNull(message = "가입 유형을 지정하세요.")
     private final AuthType authType;
 
-    public Users toEntity() {
-        return Users.builder()
+    public User toEntity() {
+        return User.builder()
                 .accountName(accountName)
                 .nickname(nickname)
                 .email(email)

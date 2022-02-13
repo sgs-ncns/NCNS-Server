@@ -5,8 +5,8 @@ import dev.ncns.sns.common.exception.BadRequestException;
 import dev.ncns.sns.common.exception.NotFoundException;
 import dev.ncns.sns.user.domain.AuthType;
 import dev.ncns.sns.user.domain.CountType;
+import dev.ncns.sns.user.domain.User;
 import dev.ncns.sns.user.domain.UserCount;
-import dev.ncns.sns.user.domain.Users;
 import dev.ncns.sns.user.dto.request.*;
 import dev.ncns.sns.user.dto.response.CheckResponseDto;
 import dev.ncns.sns.user.dto.response.LoginResponseDto;
@@ -33,14 +33,14 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public UserResponseDto getUserInfo(Long userId) {
-        Users user = getUserById(userId);
+        User user = getUserById(userId);
         UserCount userCount = userCountService.getUserCount(userId);
         return UserResponseDto.of(user, userCount);
     }
 
     @Transactional
     public void signUp(SignUpRequestDto signUpRequest) {
-        Users user = signUpRequest.toEntity();
+        User user = signUpRequest.toEntity();
         if (isExistEmail(user.getEmail())) {
             throw new BadRequestException(ResponseType.USER_DUPLICATED_EMAIL);
         }
@@ -60,7 +60,7 @@ public class UserService {
 
     @Transactional
     public void updateProfile(UpdateProfileRequestDto dto) {
-        Users user = userRepository.getById(SecurityUtil.getCurrentUserId());
+        User user = userRepository.getById(SecurityUtil.getCurrentUserId());
         user.updateProfile(dto.getAccountName(), dto.getNickname(), dto.getIntroduce());
     }
 
@@ -104,36 +104,41 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
+    public void updateUserAccessAt(Long userId) {
+        getUserById(userId).updateAccessAt();
+    }
+
     private LoginResponseDto socialLogin(String email, AuthType authType) {
-        Users user = getUserByEmail(email);
+        User user = getUserByEmail(email);
         checkAuthTypeMatch(user.getAuthType(), authType);
         return LoginResponseDto.of(user.getId(), user.getAccountName());
     }
 
     private LoginResponseDto localLogin(String email, String password) {
-        Users user = getUserByEmail(email);
+        User user = getUserByEmail(email);
         checkAuthTypeMatch(user.getAuthType(), AuthType.LOCAL);
         checkPasswordMatch(password, user.getPassword());
         return LoginResponseDto.of(user.getId(), user.getAccountName());
     }
 
     private LoginResponseDto accountLogin(String accountName, String password) {
-        Users user = getUserByAccountName(accountName);
+        User user = getUserByAccountName(accountName);
         checkPasswordMatch(password, user.getPassword());
         return LoginResponseDto.of(user.getId(), user.getAccountName());
     }
 
-    private Users getUserById(Long id) {
+    private User getUserById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(ResponseType.USER_NOT_EXIST_ID));
     }
 
-    private Users getUserByEmail(String email) {
+    private User getUserByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException(ResponseType.USER_NOT_EXIST_EMAIL));
     }
 
-    private Users getUserByAccountName(String accountName) {
+    private User getUserByAccountName(String accountName) {
         return userRepository.findByAccountName(accountName)
                 .orElseThrow(() -> new NotFoundException(ResponseType.USER_NOT_EXIST_ACCOUNT_NAME));
     }
