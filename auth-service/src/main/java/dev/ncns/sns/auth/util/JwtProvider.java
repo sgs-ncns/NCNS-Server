@@ -76,6 +76,11 @@ public class JwtProvider {
         return authorization.replace(Constants.AUTH_HEADER_VALUE_PREFIX, "");
     }
 
+    public boolean isRefreshTokenExpiration(String token) {
+        long expirationDate = getExpirationDate(token);
+        return expirationDate <= (REFRESH_TOKEN_VALIDITY / 3);
+    }
+
     private String createToken(String subject, long tokenValidity) {
         Claims claims = Jwts.claims().setSubject(subject);
         Date currentDate = new Date();
