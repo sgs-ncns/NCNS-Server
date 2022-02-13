@@ -32,6 +32,11 @@ public class FeedController {
         return ResponseEntity.successResponse(port);
     }
 
+    /**
+     * (Default) Pull 정책 Endpoint
+     * 피드 요청 시 Post 서버로 현재 피드 정보 업데이트를 요청합니다.
+     * 새 피드 정보를 갱신 후 pagination 해서 리턴합니다.
+     */
     @GetMapping("/{userId}")
     public ResponseEntity<List<Feed>> getFeed(@PathVariable Long userId) {
         try {
@@ -43,6 +48,11 @@ public class FeedController {
         return ResponseEntity.successResponse(port, feeds);
     }
 
+    /**
+     * Push 정책 Endpoint (Event Sourcing)
+     * Post 서버에서 게시글 등록 시 작성자를 팔로우하는 모든 유저에 대해 피드 서버에 업데이트 요청합니다.
+     * 피드 서버는 해당 게시글 작성자를 구독하는 유저의 피드에 게시글을 추가합니다.
+     */
     @NonAuthorize
     @PostMapping("/update")
     public void updateSubscribeFeed(@RequestBody PostResponseDto dto) {
