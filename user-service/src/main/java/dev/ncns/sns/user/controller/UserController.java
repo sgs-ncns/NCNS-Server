@@ -26,7 +26,7 @@ public class UserController extends ApiController {
     private final FollowService followService;
     private final SubscribeService subscribeService;
 
-    @Operation(summary = "회원가입")
+    @Operation(summary = "회원가입", description = "auth type(APPLE|GOOGLE|LOCAL)")
     @NonAuthorize
     @PostMapping
     public ResponseEntity<Void> signUp(@Validated @RequestBody SignUpRequestDto signUpRequest) {
@@ -60,7 +60,7 @@ public class UserController extends ApiController {
         return getSuccessResponse(userResponse);
     }
 
-    @Operation(summary = "이메일 중복 체크")
+    @Operation(summary = "이메일 중복 체크", description = "중복인 경우 true, 중복이 아닌 경우 false")
     @NonAuthorize
     @PostMapping("/email")
     public ResponseEntity<CheckResponseDto> checkDuplicateEmail(@RequestBody CheckEmailRequestDto checkEmailRequest) {
@@ -68,7 +68,7 @@ public class UserController extends ApiController {
         return getSuccessResponse(checkResponse);
     }
 
-    @Operation(summary = "계정 이름 중복 체크")
+    @Operation(summary = "계정 이름 중복 체크", description = "중복인 경우 true, 중복이 아닌 경우 false")
     @NonAuthorize
     @PostMapping("/account")
     public ResponseEntity<CheckResponseDto> checkDuplicateAccountName(@RequestBody CheckAccountRequestDto checkAccountRequest) {
