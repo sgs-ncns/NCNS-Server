@@ -47,12 +47,13 @@ public class AuthService {
 
         compareToken(refreshToken, cachedRefreshToken);
 
-        String newAccessToken = jwtProvider.createAccessToken(userId);
-        String newRefreshToken = jwtProvider.createRefreshToken(userId);
+        String accessToken = jwtProvider.createAccessToken(userId);
 
-        redisManager.setValue(jwtProvider.getRefreshTokenKey(userId), newRefreshToken, JwtProvider.REFRESH_TOKEN_VALIDITY);
-
-        return AuthResponseDto.of(newAccessToken, newRefreshToken);
+        if (jwtProvider.isRefreshTokenExpiration(refreshToken)) {
+            refreshToken = jwtProvider.createRefreshToken(userId);
+            redisManager.setValue(jwtProvider.getRefreshTokenKey(userId), refreshToken, JwtProvider.REFRESH_TOKEN_VALIDITY);
+        }
+        return AuthResponseDto.of(accessToken, refreshToken);
     }
 
     private void validateToken(String token) {

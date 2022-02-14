@@ -12,6 +12,7 @@ import java.util.Arrays;
 public class CookieManager {
 
     private static final int COOKIE_VALIDITY = 60 * 60; // 1hours
+    private static final int COOKIE_EXPIRATION = 0;
 
     public Cookie createCookie(String name, String value) {
         Cookie cookie = new Cookie(name, value);
@@ -27,6 +28,13 @@ public class CookieManager {
                 .filter(cookie -> cookie.getName().equals(name))
                 .findAny()
                 .orElseThrow(() -> new NotFoundException(ResponseType.AUTH_NOT_FOUND_COOKIE_KEY));
+    }
+
+    public Cookie deleteCookie(Cookie cookie) {
+        cookie.setValue(null);
+        cookie.setMaxAge(COOKIE_EXPIRATION);
+        cookie.setPath("/");
+        return cookie;
     }
 
 }
