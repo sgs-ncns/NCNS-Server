@@ -7,9 +7,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum SubscribeStatus {
 
-    SUBSCRIBE("subscribe"),
-    UNSUBSCRIBE("unsubscribe");
+    SUBSCRIBE(true),
+    UNSUBSCRIBE(false);
 
-    private final String value;
+    private final Boolean value;
 
 }

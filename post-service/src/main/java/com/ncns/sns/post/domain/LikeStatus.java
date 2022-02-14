@@ -1,14 +1,14 @@
-package dev.ncns.sns.user.domain;
+package com.ncns.sns.post.domain;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum FollowStatus {
+public enum LikeStatus {
 
-    FOLLOW(true),
-    UNFOLLOW(false);
+    LIKE(true),
+    DISLIKE(false);
 
     private final Boolean value;
 

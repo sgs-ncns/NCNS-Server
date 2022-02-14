@@ -5,6 +5,7 @@ import com.ncns.sns.post.domain.Post;
 import com.ncns.sns.post.dto.request.*;
 import com.ncns.sns.post.dto.response.PostDetailResponseDto;
 import com.ncns.sns.post.dto.response.PostResponseDto;
+import com.ncns.sns.post.dto.response.StatusResponseDto;
 import com.ncns.sns.post.service.CommentService;
 import com.ncns.sns.post.service.FeedFeignService;
 import com.ncns.sns.post.service.PostService;
@@ -83,8 +84,8 @@ public class PostController extends ApiController {
     }
 
     @PostMapping("/like/{postId}")
-    public ResponseEntity<String> likePost(@PathVariable Long postId) {
-        String data = postService.requestLikePost(postId);
+    public ResponseEntity<StatusResponseDto> likePost(@PathVariable Long postId) {
+        StatusResponseDto data = postService.requestLikePost(postId);
         return getSuccessResponse(data);
     }
 

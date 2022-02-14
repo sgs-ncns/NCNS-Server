@@ -1,4 +1,4 @@
-package dev.ncns.sns.user.dto.response;
+package com.ncns.sns.post.dto.response;
 
 import lombok.Builder;
 import lombok.Getter;

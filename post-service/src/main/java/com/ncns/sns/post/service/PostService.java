@@ -1,5 +1,6 @@
 package com.ncns.sns.post.service;
 
+import com.ncns.sns.post.dto.response.StatusResponseDto;
 import com.ncns.sns.post.util.SecurityUtil;
 import com.ncns.sns.post.domain.*;
 import com.ncns.sns.post.dto.request.CreatePostRequestDto;
@@ -82,7 +83,7 @@ public class PostService {
     }
 
     @Transactional
-    public String requestLikePost(Long postId) {
+    public StatusResponseDto requestLikePost(Long postId) {
         Long likeData = likeRepository.isLiked(postId, SecurityUtil.getCurrentUserId());
         return likeData == null ? like(postId) : disLike(likeData, postId);
     }
@@ -95,18 +96,18 @@ public class PostService {
         return post;
     }
 
-    private String disLike(Long like, Long postId) {
+    private StatusResponseDto disLike(Long like, Long postId) {
         likeRepository.deleteById(like);
         PostCount postCount = postCountRepository.findByPostId(postId);
         if (postCount.getLikeCount() <= 0) {
             throw new BadRequestException(ResponseType.REQUEST_NOT_VALID);
         }
         postCount.update(CountType.LIKE, false);
-        return "disLike";
+        return StatusResponseDto.of(LikeStatus.DISLIKE.getValue());
     }
 
     @Transactional
-    private String like(Long postId) {
+    private StatusResponseDto like(Long postId) {
         Like like = Like.builder()
                 .postId(postId)
                 .userId(SecurityUtil.getCurrentUserId())
@@ -114,7 +115,7 @@ public class PostService {
         likeRepository.save(like);
         PostCount postCount = postCountRepository.findByPostId(postId);
         postCount.update(CountType.LIKE, true);
-        return "like";
+        return StatusResponseDto.of(LikeStatus.DISLIKE.getValue());
     }
 
     private void saveUserTag(Long postId, Long userId) {
