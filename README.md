@@ -43,7 +43,7 @@
 
 ## 📦 DataBase Modeling
 
-<img src="https://user-images.githubusercontent.com/33328991/153784439-70c82a29-f624-4c02-a22f-61368bd6accb.png" width="80%">
+<img src="https://user-images.githubusercontent.com/75432228/153796421-6f6da44c-8c43-4449-abf4-478ff43b0477.png" width="80%">
 
 <br>
 
