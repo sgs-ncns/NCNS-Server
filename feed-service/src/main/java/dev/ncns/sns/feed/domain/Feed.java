@@ -10,6 +10,7 @@ public class Feed {
 
     private Long postId;
     private Long userId;
+    private String accountName;
     private String images;
     private String content;
     private LocalDateTime createdAt;

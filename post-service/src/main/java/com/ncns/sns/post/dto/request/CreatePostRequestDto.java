@@ -14,6 +14,9 @@ import java.util.List;
 @Getter
 public class CreatePostRequestDto {
 
+    @NotBlank(message = "계정명은 공백일 수 없습니다.")
+    private final String accountName;
+
     @NotBlank(message = "이미지는 공백일 수 없습니다.")
     private final String image_path;
 
@@ -26,6 +29,7 @@ public class CreatePostRequestDto {
     public Post toEntity(String hashtag) {
         return Post.builder()
                 .userId(SecurityUtil.getCurrentUserId())
+                .accountName(accountName)
                 .image_path(image_path)
                 .content(content)
                 .hashtag(hashtag)

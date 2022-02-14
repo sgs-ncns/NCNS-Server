@@ -12,6 +12,7 @@ public class PostResponseDto {
 
     private Long postId;
     private Long userId;
+    private String accountName;
     private String image_path;
     private String content;
     private LocalDateTime createdAt;
@@ -22,6 +23,7 @@ public class PostResponseDto {
     private PostResponseDto(Post post, PostCount postCount) {
         this.postId = post.getId();
         this.userId = post.getUserId();
+        this.accountName = post.getAccountName();
         this.image_path = post.getImage_path();
         this.content = post.getContent();
         this.createdAt = post.getCreatedAt();
