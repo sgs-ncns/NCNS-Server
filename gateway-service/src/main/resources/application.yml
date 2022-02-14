@@ -23,7 +23,7 @@ open-api:
     resources:
       - auth-service,/api/auth,auth-server
       - user-service,/api/user,user-server
-      - post-service./api/post,post-server
+      - post-service,/api/post,post-server
 
 ---
 # Gateway
