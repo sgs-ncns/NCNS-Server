@@ -83,7 +83,8 @@
 common 모듈에는 전역적으로 사용되는 `ResponseEntity`, `Exception Handler`, `Authorize annotaion` 등이 포함되었습니다.<br><br>
 <관련 코드>
 
- [common-module](https://github.com/sgs-ncns/NCNS-Server/tree/review-document-yoojeong/common-service/src/main/java/dev/ncns/sns/common) <br>
+  [build.gradle](https://github.com/sgs-ncns/NCNS-Server/blob/review-document-yoojeong/build.gradle)<br>
+  [settings.gradle](https://github.com/sgs-ncns/NCNS-Server/blob/review-document-yoojeong/settings.gradle) <br>
  [common-module/ResponseEntity](https://github.com/sgs-ncns/NCNS-Server/blob/review-document-yoojeong/common-service/src/main/java/dev/ncns/sns/common/domain/ResponseEntity.java) <br>
  [common-module/ExceptionControllerAdvice](https://github.com/sgs-ncns/NCNS-Server/blob/review-document-yoojeong/common-service/src/main/java/dev/ncns/sns/common/exception/ExceptionControllerAdvice.java)
  
