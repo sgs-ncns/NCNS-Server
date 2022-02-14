@@ -2,7 +2,7 @@ package dev.ncns.sns.user.dto.request;
 
 import dev.ncns.sns.user.domain.AuthType;
 import dev.ncns.sns.user.domain.Status;
-import dev.ncns.sns.user.domain.Users;
+import dev.ncns.sns.user.domain.User;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -12,7 +12,7 @@ import javax.validation.constraints.Pattern;
 
 @Getter
 @RequiredArgsConstructor
-public class SignupRequestDto {
+public class SignUpRequestDto {
 
     private static final String emailFormat = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+.[A-Za-z]{2,6}$";
 
@@ -32,8 +32,8 @@ public class SignupRequestDto {
     @NotNull(message = "가입 유형을 지정하세요.")
     private final AuthType authType;
 
-    public Users toEntity() {
-        return Users.builder()
+    public User toEntity() {
+        return User.builder()
                 .accountName(accountName)
                 .nickname(nickname)
                 .email(email)
