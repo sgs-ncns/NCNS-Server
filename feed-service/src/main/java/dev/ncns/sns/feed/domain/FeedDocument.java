@@ -11,7 +11,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.mongodb.core.mapping.FieldType;
 
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,8 +26,7 @@ public class FeedDocument {
     private String id;
 
     @Field
-    @NotNull
-    @Indexed(unique=true)
+    @Indexed(unique = true)
     private Long userId;
 
     @Field("updated_at")
@@ -36,15 +34,12 @@ public class FeedDocument {
     private LocalDateTime updatedAt;
 
     @Field("followings")
-    @NotNull
     private List<Long> followings;
 
     @Field("subscribing")
-    @NotNull
     private List<Long> subscribing;
 
     @Field("feeds")
-    @NotNull
     private List<Feed> feeds;
 
     @Builder
@@ -60,10 +55,9 @@ public class FeedDocument {
     }
 
     public void updateFollowings(Long followingId, boolean isAdd) {
-        if(isAdd){
+        if (isAdd) {
             this.followings.add(followingId);
-        }
-        else {
+        } else {
             this.followings.remove(followingId); // TODO: By index 인지 Object인지 테스트
         }
     }

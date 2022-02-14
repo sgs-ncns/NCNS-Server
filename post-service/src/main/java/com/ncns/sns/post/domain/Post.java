@@ -29,7 +29,7 @@ public class Post extends BaseTime {
     private Long userId;
 
     @Column(nullable = false)
-    private String image;
+    private String image_path;
 
     @Column(columnDefinition = "TEXT")
     private String content;
@@ -38,10 +38,10 @@ public class Post extends BaseTime {
     private String hashtag;
 
     @Builder
-    public Post(Long userId, String content, String image, String hashtag) {
+    public Post(Long userId, String content, String image_path, String hashtag) {
         this.userId = userId;
         this.content = content;
-        this.image = image;
+        this.image_path = image_path;
         this.hashtag = hashtag;
     }
 

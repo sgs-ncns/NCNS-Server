@@ -12,17 +12,17 @@ public class PostResponseDto {
 
     private Long postId;
     private Long userId;
-    private String images;
+    private String image_path;
     private String content;
     private LocalDateTime createdAt;
-    private int likeCount;
-    private int commentCount;
+    private Long likeCount;
+    private Long commentCount;
 
     @Builder
     private PostResponseDto(Post post, PostCount postCount) {
         this.postId = post.getId();
         this.userId = post.getUserId();
-        this.images = post.getImage();
+        this.image_path = post.getImage_path();
         this.content = post.getContent();
         this.createdAt = post.getCreatedAt();
         this.likeCount = postCount.getLikeCount();
