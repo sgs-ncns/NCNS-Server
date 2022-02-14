@@ -1,6 +1,5 @@
 package dev.ncns.sns.user.domain;
 
-import dev.ncns.sns.common.domain.BaseTime;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;

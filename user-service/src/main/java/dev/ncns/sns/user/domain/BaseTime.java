@@ -1,4 +1,4 @@
-package dev.ncns.sns.common.domain;
+package dev.ncns.sns.user.domain;
 
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
