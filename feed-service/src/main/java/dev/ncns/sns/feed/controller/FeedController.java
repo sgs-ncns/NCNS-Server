@@ -23,16 +23,10 @@ public class FeedController extends ApiController {
 
     private final FeedService feedService;
 
-    @PostMapping
-    public ResponseEntity<Void> createFeedDocument(@Validated @RequestBody CreateFeedDocumentRequestDto dto) {
-        feedService.createFeedDocument(dto);
-        return ResponseEntity.successResponse(port);
-    }
-
-    @GetMapping("/{userId}")
-    public ResponseEntity<List<Feed>> getFeed(@PathVariable Long userId) {
+    @GetMapping
+    public ResponseEntity<List<Feed>> getFeed() {
         try {
-            feedService.updateFeedByPull(userId);
+            feedService.updateFeedByPull(SecurityUtil.getCurrentUserId());
         } catch (Exception e) {
             // TODO: 업데이트 실패 리스폰스 처리
         }
