@@ -1,20 +1,18 @@
 package dev.ncns.sns.user.controller;
 
 import dev.ncns.sns.common.annotation.NonAuthorize;
+import dev.ncns.sns.common.controller.ApiController;
 import dev.ncns.sns.common.domain.ResponseEntity;
-import dev.ncns.sns.user.common.SecurityUtil;
-import dev.ncns.sns.user.dto.request.LoginRequestDto;
-import dev.ncns.sns.user.dto.request.ProfileUpdateRequestDto;
-import dev.ncns.sns.user.dto.request.SignupRequestDto;
-import dev.ncns.sns.user.dto.request.UpdateUserPostCountDto;
+import dev.ncns.sns.user.dto.request.*;
+import dev.ncns.sns.user.dto.response.CheckResponseDto;
 import dev.ncns.sns.user.dto.response.LoginResponseDto;
 import dev.ncns.sns.user.dto.response.UserResponseDto;
-import dev.ncns.sns.user.dto.response.UserSummaryResponseDto;
 import dev.ncns.sns.user.service.FollowService;
+import dev.ncns.sns.user.service.SubscribeService;
 import dev.ncns.sns.user.service.UserService;
+import dev.ncns.sns.user.util.SecurityUtil;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -27,7 +25,6 @@ public class UserController extends ApiController {
     private final UserService userService;
     private final FollowService followService;
     private final SubscribeService subscribeService;
-    private final FeedFeignClient feedFeignClient;
 
     @Operation(summary = "회원가입")
     @NonAuthorize
