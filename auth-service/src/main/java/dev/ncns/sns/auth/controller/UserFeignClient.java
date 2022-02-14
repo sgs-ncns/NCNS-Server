@@ -5,6 +5,7 @@ import dev.ncns.sns.auth.dto.request.LoginRequestDto;
 import dev.ncns.sns.auth.dto.response.LoginResponseDto;
 import dev.ncns.sns.common.domain.ResponseEntity;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -13,5 +14,8 @@ public interface UserFeignClient {
 
     @PostMapping(value = "/api/user/login")
     ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto loginRequest);
+
+    @GetMapping(value = "/api/user/access")
+    ResponseEntity<Void> updateUserAccessAt();
 
 }

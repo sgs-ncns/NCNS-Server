@@ -1,6 +1,6 @@
 package dev.ncns.sns.user.dto.response;
 
-import dev.ncns.sns.user.domain.Users;
+import dev.ncns.sns.user.domain.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,7 +14,7 @@ public class UserSummaryResponseDto {
     private String accountName;
     private String nickname;
 
-    public UserSummaryResponseDto(Users user) {
+    public UserSummaryResponseDto(User user) {
         BeanUtils.copyProperties(user, this);
     }
 }

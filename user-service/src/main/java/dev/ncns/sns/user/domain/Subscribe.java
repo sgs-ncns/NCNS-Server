@@ -1,16 +1,18 @@
 package dev.ncns.sns.user.domain;
 
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Getter
-@ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "follow")
+@Table(name = "subscribe")
 @Entity
-public class Follow {
+public class Subscribe {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,7 +28,7 @@ public class Follow {
     public LocalDateTime createdAt;
 
     @Builder
-    public Follow(Long userId, Long targetId) {
+    public Subscribe(Long userId, Long targetId) {
         this.userId = userId;
         this.targetId = targetId;
         this.createdAt = LocalDateTime.now();

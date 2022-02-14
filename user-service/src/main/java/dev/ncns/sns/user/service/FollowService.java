@@ -4,9 +4,10 @@ import dev.ncns.sns.common.domain.ResponseType;
 import dev.ncns.sns.common.exception.BadRequestException;
 import dev.ncns.sns.user.domain.CountType;
 import dev.ncns.sns.user.domain.Follow;
-import dev.ncns.sns.user.domain.UserCount;
+import dev.ncns.sns.user.domain.FollowStatus;
+import dev.ncns.sns.user.dto.response.StatusResponseDto;
+import dev.ncns.sns.user.dto.response.UserSummaryResponseDto;
 import dev.ncns.sns.user.repository.FollowRepository;
-import dev.ncns.sns.user.repository.UserCountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,51 +19,70 @@ import java.util.List;
 public class FollowService {
 
     private final FollowRepository followRepository;
-    private final UserCountRepository userCountRepository;
+
+    private final UserService userService;
+    private final UserCountService userCountService;
 
     @Transactional(readOnly = true)
-    public List<Long> getFollowingIdList(Long userId) {
-        return followRepository.findTargetIdByUserId(userId);
+    public List<UserSummaryResponseDto> getFollowingList(Long userId) {
+        userService.checkExistUser(userId);
+        return userService.getUserSummaryList(getFollowingIdList(userId));
     }
 
     @Transactional(readOnly = true)
-    public List<Long> getFollowerIdList(Long userId) {
-        return followRepository.findUserIdByTargetId(userId);
+    public List<UserSummaryResponseDto> getFollowerList(Long userId) {
+        userService.checkExistUser(userId);
+        return userService.getUserSummaryList(getFollowerIdList(userId));
     }
 
     @Transactional
-    public Boolean requestFollow(Long userId, Long targetId) {
-        isSameUser(userId, targetId);
+    public StatusResponseDto requestFollow(Long userId, Long targetId) {
+        checkSameUser(userId, targetId);
+        userService.checkExistUser(targetId);
         Follow followData = followRepository.findByUserIdAndTargetId(userId, targetId);
-        return followData == null ? follow(userId, targetId) : unFollow(followData);
+        return followData == null ? follow(userId, targetId) : unfollow(followData);
     }
 
-    private Boolean follow(Long userId, Long targetId) {
-        Follow follow = Follow.builder().userId(userId).targetId(targetId).build();
-        followRepository.save(follow);
-        updateFollowCount(userId, targetId, true);
-        return true;
+    @Transactional
+    public void deleteFollow(Long userId) {
+        List<Long> followingList = getFollowingIdList(userId);
+        userCountService.decreaseFollowerCount(followingList);
+        followRepository.deleteAllByUserId(userId);
+
+        List<Long> followerList = getFollowerIdList(userId);
+        userCountService.decreaseFollowingCount(followerList);
+        followRepository.deleteAllByTargetId(userId);
     }
 
-    private Boolean unFollow(Follow followData) {
-        updateFollowCount(followData.getUserId(), followData.getTargetId(), false);
-        followRepository.delete(followData);
-        return false;
+    private List<Long> getFollowingIdList(Long userId) {
+        return followRepository.findTargetIdByUserId(userId);
     }
 
-    private void isSameUser(Long userId, Long targetId) {
+    private List<Long> getFollowerIdList(Long userId) {
+        return followRepository.findUserIdByTargetId(userId);
+    }
+
+    private void checkSameUser(Long userId, Long targetId) {
         if (userId.equals(targetId)) {
             throw new BadRequestException(ResponseType.REQUEST_NOT_VALID);
         }
     }
 
+    private StatusResponseDto follow(Long userId, Long targetId) {
+        Follow follow = Follow.builder().userId(userId).targetId(targetId).build();
+        followRepository.save(follow);
+        updateFollowCount(userId, targetId, true);
+        return StatusResponseDto.of(FollowStatus.FOLLOW.getValue());
+    }
+
+    private StatusResponseDto unfollow(Follow followData) {
+        updateFollowCount(followData.getUserId(), followData.getTargetId(), false);
+        followRepository.delete(followData);
+        return StatusResponseDto.of(FollowStatus.UNFOLLOW.getValue());
+    }
+
     private void updateFollowCount(Long userId, Long targetId, boolean isUp) {
-        UserCount userCount = userCountRepository.findByUserId(userId);
-        UserCount targetCount = userCountRepository.findByUserId(targetId);
-        if (isUp == false && (userCount.getFollowingCount() <= 0 || targetCount.getFollowerCount() <= 0)) {
-            throw new BadRequestException(ResponseType.REQUEST_NOT_VALID);
-        }
-        userCount.update(CountType.FOLLOWING, isUp);
-        targetCount.update(CountType.FOLLOWER, isUp);
+        userCountService.updateUserCount(userId, CountType.FOLLOWING, isUp);
+        userCountService.updateUserCount(targetId, CountType.FOLLOWER, isUp);
     }
 }
