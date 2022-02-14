@@ -1,6 +1,6 @@
 package com.ncns.sns.post.service;
 
-import com.ncns.sns.post.common.SecurityUtil;
+import com.ncns.sns.post.util.SecurityUtil;
 import com.ncns.sns.post.domain.Comment;
 import com.ncns.sns.post.domain.CountType;
 import com.ncns.sns.post.domain.PostCount;
@@ -58,7 +58,7 @@ public class CommentService {
     private Comment checkAuthorization(Long commentId) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new NotFoundException(ResponseType.POST_NOT_EXIST_COMMENT));
-        if (comment.getUserId() != (SecurityUtil.getCurrentMemberId())) {
+        if (comment.getUserId() != (SecurityUtil.getCurrentUserId())) {
             throw new BadRequestException(ResponseType.POST_NOT_AUTHOR);
         }
         return comment;

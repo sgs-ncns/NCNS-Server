@@ -1,6 +1,7 @@
 package com.ncns.sns.post.service;
 
-import com.ncns.sns.post.common.SecurityUtil;
+import com.ncns.sns.post.dto.response.StatusResponseDto;
+import com.ncns.sns.post.util.SecurityUtil;
 import com.ncns.sns.post.domain.*;
 import com.ncns.sns.post.dto.request.CreatePostRequestDto;
 import com.ncns.sns.post.dto.request.UpdatePostRequestDto;
@@ -26,7 +27,7 @@ public class PostService {
     private final UserTagRepository userTagRepository;
 
     @Transactional
-    public void createPost(CreatePostRequestDto dto) {
+    public Post createPost(CreatePostRequestDto dto) {
         String hashtags = saveHashTag(dto.getHashtag());
 
         Post post = postRepository.save(dto.toEntity(hashtags));
@@ -35,6 +36,8 @@ public class PostService {
             dto.getUsertag().forEach(userId -> saveUserTag(post.getId(), userId));
         }
         postCountRepository.save(new PostCount(post.getId()));
+        // TODO: Post 객체 feign -> Kafka Topic 전송으로 전환
+        return post;
     }
 
     @Transactional
@@ -80,39 +83,39 @@ public class PostService {
     }
 
     @Transactional
-    public String requestLikePost(Long postId) {
-        Long likeData = likeRepository.isLiked(postId, SecurityUtil.getCurrentMemberId());
+    public StatusResponseDto requestLikePost(Long postId) {
+        Long likeData = likeRepository.isLiked(postId, SecurityUtil.getCurrentUserId());
         return likeData == null ? like(postId) : disLike(likeData, postId);
     }
 
     private Post checkAuthorization(Long postId) {
         Post post = getPostById(postId);
-        if (!post.getUserId().equals(SecurityUtil.getCurrentMemberId())) {
+        if (!post.getUserId().equals(SecurityUtil.getCurrentUserId())) {
             throw new BadRequestException(ResponseType.POST_NOT_AUTHOR);
         }
         return post;
     }
 
-    private String disLike(Long like, Long postId) {
+    private StatusResponseDto disLike(Long like, Long postId) {
         likeRepository.deleteById(like);
         PostCount postCount = postCountRepository.findByPostId(postId);
         if (postCount.getLikeCount() <= 0) {
             throw new BadRequestException(ResponseType.REQUEST_NOT_VALID);
         }
         postCount.update(CountType.LIKE, false);
-        return "disLike";
+        return StatusResponseDto.of(LikeStatus.DISLIKE.getValue());
     }
 
     @Transactional
-    private String like(Long postId) {
+    private StatusResponseDto like(Long postId) {
         Like like = Like.builder()
                 .postId(postId)
-                .userId(SecurityUtil.getCurrentMemberId())
+                .userId(SecurityUtil.getCurrentUserId())
                 .build();
         likeRepository.save(like);
         PostCount postCount = postCountRepository.findByPostId(postId);
         postCount.update(CountType.LIKE, true);
-        return "like";
+        return StatusResponseDto.of(LikeStatus.DISLIKE.getValue());
     }
 
     private void saveUserTag(Long postId, Long userId) {

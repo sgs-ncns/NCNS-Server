@@ -24,16 +24,16 @@ public class PostCount {
     private Long postId;
 
     @Column(nullable = false)
-    private int likeCount;
+    private Long likeCount;
 
     @Column(nullable = false)
-    private int commentCount;
+    private Long commentCount;
 
     @Builder
     public PostCount(Long postId) {
         this.postId = postId;
-        this.likeCount = 0;
-        this.commentCount = 0;
+        this.likeCount = 0L;
+        this.commentCount = 0L;
     }
 
     public void update(CountType countType, boolean isUp) {
@@ -43,7 +43,7 @@ public class PostCount {
             } else {
                 this.likeCount--;
             }
-        } else if (countType == COMMENT){
+        } else if (countType == COMMENT) {
             if (isUp) {
                 this.commentCount++;
             } else {

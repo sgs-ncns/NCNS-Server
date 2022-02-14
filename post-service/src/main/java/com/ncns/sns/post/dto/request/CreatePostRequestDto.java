@@ -1,6 +1,6 @@
 package com.ncns.sns.post.dto.request;
 
-import com.ncns.sns.post.common.SecurityUtil;
+import com.ncns.sns.post.util.SecurityUtil;
 import com.ncns.sns.post.domain.Post;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,8 +14,11 @@ import java.util.List;
 @Getter
 public class CreatePostRequestDto {
 
+    @NotBlank(message = "계정명은 공백일 수 없습니다.")
+    private final String accountName;
+
     @NotBlank(message = "이미지는 공백일 수 없습니다.")
-    private final String image;
+    private final String image_path;
 
     private String content;
 
@@ -25,8 +28,9 @@ public class CreatePostRequestDto {
 
     public Post toEntity(String hashtag) {
         return Post.builder()
-                .userId(SecurityUtil.getCurrentMemberId())
-                .image(image)
+                .userId(SecurityUtil.getCurrentUserId())
+                .accountName(accountName)
+                .image_path(image_path)
                 .content(content)
                 .hashtag(hashtag)
                 .build();

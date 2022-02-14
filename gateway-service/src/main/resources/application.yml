@@ -1,13 +1,15 @@
 server:
   port: 9000
 spring:
+  profiles:
+    active: local
   application:
     name: gateway-service
   main:
     web-application-type: reactive
   config:
 #    import: "optional:configserver:http://localhost:9020"
-    import: "optional:configserver:http://15.165.198.76:9020"
+    import: "optional:configserver:http://13.125.196.101:9020"
 
 management:
   endpoints:
@@ -21,7 +23,7 @@ open-api:
     resources:
       - auth-service,/api/auth,auth-server
       - user-service,/api/user,user-server
-#      - post-service./api/post,post-server
+      - post-service./api/post,post-server
 
 ---
 # Gateway

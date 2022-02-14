@@ -85,5 +85,4 @@ public class FollowService {
         userCountService.updateUserCount(userId, CountType.FOLLOWING, isUp);
         userCountService.updateUserCount(targetId, CountType.FOLLOWER, isUp);
     }
-
 }

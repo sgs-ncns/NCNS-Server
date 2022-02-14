@@ -6,14 +6,14 @@ import lombok.Getter;
 @Getter
 public class StatusResponseDto {
 
-    private final String status;
+    private final Boolean status;
 
     @Builder
-    private StatusResponseDto(String status) {
+    private StatusResponseDto(Boolean status) {
         this.status = status;
     }
 
-    public static StatusResponseDto of(String status) {
+    public static StatusResponseDto of(Boolean status) {
         return StatusResponseDto.builder()
                 .status(status)
                 .build();

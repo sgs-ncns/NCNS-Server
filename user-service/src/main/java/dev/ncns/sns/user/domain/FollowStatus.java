@@ -7,9 +7,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum FollowStatus {
 
-    FOLLOW("follow"),
-    UNFOLLOW("unfollow");
+    FOLLOW(true),
+    UNFOLLOW(false);
 
-    private final String value;
+    private final Boolean value;
 
 }
