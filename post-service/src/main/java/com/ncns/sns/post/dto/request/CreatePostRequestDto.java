@@ -1,6 +1,6 @@
 package com.ncns.sns.post.dto.request;
 
-import com.ncns.sns.post.common.SecurityUtil;
+import com.ncns.sns.post.util.SecurityUtil;
 import com.ncns.sns.post.domain.Post;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,7 +25,7 @@ public class CreatePostRequestDto {
 
     public Post toEntity(String hashtag) {
         return Post.builder()
-                .userId(SecurityUtil.getCurrentMemberId())
+                .userId(SecurityUtil.getCurrentUserId())
                 .image(image)
                 .content(content)
                 .hashtag(hashtag)

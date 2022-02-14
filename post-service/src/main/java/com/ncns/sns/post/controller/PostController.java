@@ -32,7 +32,7 @@ public class PostController extends ApiController {
     @PostMapping
     public ResponseEntity<?> createPost(@Validated @RequestBody CreatePostRequestDto dto) {
         Post post = postService.createPost(dto);
-        userFeignClient.updateUserPostCount(new UpdateUserPostCountDto(SecurityUtil.getCurrentMemberId(), true));
+        userFeignClient.updateUserPostCount(new UpdateUserPostCountDto(SecurityUtil.getCurrentUserId(), true));
         PostResponseDto postDto = feedFeignService.createSubscribeFeed(post);
         feedFeignClient.updateSubscribeFeed(postDto);
         return getSuccessResponse();
@@ -47,7 +47,7 @@ public class PostController extends ApiController {
     @DeleteMapping("/{postId}")
     public ResponseEntity<Void> deletePost(@PathVariable Long postId) {
         postService.deletePost(postId);
-        userFeignClient.updateUserPostCount(new UpdateUserPostCountDto(SecurityUtil.getCurrentMemberId(), false));
+        userFeignClient.updateUserPostCount(new UpdateUserPostCountDto(SecurityUtil.getCurrentUserId(), false));
         return getSuccessResponse();
     }
 
