@@ -5,7 +5,7 @@
 |                                [장유정](https://github.com/rachel5004)                                |
 
 안녕하세요 :) SGS DevCamp 2기 NCNS 팀의 서버 개발을 맡은 장유정입니다!<br>
-해당 문서는 코드 리뷰를 위한 간략한 가이드이며, 프로젝트에 대한 자세한 설명은 README.md 를 참고해주세요.<br>
+해당 문서는 코드 리뷰를 위한 간략한 가이드이며, 프로젝트에 대한 자세한 설명은 [README.md](https://github.com/sgs-ncns/NCNS-Server/blob/develop/README.md) 를 참고해주세요.<br>
 이 문서에서는 담당한 기능과 중점적으로 고민해서 개발한 부분, 그 과정에서 느낀 점 등을 기술했습니다.<br>
 
 
