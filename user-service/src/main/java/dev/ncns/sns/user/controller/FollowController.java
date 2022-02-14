@@ -2,6 +2,7 @@ package dev.ncns.sns.user.controller;
 
 import dev.ncns.sns.common.controller.ApiController;
 import dev.ncns.sns.common.domain.ResponseEntity;
+import dev.ncns.sns.user.dto.request.FollowUpdateRequestDto;
 import dev.ncns.sns.user.dto.response.StatusResponseDto;
 import dev.ncns.sns.user.dto.response.UserSummaryResponseDto;
 import dev.ncns.sns.user.service.FollowService;
@@ -18,6 +19,7 @@ import java.util.List;
 public class FollowController extends ApiController {
 
     private final FollowService followService;
+    private final FeedFeignClient feedFeignClient;
 
     @Operation(summary = "팔로잉 목록 조회")
     @GetMapping("/{userId}/following")
@@ -38,6 +40,8 @@ public class FollowController extends ApiController {
     public ResponseEntity<StatusResponseDto> requestFollow(@PathVariable final Long targetId) {
         Long currentUserId = SecurityUtil.getCurrentUserId();
         StatusResponseDto statusResponse = followService.requestFollow(currentUserId, targetId);
+        FollowUpdateRequestDto dto = FollowUpdateRequestDto.of(currentUserId,targetId,statusResponse.getStatus() );
+        feedFeignClient.updateFollowingList(dto);
         return getSuccessResponse(statusResponse);
     }
 
