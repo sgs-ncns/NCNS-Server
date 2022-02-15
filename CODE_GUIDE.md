@@ -10,7 +10,7 @@
 
 
 1. [프로젝트 구조](#1-프로젝트-구조)
-2. [담당 서버 및 기능](#2-담당-서버-및-기능)
+2. [개발 서버 및 기능](#2-개발-서버-및-기능)
 3. [아래 코드를 중점적으로 봐주세요!](#3-아래-코드를-중점적으로-봐주세요)
 4. [(appendix)  그 외의 고민들]((appendix)-그-외의-고민들)
 
@@ -26,7 +26,7 @@
 ├── user-service    # 유저 서버
 ├── feed-service    # 피드(읽기 전용) 서버
 |
-├── gradlew
+├── setting.gradle
 └── build.gradle
 
 ```
@@ -43,9 +43,20 @@
  <img src="https://img.shields.io/badge/Redis-DC382D?style=flat-square&logo=Redis&logoColor=white"/></a>
 
   
-## 2. 담당 서버 및 기능
+## 2. 개발 서버 및 기능
+
+
+> 저희 서버는 서로의 코드를 이해하고 따라가기 위해 큰 서비스별로 역할을 나누지 않고, 서로의 기능을 추가하고 리팩토링하며 개발을 진행하였습니다.<br>
+문제에 대해 함께 고민하고 서로의 코드를 리뷰하며 작업하였기 때문에 개인 담당 부분이라는 개념은 모호하지만, 가이드를 위해 베이스 코드 작성자 기준으로 임의로 분류한 역할임을 미리 알려드립니다.<br>
+
+
+
+![role](https://user-images.githubusercontent.com/75432228/154035377-30698cb2-8ee4-47f2-a62b-cc6f976bb754.png)
+
+
+
   - **Config 서버**
-    - Spring Cloud 에서 사용되는 설정 관리를  서버입니다.
+    - Spring Cloud 에서 사용되는 설정 관리를 서버입니다.
     - discovery client 등 모든 서비스에서 중복되는 설정을 중앙화했습니다.
     - 배포 환경별 DB 설정 관리합니다.
     - spring actuator를 이용해 실시간 변경 사항 반영합니다.
