@@ -17,6 +17,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import javax.validation.Valid;
+
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/user")
 @RestController
@@ -49,7 +51,8 @@ public class UserController extends ApiController {
     @Operation(summary = "사용자 정보 수정")
     @PatchMapping
     public ResponseEntity<Void> updateProfile(@RequestBody UpdateProfileRequestDto updateProfileRequest) {
-        userService.updateProfile(updateProfileRequest);
+        Long currentUserId = SecurityUtil.getCurrentUserId();
+        userService.updateProfile(currentUserId, updateProfileRequest);
         return getSuccessResponse();
     }
 
@@ -63,7 +66,7 @@ public class UserController extends ApiController {
     @Operation(summary = "이메일 중복 체크", description = "중복인 경우 true, 중복이 아닌 경우 false")
     @NonAuthorize
     @PostMapping("/email")
-    public ResponseEntity<CheckResponseDto> checkDuplicateEmail(@RequestBody CheckEmailRequestDto checkEmailRequest) {
+    public ResponseEntity<CheckResponseDto> checkDuplicateEmail(@Valid @RequestBody CheckEmailRequestDto checkEmailRequest) {
         CheckResponseDto checkResponse = userService.isDuplicateEmail(checkEmailRequest);
         return getSuccessResponse(checkResponse);
     }
@@ -71,7 +74,7 @@ public class UserController extends ApiController {
     @Operation(summary = "계정 이름 중복 체크", description = "중복인 경우 true, 중복이 아닌 경우 false")
     @NonAuthorize
     @PostMapping("/account")
-    public ResponseEntity<CheckResponseDto> checkDuplicateAccountName(@RequestBody CheckAccountRequestDto checkAccountRequest) {
+    public ResponseEntity<CheckResponseDto> checkDuplicateAccountName(@Valid @RequestBody CheckAccountRequestDto checkAccountRequest) {
         CheckResponseDto checkResponse = userService.isDuplicateAccountName(checkAccountRequest);
         return getSuccessResponse(checkResponse);
     }
