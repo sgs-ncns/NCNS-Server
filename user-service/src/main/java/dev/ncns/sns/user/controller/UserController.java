@@ -25,12 +25,15 @@ public class UserController extends ApiController {
     private final UserService userService;
     private final FollowService followService;
     private final SubscribeService subscribeService;
+    private final FeedFeignClient feedFeignClient;
 
     @Operation(summary = "회원가입", description = "auth type(APPLE|GOOGLE|LOCAL)")
     @NonAuthorize
     @PostMapping
     public ResponseEntity<Void> signUp(@Validated @RequestBody SignUpRequestDto signUpRequest) {
-        userService.signUp(signUpRequest);
+        Long userId = userService.signUp(signUpRequest);
+        CreateFeedDocumentRequestDto dto = CreateFeedDocumentRequestDto.of(userId);
+        feedFeignClient.createFeedDocument(dto);
         return getSuccessResponse();
     }
 

@@ -45,13 +45,15 @@ public class FeedDocument {
     @Builder
     public FeedDocument(Long userId) {
         this.userId = userId;
-        this.followings = new ArrayList<Long>();
-        this.subscribing = new ArrayList<Long>();
-        this.feeds = new ArrayList<Feed>();
+        this.updatedAt = LocalDateTime.now();
+        this.followings = new ArrayList<>();
+        this.subscribing = new ArrayList<>();
+        this.feeds = new ArrayList<>();
     }
 
     public void updateFeed(List<Feed> newFeeds) {
         this.feeds.addAll(newFeeds);
+        this.updatedAt = LocalDateTime.now();
     }
 
     public void updateFollowings(Long followingId, boolean isAdd) {
