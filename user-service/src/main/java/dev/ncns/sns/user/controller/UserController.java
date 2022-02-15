@@ -84,6 +84,7 @@ public class UserController extends ApiController {
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto loginRequest) {
         LoginResponseDto loginResponse = userService.handleLoginRequest(loginRequest);
+        userService.updateUserAccessAt(loginResponse.getUserId());
         return getSuccessResponse(loginResponse);
     }
 
@@ -96,10 +97,10 @@ public class UserController extends ApiController {
     }
 
     @ApiIgnore
-    @GetMapping("/access")
-    public ResponseEntity<Void> updateUserAccessAt() {
-        Long currentUserId = SecurityUtil.getCurrentUserId();
-        userService.updateUserAccessAt(currentUserId);
+    @NonAuthorize
+    @PutMapping("/access")
+    public ResponseEntity<Void> updateUserAccessAt(@RequestBody UpdateAccessAtRequestDto updateAccessAtRequest) {
+        userService.updateUserAccessAt(updateAccessAtRequest.getUserId());
         return getSuccessResponse();
     }
 
