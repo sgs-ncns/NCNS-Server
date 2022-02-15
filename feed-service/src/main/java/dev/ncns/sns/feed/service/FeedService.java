@@ -49,6 +49,7 @@ public class FeedService {
         List<Feed> newFeeds = responseDtoList.stream().map(PostResponseDto::toEntity).collect(Collectors.toList());
 
         feedDocument.updateFeed(newFeeds);
+        feedRepository.save(feedDocument);
     }
 
     @Transactional

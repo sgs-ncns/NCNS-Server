@@ -40,7 +40,7 @@ public class FollowController extends ApiController {
     public ResponseEntity<StatusResponseDto> requestFollow(@PathVariable final Long targetId) {
         Long currentUserId = SecurityUtil.getCurrentUserId();
         StatusResponseDto statusResponse = followService.requestFollow(currentUserId, targetId);
-        FollowUpdateRequestDto dto = FollowUpdateRequestDto.of(currentUserId,targetId,statusResponse.getStatus() );
+        FollowUpdateRequestDto dto = FollowUpdateRequestDto.of(currentUserId, targetId, statusResponse.getStatus());
         feedFeignClient.updateFollowingList(dto);
         return getSuccessResponse(statusResponse);
     }

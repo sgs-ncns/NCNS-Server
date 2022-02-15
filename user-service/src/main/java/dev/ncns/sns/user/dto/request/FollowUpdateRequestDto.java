@@ -1,12 +1,14 @@
 package dev.ncns.sns.user.dto.request;
 
 import lombok.Builder;
+import lombok.Getter;
 
+@Getter
 public class FollowUpdateRequestDto {
 
-    private Long userId;
-    private Long targetId;
-    private Boolean isAdd;
+    private final Long userId;
+    private final Long targetId;
+    private final Boolean isAdd;
 
     @Builder
     public FollowUpdateRequestDto(Long userId, Long targetId, Boolean isAdd) {
