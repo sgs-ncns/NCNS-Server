@@ -16,13 +16,13 @@ public class PostServiceTest {
 
     @Test
     void createPost() {
-        CreatePostRequestDto dto = new CreatePostRequestDto("2022-02-07");
+        CreatePostRequestDto dto = new CreatePostRequestDto();
         postService.createPost(dto);
     }
 
     @Test
     void updatePost() {
-        UpdatePostRequestDto dto = new UpdatePostRequestDto(4L, "updated");
+        UpdatePostRequestDto dto = new UpdatePostRequestDto();
         postService.updatePost(dto);
     }
 

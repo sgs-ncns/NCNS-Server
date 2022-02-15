@@ -13,7 +13,7 @@ public class PostResponseDto {
     private Long postId;
     private Long userId;
     private String accountName;
-    private String image_path;
+    private String imagePath;
     private String content;
     private LocalDateTime createdAt;
     private Long likeCount;
@@ -24,7 +24,7 @@ public class PostResponseDto {
         this.postId = post.getId();
         this.userId = post.getUserId();
         this.accountName = post.getAccountName();
-        this.image_path = post.getImage_path();
+        this.imagePath = post.getImagePath();
         this.content = post.getContent();
         this.createdAt = post.getCreatedAt();
         this.likeCount = postCount.getLikeCount();

@@ -11,7 +11,7 @@ public class PostResponseDto {
     private Long postId;
     private Long userId;
     private String accountName;
-    private String images;
+    private String imagePath;
     private String content;
     private LocalDateTime createdAt;
     private Long likeCount;
@@ -22,7 +22,7 @@ public class PostResponseDto {
                     .postId(this.postId)
                     .userId(this.userId)
                     .accountName(this.accountName)
-                    .images(this.images)
+                    .imagePath(this.imagePath)
                     .content(this.content)
                     .createdAt(this.createdAt)
                     .likeCount(this.likeCount)
