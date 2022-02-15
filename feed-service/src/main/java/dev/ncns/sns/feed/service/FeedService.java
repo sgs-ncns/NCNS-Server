@@ -60,6 +60,7 @@ public class FeedService {
                 List<Feed> temp = new ArrayList<>();
                 temp.add(dto.toEntity());
                 document.updateFeed(temp);
+                feedRepository.save(document);
             }
         });
     }
