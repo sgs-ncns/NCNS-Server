@@ -11,7 +11,7 @@ import java.util.Arrays;
 @Component
 public class CookieManager {
 
-    private static final int COOKIE_VALIDITY = 60 * 60; // 1hours
+    private static final int COOKIE_VALIDITY = 1000 * 60 * 60 * 24 * 15; // 15days
     private static final int COOKIE_EXPIRATION = 0;
 
     public Cookie createCookie(String name, String value) {

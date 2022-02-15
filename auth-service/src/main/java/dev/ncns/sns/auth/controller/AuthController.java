@@ -2,6 +2,7 @@ package dev.ncns.sns.auth.controller;
 
 import dev.ncns.sns.auth.domain.AuthType;
 import dev.ncns.sns.auth.dto.request.LoginRequestDto;
+import dev.ncns.sns.auth.dto.request.UpdateAccessAtRequestDto;
 import dev.ncns.sns.auth.dto.response.AuthLoginResponseDto;
 import dev.ncns.sns.auth.dto.response.AuthResponseDto;
 import dev.ncns.sns.auth.dto.response.LoginResponseDto;
@@ -75,9 +76,18 @@ public class AuthController extends ApiController {
 
     @Operation(summary = "AccessToken 재발급", description = "Cookie에 저장된 RefreshToken 검증 후 AccessToken 재발급")
     @GetMapping
-    public ResponseEntity<AuthResponseDto> reissue(HttpServletRequest httpServletRequest) {
+    public ResponseEntity<AuthResponseDto> reissue(HttpServletRequest httpServletRequest,
+                                                   HttpServletResponse httpServletResponse) {
         Cookie refreshToken = cookieManager.getCookie(httpServletRequest, Constants.REFRESH_TOKEN_NAME);
         AuthResponseDto authResponse = authService.reissueToken(refreshToken.getValue());
+
+        if (!refreshToken.getValue().equals(authResponse.getRefreshToken())) {
+            refreshToken = cookieManager.createCookie(Constants.REFRESH_TOKEN_NAME, authResponse.getRefreshToken());
+            httpServletResponse.addCookie(refreshToken);
+        }
+
+        Long userId = Long.parseLong(authService.getUserId(refreshToken.getValue()));
+        userFeignClient.updateUserAccessAt(UpdateAccessAtRequestDto.of(userId));
 
         return getSuccessResponse(authResponse);
     }

@@ -13,7 +13,6 @@ import dev.ncns.sns.user.dto.response.LoginResponseDto;
 import dev.ncns.sns.user.dto.response.UserResponseDto;
 import dev.ncns.sns.user.dto.response.UserSummaryResponseDto;
 import dev.ncns.sns.user.repository.UserRepository;
-import dev.ncns.sns.user.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -59,9 +58,12 @@ public class UserService {
     }
 
     @Transactional
-    public void updateProfile(UpdateProfileRequestDto dto) {
-        User user = userRepository.getById(SecurityUtil.getCurrentUserId());
-        user.updateProfile(dto.getAccountName(), dto.getNickname(), dto.getIntroduce());
+    public void updateProfile(Long userId, UpdateProfileRequestDto profileRequest) {
+        User user = getUserById(userId);
+        if (!user.getAccountName().equals(profileRequest.getAccountName()) && isExistAccountName(profileRequest.getAccountName())) {
+            throw new BadRequestException(ResponseType.USER_DUPLICATED_ACCOUNT_NAME);
+        }
+        user.updateProfile(profileRequest.getAccountName(), profileRequest.getNickname(), profileRequest.getIntroduce());
     }
 
     public CheckResponseDto isDuplicateEmail(CheckEmailRequestDto checkEmailRequest) {
