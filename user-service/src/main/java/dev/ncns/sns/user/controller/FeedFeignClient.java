@@ -2,7 +2,7 @@ package dev.ncns.sns.user.controller;
 
 import dev.ncns.sns.user.config.FeignClientConfig;
 import dev.ncns.sns.user.dto.request.CreateFeedDocumentRequestDto;
-import dev.ncns.sns.user.dto.request.FollowUpdateRequestDto;
+import dev.ncns.sns.user.dto.request.UpdateListRequestDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,7 +13,7 @@ public interface FeedFeignClient {
     @PostMapping
     void createFeedDocument(@RequestBody CreateFeedDocumentRequestDto dto) ;
 
-    @PostMapping("/follow")
-    void updateFollowingList(@RequestBody FollowUpdateRequestDto dto);
+    @PostMapping("/update/list")
+    void updateList(@RequestBody UpdateListRequestDto dto);
 
 }

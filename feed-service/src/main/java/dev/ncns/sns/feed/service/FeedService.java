@@ -8,7 +8,7 @@ import dev.ncns.sns.feed.domain.FeedDocument;
 import dev.ncns.sns.feed.domain.FeedRepository;
 import dev.ncns.sns.feed.dto.request.CreateFeedDocumentRequestDto;
 import dev.ncns.sns.feed.dto.request.FeedPullRequestDto;
-import dev.ncns.sns.feed.dto.request.FollowUpdateRequestDto;
+import dev.ncns.sns.feed.dto.request.UpdateListRequestDto;
 import dev.ncns.sns.feed.dto.response.PostResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -65,9 +65,13 @@ public class FeedService {
     }
 
     @Transactional
-    public void updateFollowings(FollowUpdateRequestDto dto) {
+    public void updateList(UpdateListRequestDto dto) {
         FeedDocument feedDocument = getFeedDocument(dto.getUserId());
-        feedDocument.updateFollowings(dto.getTargetId(), dto.getIsAdd());
+        if(dto.getIsAdd()) {
+            feedDocument.addToList(dto.getTargetId(), dto.getListType());
+        } else {
+            feedDocument.removeFromList(dto.getTargetId(), dto.getListType());
+        }
         feedRepository.save(feedDocument);
     }
 

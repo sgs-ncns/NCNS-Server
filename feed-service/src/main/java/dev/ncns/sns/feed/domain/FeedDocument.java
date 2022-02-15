@@ -56,13 +56,26 @@ public class FeedDocument {
         this.updatedAt = LocalDateTime.now();
     }
 
-    public void updateFollowings(Long followingId, boolean isAdd) {
-        if (isAdd) {
-            this.followings.add(followingId);
-        } else {
-            this.followings.remove(followingId); // TODO: By index 인지 Object인지 테스트
+    public void addToList(Long targetId, ListType listType) {
+        switch (listType) {
+            case FOLLOWING:
+                this.followings.add(targetId);
+                break;
+            case SUBSCRIBING:
+                this.subscribing.add(targetId);
+                break;
         }
     }
 
-    // TODO: subscribe update
+    public void removeFromList(Long targetId, ListType listType) {
+        switch (listType) {
+            case FOLLOWING:
+                this.followings.remove(targetId);
+                break;
+            case SUBSCRIBING:
+                this.subscribing.remove(targetId);
+                break;
+        }
+    }
+
 }
