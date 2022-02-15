@@ -106,7 +106,6 @@ public class PostService {
         return StatusResponseDto.of(LikeStatus.DISLIKE.getValue());
     }
 
-    @Transactional
     private StatusResponseDto like(Long postId) {
         Like like = Like.builder()
                 .postId(postId)
@@ -115,7 +114,7 @@ public class PostService {
         likeRepository.save(like);
         PostCount postCount = postCountRepository.findByPostId(postId);
         postCount.update(CountType.LIKE, true);
-        return StatusResponseDto.of(LikeStatus.DISLIKE.getValue());
+        return StatusResponseDto.of(LikeStatus.LIKE.getValue());
     }
 
     private void saveUserTag(Long postId, Long userId) {
