@@ -36,8 +36,8 @@ public class FeedDocument {
     @Field("followings")
     private List<Long> followings;
 
-    @Field("subscribing")
-    private List<Long> subscribing;
+    @Field("subscribers")
+    private List<Long> subscribers;
 
     @Field("feeds")
     private List<Feed> feeds;
@@ -47,7 +47,7 @@ public class FeedDocument {
         this.userId = userId;
         this.updatedAt = LocalDateTime.now();
         this.followings = new ArrayList<>();
-        this.subscribing = new ArrayList<>();
+        this.subscribers = new ArrayList<>();
         this.feeds = new ArrayList<>();
     }
 
@@ -62,7 +62,7 @@ public class FeedDocument {
                 this.followings.add(targetId);
                 break;
             case SUBSCRIBING:
-                this.subscribing.add(targetId);
+                this.subscribers.add(targetId);
                 break;
         }
     }
@@ -73,7 +73,7 @@ public class FeedDocument {
                 this.followings.remove(targetId);
                 break;
             case SUBSCRIBING:
-                this.subscribing.remove(targetId);
+                this.subscribers.remove(targetId);
                 break;
         }
     }

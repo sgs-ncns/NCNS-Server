@@ -54,24 +54,35 @@ public class FeedService {
 
     @Transactional
     public void updateFeedByPush(PostResponseDto dto) {
-        List<FeedDocument> feedDocuments = feedRepository.findAll();
-        feedDocuments.forEach(document -> {
-            if (document.getSubscribing().contains(dto.getUserId())) {
-                List<Feed> temp = new ArrayList<>();
-                temp.add(dto.toEntity());
-                document.updateFeed(temp);
-                feedRepository.save(document);
-            }
+        List<Long> subscribers = getFeedDocument(dto.getUserId()).getSubscribers();
+        subscribers.forEach(subscriberId -> {
+            FeedDocument sub = getFeedDocument(subscriberId);
+            List<Feed> temp = new ArrayList<>();
+            temp.add(dto.toEntity());
+            sub.updateFeed(temp);
+            feedRepository.save(sub);
         });
     }
 
     @Transactional
     public void updateList(UpdateListRequestDto dto) {
-        FeedDocument feedDocument = getFeedDocument(dto.getUserId());
-        if(dto.getIsAdd()) {
-            feedDocument.addToList(dto.getTargetId(), dto.getListType());
-        } else {
-            feedDocument.removeFromList(dto.getTargetId(), dto.getListType());
+        FeedDocument feedDocument = new FeedDocument();
+        switch (dto.getListType()) {
+            case FOLLOWING:
+                feedDocument = getFeedDocument(dto.getUserId());
+                if (dto.getIsAdd()) {
+                    feedDocument.addToList(dto.getTargetId(), dto.getListType());
+                } else {
+                    feedDocument.removeFromList(dto.getTargetId(), dto.getListType());
+                }
+                break;
+            case SUBSCRIBING:
+                feedDocument = getFeedDocument(dto.getTargetId());
+                if (dto.getIsAdd()) {
+                    feedDocument.addToList(dto.getUserId(), dto.getListType());
+                } else {
+                    feedDocument.removeFromList(dto.getUserId(), dto.getListType());
+                }
         }
         feedRepository.save(feedDocument);
     }
