@@ -4,6 +4,7 @@ import dev.ncns.sns.common.domain.ResponseType;
 import dev.ncns.sns.common.exception.NotFoundException;
 import dev.ncns.sns.search.domain.User;
 import dev.ncns.sns.search.dto.request.CreateUserRequestDto;
+import dev.ncns.sns.search.dto.request.UpdateUserRequestDto;
 import dev.ncns.sns.search.dto.response.UserResponseDto;
 import dev.ncns.sns.search.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,7 @@ public class UserService {
 
     public UserResponseDto getUser(Long userId) {
         User user = userRepository.getByUserId(userId)
-                .orElseThrow(() -> new NotFoundException(ResponseType.USER_NOT_EXIST_ID));
+                .orElseThrow(() -> new NotFoundException(ResponseType.SEARCH_NOT_EXIST_USER));
         return UserResponseDto.of(user);
     }
 
@@ -29,8 +30,20 @@ public class UserService {
         if (user == null) {
             userRepository.save(createUserRequest.toEntity());
         } else {
-            // TODO: update
+            userRepository.update(user, createUserRequest.getAccountName(), createUserRequest.getNickname());
         }
+    }
+
+    public void updateUser(UpdateUserRequestDto updateUserRequest) {
+        User user = userRepository.getByUserId(updateUserRequest.getUserId())
+                .orElseThrow(() -> new NotFoundException(ResponseType.SEARCH_NOT_EXIST_USER));
+        userRepository.update(user, updateUserRequest.getAccountName(), updateUserRequest.getNickname());
+    }
+
+    public void deleteUser(Long userId) {
+        User user = userRepository.getByUserId(userId)
+                .orElseThrow(() -> new NotFoundException(ResponseType.SEARCH_NOT_EXIST_USER));
+        userRepository.delete(user);
     }
 
     public List<UserResponseDto> findUsersByAccountName(String accountName) {

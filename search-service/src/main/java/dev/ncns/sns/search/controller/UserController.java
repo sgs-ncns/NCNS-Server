@@ -3,6 +3,7 @@ package dev.ncns.sns.search.controller;
 import dev.ncns.sns.common.controller.ApiController;
 import dev.ncns.sns.common.domain.ResponseEntity;
 import dev.ncns.sns.search.dto.request.CreateUserRequestDto;
+import dev.ncns.sns.search.dto.request.UpdateUserRequestDto;
 import dev.ncns.sns.search.dto.response.UserResponseDto;
 import dev.ncns.sns.search.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,18 @@ public class UserController extends ApiController {
     @PostMapping
     public ResponseEntity<Void> createUser(@RequestBody CreateUserRequestDto createUserRequest) {
         userService.createUser(createUserRequest);
+        return getSuccessResponse();
+    }
+
+    @PutMapping
+    public ResponseEntity<Void> updateUser(@RequestBody UpdateUserRequestDto updateUserRequest) {
+        userService.updateUser(updateUserRequest);
+        return getSuccessResponse();
+    }
+
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long userId) {
+        userService.deleteUser(userId);
         return getSuccessResponse();
     }
 

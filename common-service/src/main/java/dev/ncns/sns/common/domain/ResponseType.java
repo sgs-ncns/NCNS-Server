@@ -43,6 +43,9 @@ public enum ResponseType {
     POST_NOT_EXIST_HASHTAG("12", "존재하지 않은 해시태그입니다."),
     POST_NOT_EXIST_COMMENT("13", "존재하지 않은 댓글입니다."),
     POST_NOT_AUTHOR("14", "작성자가 아닙니다."),
+
+    // SEARCH
+    SEARCH_NOT_EXIST_USER("11", "존재하지 않은 사용자입니다."),
     ;
 
     private final String code;
