@@ -10,6 +10,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+/**
+ * 들어온 Request에 대한 로깅을 위해 정의하였습니다.
+ */
 @Slf4j
 @Component
 public class LoggingGlobalFilter implements GlobalFilter, Ordered {

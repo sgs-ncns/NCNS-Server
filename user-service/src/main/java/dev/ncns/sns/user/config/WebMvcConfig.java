@@ -12,6 +12,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     private final AuthorizationInterceptor authorizationInterceptor;
 
+    /**
+     * 정의한 인터셉터가 필요한 path에 등록합니다.
+     */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(authorizationInterceptor)

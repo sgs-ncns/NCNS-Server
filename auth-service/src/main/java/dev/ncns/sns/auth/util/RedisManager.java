@@ -9,6 +9,9 @@ import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 
+/**
+ * Redis에 "key,value"를 생성하고, 가져오고, 삭제할 수 있도록 하는 Util입니다.
+ */
 @RequiredArgsConstructor
 @Component
 public class RedisManager {

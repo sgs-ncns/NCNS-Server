@@ -47,6 +47,9 @@ public class ExceptionControllerAdvice {
         return ResponseEntity.failureResponse(port, exception.getResponseType());
     }
 
+    /**
+     * 아직 처리하지 않았거나 예상치 못한 Exception을 핸들링합니다.
+     */
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public <T> ResponseEntity<T> handleException(Exception exception) {
@@ -65,6 +68,9 @@ public class ExceptionControllerAdvice {
         return ResponseEntity.failureResponse(port, ResponseType.ARGUMENT_NOT_VALID, message);
     }
 
+    /**
+     * FeignClient로 서버 간 API 통신에서 발생하는 Exception을 핸들링합니다.
+     */
     @ExceptionHandler(FeignClientException.class)
     public org.springframework.http.ResponseEntity
             <ResponseEntity<Void>> handleFeignClientException(FeignClientException exception) {

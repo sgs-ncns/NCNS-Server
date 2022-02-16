@@ -22,9 +22,16 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+        /**
+         * 인증이 필요하지 않은 요청, @NonAuthorize를 포함하였다면 pass 합니다.
+         */
         if (isNonAuthorize(handler)) {
             return true;
         }
+        /**
+         * Authorized-User Header에 담긴 userId 값을 가져옵니다.
+         * Spring SecurityContext에 저장하여 필요시 꺼내 사용할 수 있도록 합니다.
+         */
         String userId = request.getHeader(Constants.USER_HEADER_KEY);
         if (!StringUtils.hasText(userId)) {
             throw new UnauthorizedException(ResponseType.REQUEST_UNAUTHORIZED);

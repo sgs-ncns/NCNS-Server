@@ -22,20 +22,26 @@ import java.util.List;
 @Configuration
 public class SwaggerConfig {
 
+    /**
+     * 각 설정으로 구성된 Swagger API 문서를 생성합니다.
+     */
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.OAS_30)
                 .apiInfo(apiInfo())
                 .securitySchemes(List.of(apiKey()))
                 .securityContexts(List.of(securityContext()))
-                .useDefaultResponseMessages(false)
-                .groupName("auth-server")
+                .useDefaultResponseMessages(false) // swagger에서 제공하는 defalult message를 제거합니다.
+                .groupName("auth-server") // 각 서버를 구분하기 위한 이름 정의합니다.
                 .select()
-                .apis(RequestHandlerSelectors.withClassAnnotation(RestController.class))
+                .apis(RequestHandlerSelectors.withClassAnnotation(RestController.class)) // RestContoller에 정의된 API만 등록합니다.
                 .paths(PathSelectors.any())
                 .build();
     }
 
+    /**
+     * API 문서 정보를 제공하기 위한 설정입니다.
+     */
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("NCNS's API Documentation")
@@ -44,6 +50,9 @@ public class SwaggerConfig {
                 .build();
     }
 
+    /**
+     * Authorization Header 등록을 위한 설정입니다. (버튼 활성화)
+     */
     private ApiKey apiKey() {
         return new ApiKey(Constants.AUTH_HEADER_KEY, "JWT", "header");
     }

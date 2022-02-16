@@ -25,6 +25,9 @@ public class SwaggerProvider implements SwaggerResourcesProvider {
 
     public static final String API_URI = "/v3/api-docs";
 
+    /**
+     * path를 분리하여 Swagger URI를 만듭니다.
+     */
     @Override
     public List<SwaggerResource> get() {
         List<SwaggerResource> swaggerResources = new ArrayList<>();
@@ -35,6 +38,9 @@ public class SwaggerProvider implements SwaggerResourcesProvider {
         return swaggerResources;
     }
 
+    /**
+     * 각 서버 Swagger Config에 설정한 Group 이름으로 쿼리 파라미터를 구성합니다.
+     */
     private SwaggerResource resource(String name, String oas3Url, String swaggerGroup) {
         SwaggerResource swaggerResource = new SwaggerResource();
         swaggerResource.setName(name);

@@ -19,6 +19,10 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
 
     Follow findByUserIdAndTargetId(Long userId, Long targetId);
 
+    /**
+     * Method 이름으로 만든 JPQL을 이용하면 그 개수만큼 delete 쿼리가 날라가기 때문에,
+     * 하나의 쿼리로 처리하기 위하여 직접 Query를 설정하였습니다.
+     */
     @Modifying
     @Query("delete from Follow f where f.userId = :userId")
     void deleteAllByUserId(Long userId);

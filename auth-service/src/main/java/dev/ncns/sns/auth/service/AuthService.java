@@ -17,10 +17,16 @@ public class AuthService {
     private final RedisManager redisManager;
 
     public AuthResponseDto issueToken(LoginResponseDto loginResponse) {
+        /**
+         * 페이로드에 userId가 담긴 AccessToken과 RefreshToken을 생성합니다.
+         */
         String userId = loginResponse.getUserId().toString();
         String accessToken = jwtProvider.createAccessToken(userId);
         String refreshToken = jwtProvider.createRefreshToken(userId);
 
+        /**
+         * Redis에 RefreshToken을 저장합니다.
+         */
         redisManager.setValue(jwtProvider.getRefreshTokenKey(userId), refreshToken, JwtProvider.REFRESH_TOKEN_VALIDITY);
 
         return AuthResponseDto.of(accessToken, refreshToken);
@@ -29,12 +35,21 @@ public class AuthService {
     public void discardToken(String authorization, String refreshToken) {
         String accessToken = jwtProvider.getAccessToken(authorization);
 
+        /**
+         * AccessToken을 검증하고 RefreshToken과 사용자가 일치하는지 체크합니다.
+         */
         validateToken(refreshToken);
         compareUserId(accessToken, refreshToken);
 
+        /**
+         * Redis에 저장된 RefreshToken을 삭제합니다.
+         */
         String userId = getUserId(accessToken);
         redisManager.deleteValue(jwtProvider.getRefreshTokenKey(userId));
 
+        /**
+         * 해당 AccessToken을 다시 사용할 수 없도록 Redis에 블랙리스트 처리합니다.
+         */
         long timeout = jwtProvider.getExpirationDate(accessToken);
         redisManager.setValue(accessToken, jwtProvider.getBlackListTokenValue(userId), timeout);
     }
@@ -42,6 +57,9 @@ public class AuthService {
     public AuthResponseDto reissueToken(String refreshToken) {
         validateToken(refreshToken);
 
+        /**
+         * 사용자의 RefreshToken을 검증 후 Redis에 저장된 RefreshToken과 비교합니다.
+         */
         String userId = getUserId(refreshToken);
         String cachedRefreshToken = redisManager.getValue(jwtProvider.getRefreshTokenKey(userId));
 
@@ -49,6 +67,9 @@ public class AuthService {
 
         String accessToken = jwtProvider.createAccessToken(userId);
 
+        /**
+         * AccessToken을 재발급하고, 만약 RefreshToken의 유효기간이 1/3도 남지 않았다면 RefreshToken도 재발급합니다.
+         */
         if (jwtProvider.isRefreshTokenExpiration(refreshToken)) {
             refreshToken = jwtProvider.createRefreshToken(userId);
             redisManager.setValue(jwtProvider.getRefreshTokenKey(userId), refreshToken, JwtProvider.REFRESH_TOKEN_VALIDITY);

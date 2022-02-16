@@ -19,6 +19,9 @@ import org.springframework.web.server.ServerWebExchange;
 
 import java.util.List;
 
+/**
+ * Request에 담긴 AccessToken을 검증하고 파싱하기 위해 정의하였습니다.
+ */
 @RequiredArgsConstructor
 @Slf4j
 @Component
@@ -32,16 +35,25 @@ public class AuthorizationGatewayFilter extends AbstractGatewayFilterFactory {
         return (exchange, chain) -> {
             ServerHttpRequest request = exchange.getRequest();
 
+            /**
+             * Swagger 문서 요청은 pass 하도록 합니다.
+             */
             if (passSwagger(request.getURI().getPath())) {
                 return chain.filter(exchange);
             }
 
+            /**
+             * Authorization Header에 담긴 AccessToken을 검증합니다.
+             */
             String accessToken = jwtProvider.getAccessToken(getAuthorization(request.getHeaders()));
             ResponseType responseType = jwtProvider.validateToken(accessToken);
             if (!responseType.equals(ResponseType.SUCCESS)) {
                 throw new BadRequestException(responseType);
             }
 
+            /**
+             * 만약 AccessToken이 블랙리스트 처리가 된 토큰이라면 이용하지 못하도록 합니다.
+             */
             String userId = jwtProvider.getSubject(accessToken);
             log.info("[Authorization] - " + "UserId is " + userId);
             checkBlackListToken(userId, accessToken);

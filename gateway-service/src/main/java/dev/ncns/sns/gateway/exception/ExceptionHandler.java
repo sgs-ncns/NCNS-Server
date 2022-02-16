@@ -33,6 +33,9 @@ public class ExceptionHandler implements ErrorWebExceptionHandler {
         HttpStatus httpStatus;
         ResponseEntity<Void> responseEntity;
 
+        /**
+         * Exception 상황에 맞게 응답하기 위해 분기처리 하였습니다.
+         */
         if (ex instanceof BadRequestException) {
             printLog((BusinessException) ex);
             httpStatus = HttpStatus.BAD_REQUEST;
@@ -48,6 +51,10 @@ public class ExceptionHandler implements ErrorWebExceptionHandler {
             responseEntity = ResponseEntity.failureResponse(ResponseType.FAILURE);
         }
 
+        /**
+         * 응답 객체를 ObjectMapper를 이용하여 감싼 뒤,
+         * 응답에 HttpStatus, Header 정보를 함께 담아 응답으로 내려줍니다.
+         */
         DataBuffer dataBuffer = dataBufferFactory.wrap(objectMapper.writeValueAsBytes(responseEntity));
         exchange.getResponse().setStatusCode(httpStatus);
         exchange.getResponse().getHeaders().setContentType(MediaType.APPLICATION_JSON);

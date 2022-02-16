@@ -13,6 +13,10 @@ public interface UserCountRepository extends JpaRepository<UserCount, Long> {
 
     void deleteByUserId(Long userId);
 
+    /**
+     * Method 이름으로 만든 JPQL을 이용하면 그 개수만큼의 select, update 쿼리가 날라가기 때문에,
+     * 하나의 쿼리로 처리하기 위하여 직접 Query를 설정하였습니다.
+     */
     @Modifying
     @Query(value = "update UserCount u set u.followerCount = u.followerCount - 1 where u.userId in :userId")
     void updateDecreaseFollowerCountByUserId(List<Long> userId);

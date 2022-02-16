@@ -68,6 +68,9 @@ public class AuthController extends ApiController {
         String authorization = httpServletRequest.getHeader(Constants.AUTH_HEADER_KEY);
         Cookie refreshToken = cookieManager.getCookie(httpServletRequest, Constants.REFRESH_TOKEN_NAME);
 
+        /**
+         * AccessToken과 RefreshToken을 사용하지 못하도록 처리하고, Cookie에서도 RefreshToken을 제거합니다.
+         */
         authService.discardToken(authorization, refreshToken.getValue());
         httpServletResponse.addCookie(cookieManager.deleteCookie(refreshToken));
 
@@ -78,14 +81,25 @@ public class AuthController extends ApiController {
     @GetMapping
     public ResponseEntity<AuthResponseDto> reissue(HttpServletRequest httpServletRequest,
                                                    HttpServletResponse httpServletResponse) {
+        /**
+         * Cookie에 담긴 RefreshToken을 가져옵니다.
+         * RefreshToken으로 사용자의 AccessToken을 재발급합니다.
+         */
         Cookie refreshToken = cookieManager.getCookie(httpServletRequest, Constants.REFRESH_TOKEN_NAME);
         AuthResponseDto authResponse = authService.reissueToken(refreshToken.getValue());
 
+        /**
+         * RefreshToken 유효기간이 1/3도 남지 않아 재발급된 경우,
+         * Cookie에 RefreshToken을 다시 저장해줍니다.
+         */
         if (!refreshToken.getValue().equals(authResponse.getRefreshToken())) {
             refreshToken = cookieManager.createCookie(Constants.REFRESH_TOKEN_NAME, authResponse.getRefreshToken());
             httpServletResponse.addCookie(refreshToken);
         }
 
+        /**
+         * 토큰 재발급시 사용자의 최근접속일을 업데이트합니다.
+         */
         Long userId = Long.parseLong(authService.getUserId(refreshToken.getValue()));
         userFeignClient.updateUserAccessAt(UpdateAccessAtRequestDto.of(userId));
 
@@ -94,10 +108,17 @@ public class AuthController extends ApiController {
 
     private ResponseEntity<AuthLoginResponseDto> login(LoginRequestDto loginRequest,
                                                        HttpServletResponse httpServletResponse) {
+        /**
+         * User Server login 요청을 호출하여 사용자의 로그인 정보를 검증하고 정보를 가져옵니다.
+         * User 최소 정보(userId)가 담긴 accessToken과 refreshToken을 발급합니다.
+         */
         ResponseEntity<LoginResponseDto> loginResponse = userFeignClient.login(loginRequest);
         AuthResponseDto authResponse = authService.issueToken(loginResponse.getData());
         AuthLoginResponseDto authLoginResponse = AuthLoginResponseDto.of(authResponse, loginResponse.getData());
 
+        /**
+         * Cookie를 생성하여 RefreshToken을 저장합니다.
+         */
         Cookie refreshToken = cookieManager.createCookie(Constants.REFRESH_TOKEN_NAME, authResponse.getRefreshToken());
         httpServletResponse.addCookie(refreshToken);
 

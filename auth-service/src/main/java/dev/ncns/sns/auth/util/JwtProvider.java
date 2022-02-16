@@ -20,14 +20,23 @@ public class JwtProvider {
 
     private final String secretKey;
 
+    /**
+     * 저희만의 JWT Secret 값을 설정 파일에서 읽어 생성합니다.
+     */
     public JwtProvider(@Value("${jwt.secret}") String secretKey) {
         this.secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
     }
 
+    /**
+     * 30분의 유효기간을 갖는 AccessToken을 생성합니다.
+     */
     public String createAccessToken(String subject) {
         return createToken(subject, ACCESS_TOKEN_VALIDITY);
     }
 
+    /**
+     * 15일의 유효기간을 갖는 RefreshToken을 생성합니다.
+     */
     public String createRefreshToken(String subject) {
         return createToken(subject, REFRESH_TOKEN_VALIDITY);
     }
@@ -69,6 +78,9 @@ public class JwtProvider {
         return expiration.getTime() - now.getTime();
     }
 
+    /**
+     * Authorization Header에서 읽어온 값을 검증하고 AccessToken 값만 가져옵니다.
+     */
     public String getAccessToken(String authorization) {
         if (!authorization.startsWith(Constants.AUTH_HEADER_VALUE_PREFIX)) {
             throw new BadRequestException(ResponseType.JWT_HEADER_PREFIX);
@@ -76,6 +88,9 @@ public class JwtProvider {
         return authorization.replace(Constants.AUTH_HEADER_VALUE_PREFIX, "");
     }
 
+    /**
+     * RefreshToken의 만료기간이 총 유효기간의 1/3보다 적게 남았는지 확인합니다. (RefreshToken 연장을 위함)
+     */
     public boolean isRefreshTokenExpiration(String token) {
         long expirationDate = getExpirationDate(token);
         return expirationDate <= (REFRESH_TOKEN_VALIDITY / 3);

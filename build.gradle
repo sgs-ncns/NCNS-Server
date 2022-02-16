@@ -35,6 +35,9 @@ subprojects {
         }
     }
 
+    /**
+     * auth, user, post, feed 모듈에서 공통으로 사용하는 의존성을 추가합니다.
+     */
     dependencies {
         List.of("auth", "user", "post", "feed", "search").stream()
                 .filter(p -> project.name.contains(p))
@@ -57,6 +60,9 @@ subprojects {
                     }
                 })
 
+        /**
+         * 모든 모듈에서 공통으로 사용하는 의존성을 추가합니다.
+         */
         compileOnly 'org.projectlombok:lombok'
         annotationProcessor 'org.projectlombok:lombok'
 
