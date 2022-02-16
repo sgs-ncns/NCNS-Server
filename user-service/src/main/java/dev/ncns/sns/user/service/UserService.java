@@ -3,19 +3,15 @@ package dev.ncns.sns.user.service;
 import dev.ncns.sns.common.domain.ResponseType;
 import dev.ncns.sns.common.exception.BadRequestException;
 import dev.ncns.sns.common.exception.NotFoundException;
-import dev.ncns.sns.user.common.SecurityUtil;
 import dev.ncns.sns.user.domain.AuthType;
 import dev.ncns.sns.user.domain.CountType;
+import dev.ncns.sns.user.domain.User;
 import dev.ncns.sns.user.domain.UserCount;
-import dev.ncns.sns.user.domain.Users;
-import dev.ncns.sns.user.dto.request.LoginRequestDto;
-import dev.ncns.sns.user.dto.request.ProfileUpdateRequestDto;
-import dev.ncns.sns.user.dto.request.SignupRequestDto;
-import dev.ncns.sns.user.dto.request.UpdateUserPostCountDto;
+import dev.ncns.sns.user.dto.request.*;
+import dev.ncns.sns.user.dto.response.CheckResponseDto;
 import dev.ncns.sns.user.dto.response.LoginResponseDto;
 import dev.ncns.sns.user.dto.response.UserResponseDto;
 import dev.ncns.sns.user.dto.response.UserSummaryResponseDto;
-import dev.ncns.sns.user.repository.UserCountRepository;
 import dev.ncns.sns.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -30,23 +26,20 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final UserCountRepository userCountRepository;
+
+    private final UserCountService userCountService;
     private final PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)
     public UserResponseDto getUserInfo(Long userId) {
-        Users user = getUserById(userId);
-        UserCount userCount = userCountRepository.findByUserId(userId);
+        User user = getUserById(userId);
+        UserCount userCount = userCountService.getUserCount(userId);
         return UserResponseDto.of(user, userCount);
     }
 
-    /**
-     * 회원가입 요청 시 이메일/계정의 중복 여부를 체크합니다.
-     * 유효한 정보라면 패스워드를 암호화 후 DB에 저장합니다.
-     */
     @Transactional
-    public void signUp(SignupRequestDto signupRequest) {
-        Users user = signupRequest.toEntity();
+    public Long signUp(SignUpRequestDto signUpRequest) {
+        User user = signUpRequest.toEntity();
         if (isExistEmail(user.getEmail())) {
             throw new BadRequestException(ResponseType.USER_DUPLICATED_EMAIL);
         }
@@ -55,39 +48,36 @@ public class UserService {
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user = userRepository.save(user);
-        UserCount userCount = UserCount.builder().userId(user.getId()).build();
-        userCountRepository.save(userCount);
+        userCountService.createUserCount(user.getId());
+        return user.getId();
     }
 
     /**
      * 회원 탈퇴와 회원 정보 업데이트는 요청을 보낸 인증 정보를 기반으로 이루어집니다.
      */
     @Transactional
-    public void signOut() {
-        Users user = getUserById(SecurityUtil.getCurrentMemberId());
-        userCountRepository.deleteByUserId(user.getId());
-        userRepository.delete(user);
+    public void signOut(Long userId) {
+        userCountService.deleteUserCount(userId);
+        userRepository.delete(getUserById(userId));
     }
 
     @Transactional
-    public void updateProfile(ProfileUpdateRequestDto dto) {
-        Users user = userRepository.getById(SecurityUtil.getCurrentMemberId());
-        user.updateProfile(dto.getAccountName(), dto.getNickname(), dto.getIntroduce());
+    public void updateProfile(Long userId, UpdateProfileRequestDto profileRequest) {
+        User user = getUserById(userId);
+        if (!user.getAccountName().equals(profileRequest.getAccountName()) && isExistAccountName(profileRequest.getAccountName())) {
+            throw new BadRequestException(ResponseType.USER_DUPLICATED_ACCOUNT_NAME);
+        }
+        user.updateProfile(profileRequest.getAccountName(), profileRequest.getNickname(), profileRequest.getIntroduce());
     }
 
-    /**
-     * 팔로워/팔로잉 조회는 계정명과 사용자 이름만 포함된 간략한 정보를 제공합니다.
-     */
-    public List<UserSummaryResponseDto> getFollowingList(List<Long> followingIdList) {
-        return followingIdList.stream()
-                .map(id -> new UserSummaryResponseDto(getUserById(id)))
-                .collect(Collectors.toList());
+    public CheckResponseDto isDuplicateEmail(CheckEmailRequestDto checkEmailRequest) {
+        boolean result = isExistEmail(checkEmailRequest.getEmail());
+        return CheckResponseDto.of(result);
     }
 
-    public List<UserSummaryResponseDto> getFollowerList(List<Long> followerIdList) {
-        return followerIdList.stream()
-                .map(id -> new UserSummaryResponseDto(getUserById(id)))
-                .collect(Collectors.toList());
+    public CheckResponseDto isDuplicateAccountName(CheckAccountRequestDto checkAccountRequest) {
+        boolean result = isExistAccountName(checkAccountRequest.getAccountName());
+        return CheckResponseDto.of(result);
     }
 
     /**
@@ -117,43 +107,56 @@ public class UserService {
      */
     @Transactional
     public void updatePostCount(UpdateUserPostCountDto dto) {
-        UserCount userCount = userCountRepository.findByUserId(dto.getUserId());
-        if (userCount.getPostCount() <= 0 && !dto.getIsUp()) {
-            throw new BadRequestException(ResponseType.REQUEST_NOT_VALID);
+        userCountService.updateUserCount(dto.getUserId(), CountType.POST, dto.getIsUp());
+    }
+
+    public void checkExistUser(Long userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new NotFoundException(ResponseType.USER_NOT_EXIST_ID);
         }
-        userCount.update(CountType.POST, dto.getIsUp());
+    }
+
+    public List<UserSummaryResponseDto> getUserSummaryList(List<Long> userIdList) {
+        return userIdList.stream()
+                .map(id -> new UserSummaryResponseDto(getUserById(id)))
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void updateUserAccessAt(Long userId) {
+        getUserById(userId).updateAccessAt();
     }
 
     private LoginResponseDto socialLogin(String email, AuthType authType) {
-        Users user = getUserByEmail(email);
+        User user = getUserByEmail(email);
         checkAuthTypeMatch(user.getAuthType(), authType);
         return LoginResponseDto.of(user.getId(), user.getAccountName());
     }
 
     private LoginResponseDto localLogin(String email, String password) {
-        Users user = getUserByEmail(email);
+        User user = getUserByEmail(email);
         checkAuthTypeMatch(user.getAuthType(), AuthType.LOCAL);
         checkPasswordMatch(password, user.getPassword());
         return LoginResponseDto.of(user.getId(), user.getAccountName());
     }
 
     private LoginResponseDto accountLogin(String accountName, String password) {
-        Users user = getUserByAccountName(accountName);
+        User user = getUserByAccountName(accountName);
         checkPasswordMatch(password, user.getPassword());
         return LoginResponseDto.of(user.getId(), user.getAccountName());
     }
 
-    private Users getUserById(Long id) {
+    private User getUserById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(ResponseType.USER_NOT_EXIST_ID));
     }
 
-    private Users getUserByEmail(String email) {
+    private User getUserByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException(ResponseType.USER_NOT_EXIST_EMAIL));
     }
 
-    private Users getUserByAccountName(String accountName) {
+    private User getUserByAccountName(String accountName) {
         return userRepository.findByAccountName(accountName)
                 .orElseThrow(() -> new NotFoundException(ResponseType.USER_NOT_EXIST_ACCOUNT_NAME));
     }

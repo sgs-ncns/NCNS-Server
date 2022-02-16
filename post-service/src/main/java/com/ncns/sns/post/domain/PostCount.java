@@ -7,12 +7,13 @@ import lombok.ToString;
 
 import javax.persistence.*;
 
-import static com.ncns.sns.post.domain.CountType.*;
+import static com.ncns.sns.post.domain.CountType.COMMENT;
+import static com.ncns.sns.post.domain.CountType.LIKE;
 
 @Getter
 @ToString
 @NoArgsConstructor
-@Table(name = "posts_count")
+@Table(name = "post_count")
 @Entity
 public class PostCount {
 
@@ -24,16 +25,16 @@ public class PostCount {
     private Long postId;
 
     @Column(nullable = false)
-    private int likeCount;
+    private Long likeCount;
 
     @Column(nullable = false)
-    private int commentCount;
+    private Long commentCount;
 
     @Builder
     public PostCount(Long postId) {
         this.postId = postId;
-        this.likeCount = 0;
-        this.commentCount = 0;
+        this.likeCount = 0L;
+        this.commentCount = 0L;
     }
 
     public void update(CountType countType, boolean isUp) {
@@ -43,7 +44,7 @@ public class PostCount {
             } else {
                 this.likeCount--;
             }
-        } else if (countType == COMMENT){
+        } else if (countType == COMMENT) {
             if (isUp) {
                 this.commentCount++;
             } else {

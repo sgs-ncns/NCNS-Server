@@ -1,9 +1,6 @@
 package dev.ncns.sns.user.domain;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -12,12 +9,12 @@ import java.time.LocalDateTime;
 
 @Getter
 @ToString
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLDelete(sql = "update users set deleted_at=now() where id=?")
 @Where(clause = "deleted_at is null")
 @Table(name = "users")
 @Entity
-public class Users extends BaseTime {
+public class User extends BaseTime {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,7 +23,7 @@ public class Users extends BaseTime {
     @Column(nullable = false, unique = true, length = 50)
     private String accountName;  // @accountName 계정명
 
-    @Column(nullable = false, length = 50)
+    @Column(length = 50)
     private String nickname;    // 사용자 이름
 
     @Column(nullable = false, unique = true, length = 320)
@@ -49,25 +46,28 @@ public class Users extends BaseTime {
     @Column
     private LocalDateTime accessAt;
 
-
     @Builder
-    public Users(String accountName, String nickname, String email, String password, Status status, AuthType authType) {
+    public User(String accountName, String nickname, String email, String password, Status status, AuthType authType) {
         this.accountName = accountName;
         this.nickname = nickname;
         this.email = email;
         this.password = password;
         this.status = status;
-        this.authType =  authType;
+        this.authType = authType;
     }
 
     public void setPassword(String encode) {
         this.password = encode;
     }
 
-    public Users updateProfile(String accountName, String nickname, String introduce) {
+    public void updateProfile(String accountName, String nickname, String introduce) {
         this.accountName = accountName;
         this.nickname = nickname;
         this.introduce = introduce;
-        return this;
     }
+
+    public void updateAccessAt() {
+        this.accessAt = LocalDateTime.now();
+    }
+
 }

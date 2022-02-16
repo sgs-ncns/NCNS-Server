@@ -34,7 +34,10 @@ public class Post extends BaseTime {
      * 이후 클라이언트에게 이미지의 full path 를 넘겨주지 않아도 bucket/{userid}/{image_path} 에서 이미지를 가져올 수 있습니다.
      */
     @Column(nullable = false)
-    private String image;
+    private String accountName;
+
+    @Column(nullable = false)
+    private String imagePath;
 
     @Column(columnDefinition = "TEXT")
     private String content;
@@ -44,10 +47,11 @@ public class Post extends BaseTime {
     private String hashtag;
 
     @Builder
-    public Post(Long userId, String content, String image, String hashtag) {
+    public Post(Long userId, String accountName, String content, String imagePath, String hashtag) {
         this.userId = userId;
+        this.accountName = accountName;
         this.content = content;
-        this.image = image;
+        this.imagePath = imagePath;
         this.hashtag = hashtag;
     }
 

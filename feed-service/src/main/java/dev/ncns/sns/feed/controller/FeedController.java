@@ -16,36 +16,34 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RequiredArgsConstructor
-@ComponentScan(basePackages = "dev.ncns.sns.common.exception")
 @RequestMapping(value = "/api/feed")
 @RestController
-public class FeedController {
+public class FeedController extends ApiController {
 
-    @Value("${server.port}")
-    private String port;
 
     private final FeedService feedService;
-
-    @PostMapping
-    public ResponseEntity<Void> createFeedDocument(@Validated @RequestBody CreateFeedDocumentRequestDto dto) {
-        feedService.createFeedDocument(dto);
-        return ResponseEntity.successResponse(port);
-    }
 
     /**
      * (Default) Pull 정책 Endpoint
      * 피드 요청 시 Post 서버로 현재 피드 정보 업데이트를 요청합니다.
      * 새 피드 정보를 갱신 후 pagination 해서 리턴합니다.
      */
-    @GetMapping("/{userId}")
-    public ResponseEntity<List<Feed>> getFeed(@PathVariable Long userId) {
+    @GetMapping
+    public ResponseEntity<List<Feed>> getFeed() {
         try {
-            feedService.updateFeedByPull(userId);
+            feedService.updateFeedByPull(SecurityUtil.getCurrentUserId());
         } catch (Exception e) {
             // TODO: 업데이트 실패 리스폰스 처리
         }
-        List<Feed> feeds = feedService.getFeeds(userId);
-        return ResponseEntity.successResponse(port, feeds);
+        List<Feed> feeds = feedService.getFeeds(SecurityUtil.getCurrentUserId());
+        return getSuccessResponse(feeds);
+    }
+
+    @NonAuthorize
+    @PostMapping
+    public ResponseEntity<Void> createFeedDocument(@Validated @RequestBody CreateFeedDocumentRequestDto dto) {
+        feedService.createFeedDocument(dto);
+        return getSuccessResponse();
     }
 
     /**
@@ -54,17 +52,15 @@ public class FeedController {
      * 피드 서버는 해당 게시글 작성자를 구독하는 유저의 피드에 게시글을 추가합니다.
      */
     @NonAuthorize
-    @PostMapping("/update")
+    @PostMapping("/update/feed")
     public void updateSubscribeFeed(@RequestBody PostResponseDto dto) {
         feedService.updateFeedByPush(dto);
     }
 
     @NonAuthorize
-    @PostMapping("/follow")
-    public void updateFollowingList(@RequestBody FollowUpdateRequestDto dto) {
-        feedService.updateFollowings(dto);
+    @PostMapping("/update/list")
+    public void updateFollowingList(@RequestBody UpdateListRequestDto dto) {
+        feedService.updateList(dto);
     }
-
-    // TODO: subscribe feign endpoint
 
 }

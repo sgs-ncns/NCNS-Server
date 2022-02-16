@@ -10,7 +10,8 @@ public class PostResponseDto {
 
     private Long postId;
     private Long userId;
-    private String images;
+    private String accountName;
+    private String imagePath;
     private String content;
     private LocalDateTime createdAt;
     private Long likeCount;
@@ -20,7 +21,8 @@ public class PostResponseDto {
         return Feed.builder()
                     .postId(this.postId)
                     .userId(this.userId)
-                    .images(this.images)
+                    .accountName(this.accountName)
+                    .imagePath(this.imagePath)
                     .content(this.content)
                     .createdAt(this.createdAt)
                     .likeCount(this.likeCount)

@@ -32,7 +32,7 @@ public class AuthService {
         validateToken(refreshToken);
         compareUserId(accessToken, refreshToken);
 
-        String userId = jwtProvider.getSubject(accessToken);
+        String userId = getUserId(accessToken);
         redisManager.deleteValue(jwtProvider.getRefreshTokenKey(userId));
 
         long timeout = jwtProvider.getExpirationDate(accessToken);
@@ -42,17 +42,22 @@ public class AuthService {
     public AuthResponseDto reissueToken(String refreshToken) {
         validateToken(refreshToken);
 
-        String userId = jwtProvider.getSubject(refreshToken);
+        String userId = getUserId(refreshToken);
         String cachedRefreshToken = redisManager.getValue(jwtProvider.getRefreshTokenKey(userId));
 
         compareToken(refreshToken, cachedRefreshToken);
 
-        String newAccessToken = jwtProvider.createAccessToken(userId);
-        String newRefreshToken = jwtProvider.createRefreshToken(userId);
+        String accessToken = jwtProvider.createAccessToken(userId);
 
-        redisManager.setValue(jwtProvider.getRefreshTokenKey(userId), newRefreshToken, JwtProvider.REFRESH_TOKEN_VALIDITY);
+        if (jwtProvider.isRefreshTokenExpiration(refreshToken)) {
+            refreshToken = jwtProvider.createRefreshToken(userId);
+            redisManager.setValue(jwtProvider.getRefreshTokenKey(userId), refreshToken, JwtProvider.REFRESH_TOKEN_VALIDITY);
+        }
+        return AuthResponseDto.of(accessToken, refreshToken);
+    }
 
-        return AuthResponseDto.of(newAccessToken, newRefreshToken);
+    public String getUserId(String token) {
+        return jwtProvider.getSubject(token);
     }
 
     private void validateToken(String token) {
@@ -69,7 +74,7 @@ public class AuthService {
     }
 
     private void compareUserId(String accessToken, String refreshToken) {
-        if (!jwtProvider.getSubject(accessToken).equals(jwtProvider.getSubject(refreshToken))) {
+        if (!getUserId(accessToken).equals(getUserId(refreshToken))) {
             throw new BadRequestException(ResponseType.AUTH_NOT_SAME_USER);
         }
     }

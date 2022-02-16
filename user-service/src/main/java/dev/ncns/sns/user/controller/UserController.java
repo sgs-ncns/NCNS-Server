@@ -1,81 +1,85 @@
 package dev.ncns.sns.user.controller;
 
 import dev.ncns.sns.common.annotation.NonAuthorize;
+import dev.ncns.sns.common.controller.ApiController;
 import dev.ncns.sns.common.domain.ResponseEntity;
-import dev.ncns.sns.user.common.SecurityUtil;
 import dev.ncns.sns.user.dto.request.*;
+import dev.ncns.sns.user.dto.response.CheckResponseDto;
 import dev.ncns.sns.user.dto.response.LoginResponseDto;
 import dev.ncns.sns.user.dto.response.UserResponseDto;
-import dev.ncns.sns.user.dto.response.UserSummaryResponseDto;
 import dev.ncns.sns.user.service.FollowService;
+import dev.ncns.sns.user.service.SubscribeService;
 import dev.ncns.sns.user.service.UserService;
+import dev.ncns.sns.user.util.SecurityUtil;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import java.util.List;
+import javax.validation.Valid;
 
 @RequiredArgsConstructor
-@ComponentScan(basePackages = "dev.ncns.sns.common.exception")
 @RequestMapping(value = "/api/user")
 @RestController
-public class UserController {
-
-    @Value("${server.port}")
-    private String port;
+public class UserController extends ApiController {
 
     private final UserService userService;
     private final FollowService followService;
+    private final SubscribeService subscribeService;
     private final FeedFeignClient feedFeignClient;
 
+    @Operation(summary = "회원가입", description = "auth type(APPLE|GOOGLE|LOCAL)")
     @NonAuthorize
     @PostMapping
-    public ResponseEntity<Void> signUp(@Validated @RequestBody SignupRequestDto signupRequest) {
-        userService.signUp(signupRequest);
-        return ResponseEntity.successResponse(port);
+    public ResponseEntity<Void> signUp(@Validated @RequestBody SignUpRequestDto signUpRequest) {
+        Long userId = userService.signUp(signUpRequest);
+        CreateFeedDocumentRequestDto dto = CreateFeedDocumentRequestDto.of(userId);
+        feedFeignClient.createFeedDocument(dto);
+        return getSuccessResponse();
     }
 
+    @Operation(summary = "회원탈퇴")
     @DeleteMapping
     public ResponseEntity<Void> signOut() {
-        userService.signOut();
-        return ResponseEntity.successResponse(port, "Unregister Success!");
+        Long currentUserId = SecurityUtil.getCurrentUserId();
+        userService.checkExistUser(currentUserId);
+        followService.deleteFollow(currentUserId);
+        subscribeService.deleteSubscribe(currentUserId);
+        // TODO: post 삭제
+        userService.signOut(currentUserId);
+        return getSuccessResponse();
     }
 
+    @Operation(summary = "사용자 정보 수정")
     @PatchMapping
-    public ResponseEntity<Void> updateProfile(@RequestBody ProfileUpdateRequestDto dto) {
-        userService.updateProfile(dto);
-        return ResponseEntity.successResponse(port);
+    public ResponseEntity<Void> updateProfile(@RequestBody UpdateProfileRequestDto updateProfileRequest) {
+        Long currentUserId = SecurityUtil.getCurrentUserId();
+        userService.updateProfile(currentUserId, updateProfileRequest);
+        return getSuccessResponse();
     }
 
+    @Operation(summary = "사용자 프로필 조회")
     @GetMapping("/{userId}")
     public ResponseEntity<UserResponseDto> getProfile(@PathVariable final Long userId) {
-        UserResponseDto userInfo = userService.getUserInfo(userId);
-        return ResponseEntity.successResponse(port, userInfo);
+        UserResponseDto userResponse = userService.getUserInfo(userId);
+        return getSuccessResponse(userResponse);
     }
 
-    @GetMapping("/{userId}/following")
-    public ResponseEntity<List<UserSummaryResponseDto>> getFollowingList(@PathVariable Long userId) {
-        List<UserSummaryResponseDto> followingList = userService.getFollowingList(followService.getFollowingIdList(userId));
-        return ResponseEntity.successResponse(port, "following list", followingList);
+    @Operation(summary = "이메일 중복 체크", description = "중복인 경우 true, 중복이 아닌 경우 false")
+    @NonAuthorize
+    @PostMapping("/email")
+    public ResponseEntity<CheckResponseDto> checkDuplicateEmail(@Valid @RequestBody CheckEmailRequestDto checkEmailRequest) {
+        CheckResponseDto checkResponse = userService.isDuplicateEmail(checkEmailRequest);
+        return getSuccessResponse(checkResponse);
     }
 
-    @GetMapping("/{userId}/followers")
-    public ResponseEntity<List<UserSummaryResponseDto>> getFollowerList(@PathVariable Long userId) {
-        List<UserSummaryResponseDto> followerList = userService.getFollowerList(followService.getFollowerIdList(userId));
-        return ResponseEntity.successResponse(port, "follower list", followerList);
-    }
-
-    @PostMapping("/follow/{targetId}")
-    public ResponseEntity<String> requestFollow(@PathVariable Long targetId) {
-        Long currentUserId = SecurityUtil.getCurrentMemberId();
-        Boolean isAdd = followService.requestFollow(currentUserId, targetId);
-
-        FollowUpdateRequestDto dto = FollowUpdateRequestDto.of(currentUserId,targetId,isAdd);
-        feedFeignClient.updateFollowingList(dto);
-        return ResponseEntity.successResponse(port, isAdd ? "follow" : "unfollow");
+    @Operation(summary = "계정 이름 중복 체크", description = "중복인 경우 true, 중복이 아닌 경우 false")
+    @NonAuthorize
+    @PostMapping("/account")
+    public ResponseEntity<CheckResponseDto> checkDuplicateAccountName(@Valid @RequestBody CheckAccountRequestDto checkAccountRequest) {
+        CheckResponseDto checkResponse = userService.isDuplicateAccountName(checkAccountRequest);
+        return getSuccessResponse(checkResponse);
     }
 
     /** Auth 서버로부터 로그인 정보 검증을 요청받는 Endpoint 입니다. */
@@ -84,15 +88,25 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto loginRequest) {
         LoginResponseDto loginResponse = userService.handleLoginRequest(loginRequest);
-        return ResponseEntity.successResponse(port, loginResponse);
+        userService.updateUserAccessAt(loginResponse.getUserId());
+        return getSuccessResponse(loginResponse);
     }
 
     /** Post 서버로부터 post 생성/삭제 시 post count 컬럼 업데이트를 요청받는 Endpoint 입니다. */
+    @ApiIgnore
     @NonAuthorize
     @PostMapping("/count/post")
     public ResponseEntity<Void> updateUserPostCount(@RequestBody UpdateUserPostCountDto dto) {
         userService.updatePostCount(dto);
-        return ResponseEntity.successResponse(port);
+        return getSuccessResponse();
+    }
+
+    @ApiIgnore
+    @NonAuthorize
+    @PutMapping("/access")
+    public ResponseEntity<Void> updateUserAccessAt(@RequestBody UpdateAccessAtRequestDto updateAccessAtRequest) {
+        userService.updateUserAccessAt(updateAccessAtRequest.getUserId());
+        return getSuccessResponse();
     }
 
 }

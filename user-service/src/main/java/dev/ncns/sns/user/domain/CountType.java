@@ -4,7 +4,10 @@ import lombok.Getter;
 
 @Getter
 public enum CountType {
+
     POST,
     FOLLOWER,
-    FOLLOWING;
+    FOLLOWING,
+    SUBSCRIBING;
+
 }

@@ -2,6 +2,7 @@ package com.ncns.sns.post;
 
 import com.ncns.sns.post.dto.request.CreatePostRequestDto;
 import com.ncns.sns.post.dto.request.UpdatePostRequestDto;
+import com.ncns.sns.post.dto.response.StatusResponseDto;
 import com.ncns.sns.post.service.PostService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,13 +16,13 @@ public class PostServiceTest {
 
     @Test
     void createPost() {
-        CreatePostRequestDto dto = new CreatePostRequestDto("2022-02-07");
+        CreatePostRequestDto dto = new CreatePostRequestDto();
         postService.createPost(dto);
     }
 
     @Test
     void updatePost() {
-        UpdatePostRequestDto dto = new UpdatePostRequestDto(4L, "updated");
+        UpdatePostRequestDto dto = new UpdatePostRequestDto();
         postService.updatePost(dto);
     }
 
@@ -32,10 +33,10 @@ public class PostServiceTest {
 
     @Test
     void likePost() {
-        String result = postService.requestLikePost(5L);
-        assertEquals(result, "like");
+        StatusResponseDto result = postService.requestLikePost(5L);
+        assertEquals(result, true);
         result = postService.requestLikePost(5L);
-        assertEquals(result, "disLike");
+        assertEquals(result.getStatus(), false);
 
     }
 }

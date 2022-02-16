@@ -1,7 +1,7 @@
 package dev.ncns.sns.user.dto.response;
 
 import dev.ncns.sns.user.domain.UserCount;
-import dev.ncns.sns.user.domain.Users;
+import dev.ncns.sns.user.domain.User;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -17,7 +17,7 @@ public class UserResponseDto {
     private Long followingCount;
 
     @Builder
-    public UserResponseDto(Users user, UserCount userCount) {
+    public UserResponseDto(User user, UserCount userCount) {
         this.id = user.getId();
         this.accountName = user.getAccountName();
         this.nickname = user.getNickname();
@@ -27,7 +27,7 @@ public class UserResponseDto {
         this.followingCount = userCount.getFollowingCount();
     }
 
-    public static UserResponseDto of(Users user, UserCount userCount) {
+    public static UserResponseDto of(User user, UserCount userCount) {
         return UserResponseDto.builder().user(user).userCount(userCount).build();
     }
 

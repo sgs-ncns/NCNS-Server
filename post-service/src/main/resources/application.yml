@@ -1,11 +1,13 @@
 server:
   port: 9120
 spring:
+  profiles:
+    active: local
   application:
     name: post-service
   config:
 #    import: "optional:configserver:http://localhost:9020"
-    import: "optional:configserver:http://15.165.198.76:9020"
+    import: "optional:configserver:http://13.125.196.101:9020"
 
 management:
   endpoints:

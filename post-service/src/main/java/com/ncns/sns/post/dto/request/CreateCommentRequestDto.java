@@ -1,6 +1,6 @@
 package com.ncns.sns.post.dto.request;
 
-import com.ncns.sns.post.common.SecurityUtil;
+import com.ncns.sns.post.util.SecurityUtil;
 import com.ncns.sns.post.domain.Comment;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ public class CreateCommentRequestDto {
     public Comment toEntity() {
         return Comment.builder()
                 .postId(postId)
-                .userId(SecurityUtil.getCurrentMemberId())
+                .userId(SecurityUtil.getCurrentUserId())
                 .parentId(parentId)
                 .content(content)
                 .build();
