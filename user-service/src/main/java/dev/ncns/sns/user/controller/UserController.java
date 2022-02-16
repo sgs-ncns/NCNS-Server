@@ -100,7 +100,7 @@ public class UserController extends ApiController {
         userService.updatePostCount(dto);
         return getSuccessResponse();
     }
-
+    /** Auth 서버로부터 로그인 혹은 토큰 재발급 시 마지막 활동시간을 업데이트 하는 Endpoint 입니다. */
     @ApiIgnore
     @NonAuthorize
     @PutMapping("/access")

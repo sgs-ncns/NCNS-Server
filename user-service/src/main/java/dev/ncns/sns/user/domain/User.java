@@ -43,6 +43,7 @@ public class User extends BaseTime {
     @Column(nullable = false, length = 10)
     private AuthType authType;  // 회원가입 및 로그인 타입
 
+    /** 유저의 마지막 활동 시간입니다. 휴면 계정 전환 등에 활용됩니다. */
     @Column
     private LocalDateTime accessAt;
 

@@ -52,7 +52,10 @@ public class PostController extends ApiController {
         return getSuccessResponse();
     }
 
-    /** 유저 프로필 시 피드 정보를 보여주는 Endpoint 입니다. */
+    /** 유저 프로필 조회 시 피드 정보를 보여주는 Endpoint 입니다.
+     * 유저 프로필은 유저데이터, 게시글 수, 팔로잉/팔로워 수로 이루어진 상단 데이터를 우선적으로 호출합니다.
+     * 게시글 수가 0이 아닐 경우에만 post 서버로 요청을 보내 작성 게시글 데이터를 가져옵니다.
+     */
     @GetMapping
     public ResponseEntity<List<PostResponseDto>> getUserPosts(@RequestParam Long userId) {
         List<PostResponseDto> response = postService.getUserPosts(userId);
@@ -91,10 +94,14 @@ public class PostController extends ApiController {
         return getSuccessResponse(data);
     }
 
+    /**
+     * 피드 서버로부터 pull 정책(디폴트)을 적용한 경우 Syncronize 요청을 받는 Endpoint 입니다.
+     * following list 와 lastUpdatedDate 를 파라미터로 받습니다.
+     * 팔로잉하는 유저들의 신규 게시글을 리턴합니다.
+     */
     @NonAuthorize
     @PostMapping("/feed")
     public List<PostResponseDto> getNewFeeds(@RequestBody FeedPullRequestDto dto) {
-        List<PostResponseDto> newFeeds = feedFeignService.getNewFeeds(dto);
-        return newFeeds;
+        return feedFeignService.getNewFeeds(dto);
     }
 }

@@ -84,7 +84,7 @@ public class UserService {
      * Auth 서버에서 로그인 요청 정보를 받아 검증합니다.
      * 소셜로 회원가입한 사용자는 소셜 로그인/이메일 로그인/계정 로그인을 사용 할 수 있습니다.
      * 자체 회원가입을 이용한 사용자는 이메일 로그인/계정 로그인만 사용할 수 있습니다.
-     * <p>
+     *
      * 소셜 로그인(Google, Apple) 을 요청한 경우 가입 여부와 소셜로 가입한 사용자인지를 검증합니다.
      * 이메일/계정 로그인 요청은 가입 여부와 비밀번호 일치 여부를 검증합니다.
      */
@@ -103,7 +103,7 @@ public class UserService {
 
     /**
      * Post 서버에서 요청한 post count 정보를 업데이트합니다.
-     * post count는 마이너스가 될 수 없습니다.
+     * post count 는 마이너스가 될 수 없습니다.
      */
     @Transactional
     public void updatePostCount(UpdateUserPostCountDto dto) {

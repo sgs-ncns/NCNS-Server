@@ -1,4 +1,4 @@
-package dev.ncns.sns.user.common;
+package dev.ncns.sns.feed.util;
 
 import dev.ncns.sns.common.domain.ResponseType;
 import dev.ncns.sns.common.exception.UnauthorizedException;

@@ -151,13 +151,13 @@ public class PostService {
         userTagRepository.save(userTag);
     }
     /**
-     * 요청에 해시태그가 포함되어 있지 않다면 null 을, 있다면 로직 처리 후 String 을 반환합니다.
+     * 요청에 해시태그가 포함되어 있지 않다면 공백 문자열을, 있다면 로직 처리 후 String 을 반환합니다.
      * 리스트의 각 해시태그에 대해 기존 데이터 존재 여부를 확인하고 없다면 새 객체를 생성, 있다면 count++을 수행합니다.
      */
     private String saveHashTag(List<String> hashtagList) {
         return hashtagList.size() == 0 ? "" :
                 hashtagList.stream().map(hash -> {
-
+                /** 해시태그는 공백문자열로 들어올 수 없습니다. 정상적인 요청이라면 클라이언트에서 파싱한 데이터이기때문에 Bad Request 처리했습니다. */
                     if (hash.isBlank()) throw new BadRequestException(ResponseType.REQUEST_NOT_VALID);
 
                     Hashtag hashtag = hashtagRepository.findByContent(hash)

@@ -13,6 +13,10 @@ public interface UserCountRepository extends JpaRepository<UserCount, Long> {
 
     void deleteByUserId(Long userId);
 
+    /**
+     * 일반적으로 one to many Join 으로 생성되는 컬럼이지만, 저희는 해당 로직을 위해 join 을 걸지 않았습니다.
+     * Join cascade 는 delete 쿼리가 여러 번 실행되기 때문에 DB의 부담을 줄이기 위해 join 을 사용하지 않고 Query 로 벌크 요청을 보냈습니다.
+     */
     @Modifying
     @Query(value = "update UserCount u set u.followerCount = u.followerCount - 1 where u.userId in :userId")
     void updateDecreaseFollowerCountByUserId(List<Long> userId);
