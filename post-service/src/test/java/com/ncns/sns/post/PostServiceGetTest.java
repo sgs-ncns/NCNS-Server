@@ -23,7 +23,7 @@ public class PostServiceGetTest {
 
     @Test
     void createPost() {
-        CreatePostRequestDto dto =  new CreatePostRequestDto("2022-02-08!!!");
+        CreatePostRequestDto dto =  new CreatePostRequestDto();
         postService.createPost(dto);
         CreateCommentRequestDto cdto = new CreateCommentRequestDto(9L,"comment comment");
         commentService.createComment(cdto);

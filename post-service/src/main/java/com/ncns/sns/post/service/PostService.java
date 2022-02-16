@@ -47,10 +47,10 @@ public class PostService {
         userTagRepository.deleteAllByPostId(dto.getPostId());
         dto.getUsertag().forEach(userId -> saveUserTag(dto.getPostId(), userId));
 
-        deleteHashTags(post.getHashtagList());
-
+        if (!post.getHashtag().isEmpty()) {
+            deleteHashTags(post.getHashtagList());
+        }
         String newHashtags = saveHashTag(dto.getHashtag());
-
         post.updatePost(dto.getContent(), newHashtags);
     }
 
@@ -106,7 +106,6 @@ public class PostService {
         return StatusResponseDto.of(LikeStatus.DISLIKE.getValue());
     }
 
-    @Transactional
     private StatusResponseDto like(Long postId) {
         Like like = Like.builder()
                 .postId(postId)
@@ -115,7 +114,7 @@ public class PostService {
         likeRepository.save(like);
         PostCount postCount = postCountRepository.findByPostId(postId);
         postCount.update(CountType.LIKE, true);
-        return StatusResponseDto.of(LikeStatus.DISLIKE.getValue());
+        return StatusResponseDto.of(LikeStatus.LIKE.getValue());
     }
 
     private void saveUserTag(Long postId, Long userId) {
@@ -127,19 +126,24 @@ public class PostService {
     }
 
     private String saveHashTag(List<String> hashtagList) {
-        return hashtagList == null ? null :
+        return hashtagList.size() == 0 ? "" :
                 hashtagList.stream().map(hash -> {
+
+                    if (hash.isBlank()) throw new BadRequestException(ResponseType.REQUEST_NOT_VALID);
+
                     Hashtag hashtag = hashtagRepository.findByContent(hash)
-                            .orElse(new Hashtag(hash, 0));
+                            .orElseGet(() -> hashtagRepository.save(new Hashtag(hash, 0)));
                     hashtag.update(true);
                     return hash;
                 }).collect(Collectors.joining(","));
     }
 
     private void deleteHashTags(List<String> hashtagList) {
+        if (hashtagList == null) return;
+
         hashtagList.forEach(hash -> {
             Hashtag hashtag = hashtagRepository.findByContent(hash)
-                    .orElseThrow(() -> new NotFoundException(ResponseType.POST_NOT_EXIST));
+                    .orElseThrow(() -> new NotFoundException(ResponseType.POST_NOT_EXIST_HASHTAG));
             hashtag.update(false);
         });
     }

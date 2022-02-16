@@ -2,7 +2,8 @@ package dev.ncns.sns.user.controller;
 
 import dev.ncns.sns.common.controller.ApiController;
 import dev.ncns.sns.common.domain.ResponseEntity;
-import dev.ncns.sns.user.dto.request.FollowUpdateRequestDto;
+import dev.ncns.sns.user.domain.ListType;
+import dev.ncns.sns.user.dto.request.UpdateListRequestDto;
 import dev.ncns.sns.user.dto.response.StatusResponseDto;
 import dev.ncns.sns.user.dto.response.UserSummaryResponseDto;
 import dev.ncns.sns.user.service.FollowService;
@@ -40,8 +41,9 @@ public class FollowController extends ApiController {
     public ResponseEntity<StatusResponseDto> requestFollow(@PathVariable final Long targetId) {
         Long currentUserId = SecurityUtil.getCurrentUserId();
         StatusResponseDto statusResponse = followService.requestFollow(currentUserId, targetId);
-        FollowUpdateRequestDto dto = FollowUpdateRequestDto.of(currentUserId,targetId,statusResponse.getStatus() );
-        feedFeignClient.updateFollowingList(dto);
+        UpdateListRequestDto dto = UpdateListRequestDto
+                .of(currentUserId, targetId, statusResponse.getStatus(), ListType.FOLLOWING);
+        feedFeignClient.updateList(dto);
         return getSuccessResponse(statusResponse);
     }
 

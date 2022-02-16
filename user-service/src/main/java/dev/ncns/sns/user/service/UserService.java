@@ -38,7 +38,7 @@ public class UserService {
     }
 
     @Transactional
-    public void signUp(SignUpRequestDto signUpRequest) {
+    public Long signUp(SignUpRequestDto signUpRequest) {
         User user = signUpRequest.toEntity();
         if (isExistEmail(user.getEmail())) {
             throw new BadRequestException(ResponseType.USER_DUPLICATED_EMAIL);
@@ -49,6 +49,7 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user = userRepository.save(user);
         userCountService.createUserCount(user.getId());
+        return user.getId();
     }
 
     @Transactional

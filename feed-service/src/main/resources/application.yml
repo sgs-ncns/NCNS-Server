@@ -5,14 +5,7 @@ spring:
     name: feed-service
   config:
 #    import: "optional:configserver:http://localhost:9020"
-    import: "optional:configserver:http://15.165.198.76:9020"
-  data:
-    mongodb:
-      host: localhost
-      port: 27017
-      database: ncns_mongo
-  main:
-    allow-bean-definition-overriding: true
+    import: "optional:configserver:http://13.125.196.101:9020"
 
 management:
   endpoints:

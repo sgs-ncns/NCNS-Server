@@ -1,16 +1,16 @@
 package com.ncns.sns.post.dto.request;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-@RequiredArgsConstructor
+@NoArgsConstructor
 @Getter
 public class UpdatePostRequestDto {
 
-    private final Long postId;
-    private final String content;
+    private Long postId;
+    private String content;
     private List<String> hashtag;
     private List<Long> usertag;
 

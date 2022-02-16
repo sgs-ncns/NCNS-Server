@@ -2,6 +2,8 @@ package dev.ncns.sns.user.controller;
 
 import dev.ncns.sns.common.controller.ApiController;
 import dev.ncns.sns.common.domain.ResponseEntity;
+import dev.ncns.sns.user.domain.ListType;
+import dev.ncns.sns.user.dto.request.UpdateListRequestDto;
 import dev.ncns.sns.user.dto.response.StatusResponseDto;
 import dev.ncns.sns.user.dto.response.UserSummaryResponseDto;
 import dev.ncns.sns.user.service.SubscribeService;
@@ -18,6 +20,7 @@ import java.util.List;
 public class SubscribeController extends ApiController {
 
     private final SubscribeService subscribeService;
+    private final FeedFeignClient feedFeignClient;
 
     @Operation(summary = "구독(깐부) 목록 조회", description = "사용자 본인의 구독(깐부) 목록 조회 (본인 외에는 비공개)")
     @GetMapping("/subscribing")
@@ -32,6 +35,9 @@ public class SubscribeController extends ApiController {
     public ResponseEntity<StatusResponseDto> requestSubscribe(@PathVariable Long targetId) {
         Long currentUserId = SecurityUtil.getCurrentUserId();
         StatusResponseDto statusResponse = subscribeService.requestSubscribe(currentUserId, targetId);
+        UpdateListRequestDto dto = UpdateListRequestDto
+                .of(currentUserId, targetId, statusResponse.getStatus(), ListType.SUBSCRIBING);
+        feedFeignClient.updateList(dto);
         return getSuccessResponse(statusResponse);
     }
 

@@ -7,12 +7,13 @@ import lombok.ToString;
 
 import javax.persistence.*;
 
-import static com.ncns.sns.post.domain.CountType.*;
+import static com.ncns.sns.post.domain.CountType.COMMENT;
+import static com.ncns.sns.post.domain.CountType.LIKE;
 
 @Getter
 @ToString
 @NoArgsConstructor
-@Table(name = "posts_count")
+@Table(name = "post_count")
 @Entity
 public class PostCount {
 

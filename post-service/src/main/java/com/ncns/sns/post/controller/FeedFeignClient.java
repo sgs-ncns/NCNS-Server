@@ -9,6 +9,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 @FeignClient(name = "feed-service", path = "/api/feed", configuration = FeignClientConfig.class)
 public interface FeedFeignClient {
 
-    @PostMapping("/update")
+    @PostMapping("/update/feed")
     void updateSubscribeFeed(@RequestBody PostResponseDto dto);
 }
