@@ -6,6 +6,7 @@ import dev.ncns.sns.common.domain.ResponseEntity;
 import dev.ncns.sns.feed.domain.Feed;
 import dev.ncns.sns.feed.dto.request.CreateFeedDocumentRequestDto;
 import dev.ncns.sns.feed.dto.request.UpdateListRequestDto;
+import dev.ncns.sns.feed.dto.response.FeedResponseDto;
 import dev.ncns.sns.feed.dto.response.PostResponseDto;
 import dev.ncns.sns.feed.service.FeedService;
 import dev.ncns.sns.feed.util.SecurityUtil;
@@ -24,13 +25,13 @@ public class FeedController extends ApiController {
     private final FeedService feedService;
 
     @GetMapping
-    public ResponseEntity<List<Feed>> getFeed() {
+    public ResponseEntity<FeedResponseDto> getFeed() {
         try {
             feedService.updateFeedByPull(SecurityUtil.getCurrentUserId());
         } catch (Exception e) {
             // TODO: 업데이트 실패 리스폰스 처리
         }
-        List<Feed> feeds = feedService.getFeeds(SecurityUtil.getCurrentUserId());
+        FeedResponseDto feeds = feedService.getFeeds(SecurityUtil.getCurrentUserId());
         return getSuccessResponse(feeds);
     }
 

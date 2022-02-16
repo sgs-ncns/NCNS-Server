@@ -9,6 +9,7 @@ import dev.ncns.sns.feed.domain.FeedRepository;
 import dev.ncns.sns.feed.dto.request.CreateFeedDocumentRequestDto;
 import dev.ncns.sns.feed.dto.request.FeedPullRequestDto;
 import dev.ncns.sns.feed.dto.request.UpdateListRequestDto;
+import dev.ncns.sns.feed.dto.response.FeedResponseDto;
 import dev.ncns.sns.feed.dto.response.PostResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -32,9 +33,9 @@ public class FeedService {
         feedRepository.save(feedDocument);
     }
 
-    public List<Feed> getFeeds(Long userId) {
+    public FeedResponseDto getFeeds(Long userId) {
         FeedDocument feedDocument = getFeedDocument(userId);
-        return feedDocument.getFeeds(); //TODO:: pagination
+        return FeedResponseDto.of(feedDocument.getFollowingFeeds(), feedDocument.getSubscribingFeeds()); //TODO:: pagination
     }
 
     @Transactional
@@ -44,11 +45,11 @@ public class FeedService {
         List<Long> followingList = feedDocument.getFollowings();
         LocalDateTime feedLastUpdated = feedDocument.getUpdatedAt();
         FeedPullRequestDto dto = new FeedPullRequestDto(followingList, feedLastUpdated);
-
+        // TODO: 깐부도 팔로잉에 포함이므로 중복으로 들어감 -> 처리 or 활용
         List<PostResponseDto> responseDtoList = postFeignClient.getNewFeeds(dto);
         List<Feed> newFeeds = responseDtoList.stream().map(PostResponseDto::toEntity).collect(Collectors.toList());
 
-        feedDocument.updateFeed(newFeeds);
+        feedDocument.updatefollowingFeed(newFeeds);
         feedRepository.save(feedDocument);
     }
 
@@ -59,7 +60,7 @@ public class FeedService {
             FeedDocument sub = getFeedDocument(subscriberId);
             List<Feed> temp = new ArrayList<>();
             temp.add(dto.toEntity());
-            sub.updateFeed(temp);
+            sub.updateSubscribeFeed(temp);
             feedRepository.save(sub);
         });
     }

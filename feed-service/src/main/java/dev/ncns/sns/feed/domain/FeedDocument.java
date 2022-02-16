@@ -39,8 +39,11 @@ public class FeedDocument {
     @Field("subscribers")
     private List<Long> subscribers;
 
-    @Field("feeds")
-    private List<Feed> feeds;
+    @Field("following_feeds")
+    private List<Feed> followingFeeds;
+
+    @Field("subscribing_feeds")
+    private List<Feed> subscribingFeeds;
 
     @Builder
     public FeedDocument(Long userId) {
@@ -48,12 +51,17 @@ public class FeedDocument {
         this.updatedAt = LocalDateTime.now();
         this.followings = new ArrayList<>();
         this.subscribers = new ArrayList<>();
-        this.feeds = new ArrayList<>();
+        this.followingFeeds = new ArrayList<>();
+        this.subscribingFeeds = new ArrayList<>();
     }
 
-    public void updateFeed(List<Feed> newFeeds) {
-        this.feeds.addAll(newFeeds);
+    public void updatefollowingFeed(List<Feed> newFeeds) {
+        this.followingFeeds.addAll(newFeeds);
         this.updatedAt = LocalDateTime.now();
+    }
+
+    public void updateSubscribeFeed(List<Feed> newFeeds) {
+        this.subscribingFeeds.addAll(newFeeds);
     }
 
     public void addToList(Long targetId, ListType listType) {
