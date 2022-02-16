@@ -117,6 +117,7 @@ SNS 서비스는 read 요청이 빈번하기 때문에 count 쿼리의 부담이
 
 <관련 코드>
 
+[UserCountRepository](https://github.com/sgs-ncns/NCNS-Server/blob/review-document-yoojeong/user-service/src/main/java/dev/ncns/sns/user/repository/UserCountRepository.java)<br>
   [post entity](https://github.com/sgs-ncns/NCNS-Server/blob/review-document-yoojeong/post-service/src/main/java/com/ncns/sns/post/domain/Post.java)  <br>
   [hashtag entity](https://github.com/sgs-ncns/NCNS-Server/blob/review-document-yoojeong/post-service/src/main/java/com/ncns/sns/post/domain/Hashtag.java) <br>
   [postservice](https://github.com/sgs-ncns/NCNS-Server/blob/review-document-yoojeong/post-service/src/main/java/com/ncns/sns/post/service/PostService.java) <br>
