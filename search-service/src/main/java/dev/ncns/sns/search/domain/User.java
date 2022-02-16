@@ -1,20 +1,34 @@
 package dev.ncns.sns.search.domain;
 
+import lombok.Builder;
+import lombok.Getter;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.Setting;
 
+@Getter
+@Setting(settingPath = "settings.json")
 @Document(indexName = "users")
 public class User {
 
-    private final Long id;
+    @Id
+    private String id;
 
-    private String accountName;
+    @Field
+    private final Long userId;
 
-    private String nickname;
+    @Field
+    private final String accountName;
 
+    @Field
+    private final String nickname;
+
+    @Builder
     @PersistenceConstructor
-    public User(Long id, String accountName, String nickname) {
-        this.id = id;
+    public User(Long userId, String accountName, String nickname) {
+        this.userId = userId;
         this.accountName = accountName;
         this.nickname = nickname;
     }
