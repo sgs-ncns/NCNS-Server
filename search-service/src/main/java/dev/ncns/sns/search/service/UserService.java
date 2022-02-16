@@ -9,6 +9,9 @@ import dev.ncns.sns.search.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @RequiredArgsConstructor
 @Service
 public class UserService {
@@ -28,6 +31,20 @@ public class UserService {
         } else {
             // TODO: update
         }
+    }
+
+    public List<UserResponseDto> findUsersByAccountName(String accountName) {
+        List<User> users = userRepository.findByAccountNameContains(accountName);
+        return users.stream()
+                .map(UserResponseDto::of)
+                .collect(Collectors.toList());
+    }
+
+    public List<UserResponseDto> findUsersByNickname(String nickname) {
+        List<User> users = userRepository.findByNicknameContains(nickname);
+        return users.stream()
+                .map(UserResponseDto::of)
+                .collect(Collectors.toList());
     }
 
 }
