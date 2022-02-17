@@ -60,9 +60,9 @@ public class UserController extends ApiController {
     }
 
     @Operation(summary = "사용자 프로필 조회")
-    @GetMapping("/{userId}")
-    public ResponseEntity<UserResponseDto> getProfile(@PathVariable final Long userId) {
-        UserResponseDto userResponse = userService.getUserInfo(userId);
+    @GetMapping("/{accountName}")
+    public ResponseEntity<UserResponseDto> getProfile(@PathVariable String accountName) {
+        UserResponseDto userResponse = userService.getProfile(accountName);
         return getSuccessResponse(userResponse);
     }
 
