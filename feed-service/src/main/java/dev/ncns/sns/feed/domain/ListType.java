@@ -5,5 +5,7 @@ import lombok.Getter;
 @Getter
 public enum ListType {
     FOLLOWING,
-    SUBSCRIBING
+    FOLLOWER,
+    SUBSCRIBING,
+    SUBSCRIBER
 }

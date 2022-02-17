@@ -6,6 +6,7 @@ import dev.ncns.sns.feed.controller.PostFeignClient;
 import dev.ncns.sns.feed.domain.Feed;
 import dev.ncns.sns.feed.domain.FeedDocument;
 import dev.ncns.sns.feed.domain.FeedRepository;
+import dev.ncns.sns.feed.domain.ListType;
 import dev.ncns.sns.feed.dto.request.CreateFeedDocumentRequestDto;
 import dev.ncns.sns.feed.dto.request.FeedPullRequestDto;
 import dev.ncns.sns.feed.dto.request.UpdateListRequestDto;
@@ -32,48 +33,76 @@ public class FeedService {
         feedRepository.save(feedDocument);
     }
 
-    public List<Feed> getFeeds(Long userId) {
-        FeedDocument feedDocument = getFeedDocument(userId);
-        return feedDocument.getFeeds(); //TODO:: pagination
+    public List<FeedDocument> getAllFeed(){
+        return feedRepository.findAll();
+    }
+
+    public List<Feed> getFollowingFeeds(Long userId) {
+        return getFeedDocument(userId).getFollowingFeeds();
+    }
+
+    public List<Feed> getSubscribingFeeds(Long userId) {
+        return getFeedDocument(userId).getSubscribingFeeds();
     }
 
     @Transactional
-    public void updateFeedByPull(Long userId) {
+    public boolean updateFeedByPull(Long userId) {
         FeedDocument feedDocument = getFeedDocument(userId);
 
         List<Long> followingList = feedDocument.getFollowings();
+        List<Long> subscribingList = feedDocument.getSubscribings();
+        subscribingList.forEach(followingList::remove);
         LocalDateTime feedLastUpdated = feedDocument.getUpdatedAt();
         FeedPullRequestDto dto = new FeedPullRequestDto(followingList, feedLastUpdated);
+        try {
+            List<PostResponseDto> responseDtoList = postFeignClient.getNewFeeds(dto);
+            List<Feed> newFeeds = responseDtoList.stream().map(PostResponseDto::toEntity).collect(Collectors.toList());
 
-        List<PostResponseDto> responseDtoList = postFeignClient.getNewFeeds(dto);
-        List<Feed> newFeeds = responseDtoList.stream().map(PostResponseDto::toEntity).collect(Collectors.toList());
-
-        feedDocument.updateFeed(newFeeds);
-        feedRepository.save(feedDocument);
+            feedDocument.updateFollowingFeed(newFeeds);
+            feedRepository.save(feedDocument);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     @Transactional
     public void updateFeedByPush(PostResponseDto dto) {
-        List<FeedDocument> feedDocuments = feedRepository.findAll();
-        feedDocuments.forEach(document -> {
-            if (document.getSubscribing().contains(dto.getUserId())) {
-                List<Feed> temp = new ArrayList<>();
-                temp.add(dto.toEntity());
-                document.updateFeed(temp);
-                feedRepository.save(document);
-            }
+        List<Long> subscribers = getFeedDocument(dto.getUserId()).getSubscribers();
+        subscribers.forEach(subscriberId -> {
+            FeedDocument sub = getFeedDocument(subscriberId);
+            List<Feed> temp = new ArrayList<>();
+            temp.add(dto.toEntity());
+            sub.updateSubscribeFeed(temp);
+            feedRepository.save(sub);
         });
     }
 
     @Transactional
     public void updateList(UpdateListRequestDto dto) {
-        FeedDocument feedDocument = getFeedDocument(dto.getUserId());
-        if(dto.getIsAdd()) {
-            feedDocument.addToList(dto.getTargetId(), dto.getListType());
-        } else {
-            feedDocument.removeFromList(dto.getTargetId(), dto.getListType());
+        FeedDocument userDocument = getFeedDocument(dto.getUserId());
+        FeedDocument targetDocument = getFeedDocument(dto.getTargetId());
+        switch (dto.getListType()) {
+            case FOLLOWING:
+                if (dto.getIsAdd()) {
+                    userDocument.addToList(dto.getTargetId(), ListType.FOLLOWING);
+                    targetDocument.addToList(dto.getUserId(), ListType.FOLLOWER);
+                } else {
+                    userDocument.removeFromList(dto.getTargetId(), ListType.FOLLOWING);
+                    targetDocument.removeFromList(dto.getUserId(), ListType.FOLLOWER);
+                }
+                break;
+            case SUBSCRIBING:
+                if (dto.getIsAdd()) {
+                    userDocument.addToList(dto.getTargetId(), ListType.SUBSCRIBING);
+                    targetDocument.addToList(dto.getUserId(), ListType.SUBSCRIBER);
+                } else {
+                    userDocument.removeFromList(dto.getTargetId(), ListType.SUBSCRIBING);
+                    targetDocument.removeFromList(dto.getUserId(), ListType.SUBSCRIBER);
+                }
         }
-        feedRepository.save(feedDocument);
+        feedRepository.save(userDocument);
+        feedRepository.save(targetDocument);
     }
 
     private FeedDocument getFeedDocument(Long userId) {

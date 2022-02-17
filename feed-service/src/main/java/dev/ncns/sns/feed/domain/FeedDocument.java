@@ -36,24 +36,40 @@ public class FeedDocument {
     @Field("followings")
     private List<Long> followings;
 
-    @Field("subscribing")
-    private List<Long> subscribing;
+    @Field("followers")
+    private List<Long> followers;
 
-    @Field("feeds")
-    private List<Feed> feeds;
+    @Field("subscribings")
+    private List<Long> subscribings;
+
+    @Field("subscribers")
+    private List<Long> subscribers;
+
+    @Field("following_feeds")
+    private List<Feed> followingFeeds;
+
+    @Field("subscribing_feeds")
+    private List<Feed> subscribingFeeds;
 
     @Builder
     public FeedDocument(Long userId) {
         this.userId = userId;
         this.updatedAt = LocalDateTime.now();
         this.followings = new ArrayList<>();
-        this.subscribing = new ArrayList<>();
-        this.feeds = new ArrayList<>();
+        this.followers = new ArrayList<>();
+        this.subscribings = new ArrayList<>();
+        this.subscribers = new ArrayList<>();
+        this.followingFeeds = new ArrayList<>();
+        this.subscribingFeeds = new ArrayList<>();
     }
 
-    public void updateFeed(List<Feed> newFeeds) {
-        this.feeds.addAll(newFeeds);
+    public void updateFollowingFeed(List<Feed> newFeeds) {
+        this.followingFeeds.addAll(newFeeds);
         this.updatedAt = LocalDateTime.now();
+    }
+
+    public void updateSubscribeFeed(List<Feed> newFeeds) {
+        this.subscribingFeeds.addAll(newFeeds);
     }
 
     public void addToList(Long targetId, ListType listType) {
@@ -61,8 +77,14 @@ public class FeedDocument {
             case FOLLOWING:
                 this.followings.add(targetId);
                 break;
+            case FOLLOWER:
+                this.followers.add(targetId);
+                break;
             case SUBSCRIBING:
-                this.subscribing.add(targetId);
+                this.subscribings.add(targetId);
+                break;
+            case SUBSCRIBER:
+                this.subscribers.add(targetId);
                 break;
         }
     }
@@ -72,8 +94,14 @@ public class FeedDocument {
             case FOLLOWING:
                 this.followings.remove(targetId);
                 break;
+            case FOLLOWER:
+                this.followers.remove(targetId);
+                break;
             case SUBSCRIBING:
-                this.subscribing.remove(targetId);
+                this.subscribings.remove(targetId);
+                break;
+            case SUBSCRIBER:
+                this.subscribers.remove(targetId);
                 break;
         }
     }
