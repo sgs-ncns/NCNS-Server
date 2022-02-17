@@ -46,6 +46,7 @@ public enum ResponseType {
 
     // SEARCH
     SEARCH_NOT_EXIST_USER("11", "존재하지 않은 사용자입니다."),
+    SEARCH_NOT_EXIST_HASHTAG("12", "존재하지 않은 해시태그입니다."),
     ;
 
     private final String code;
