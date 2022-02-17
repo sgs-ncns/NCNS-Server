@@ -8,6 +8,8 @@ import dev.ncns.sns.search.service.HashtagService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/search/hashtag")
 @RestController
@@ -25,6 +27,12 @@ public class HashtagController extends ApiController {
     public ResponseEntity<Void> createHashtag(@RequestBody CreateHashtagRequestDto createHashtagRequest) {
         hashtagService.createHashtag(createHashtagRequest);
         return getSuccessResponse();
+    }
+
+    @GetMapping("/content")
+    public ResponseEntity<List<HashtagResponseDto>> findHashtagsByContent(@RequestParam String keyword) {
+        List<HashtagResponseDto> hashtagResponse = hashtagService.findHashtagsByContent(keyword);
+        return getSuccessResponse(hashtagResponse);
     }
 
 }

@@ -9,6 +9,9 @@ import dev.ncns.sns.search.repository.HashtagRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @RequiredArgsConstructor
 @Service
 public class HashtagService {
@@ -28,6 +31,13 @@ public class HashtagService {
         } else {
             // TODO: Update
         }
+    }
+
+    public List<HashtagResponseDto> findHashtagsByContent(String content) {
+        List<Hashtag> hashtags = hashtagRepository.findByContentContains(content);
+        return hashtags.stream()
+                .map(HashtagResponseDto::of)
+                .collect(Collectors.toList());
     }
 
 }
