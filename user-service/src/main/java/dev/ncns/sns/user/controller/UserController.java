@@ -62,7 +62,13 @@ public class UserController extends ApiController {
     @Operation(summary = "사용자 프로필 조회")
     @GetMapping("/{accountName}")
     public ResponseEntity<UserResponseDto> getProfile(@PathVariable String accountName) {
+        Long currentUserId = SecurityUtil.getCurrentUserId();
         UserResponseDto userResponse = userService.getProfile(accountName);
+        if (!currentUserId.equals(userResponse.getUserId())) {
+            boolean followStatus = followService.getFollowStatus(currentUserId, userResponse.getUserId());
+            boolean subscribeStatus = subscribeService.getSubscribeStatus(currentUserId, userResponse.getUserId());
+            userResponse.setStatus(followStatus, subscribeStatus);
+        }
         return getSuccessResponse(userResponse);
     }
 

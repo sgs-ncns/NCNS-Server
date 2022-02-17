@@ -27,4 +27,6 @@ public interface SubscribeRepository extends JpaRepository<Subscribe, Long> {
     @Query("delete from Subscribe s where s.targetId = :targetId")
     void deleteAllByTargetId(Long targetId);
 
+    boolean existsByUserIdAndTargetId(Long userId, Long targetId);
+
 }
