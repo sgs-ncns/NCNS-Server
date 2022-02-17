@@ -59,3 +59,5 @@ spring:
           uri: lb://POST-SERVICE
           predicates:
             - Path=/api/post/**
+          filters:
+            - AuthorizationGatewayFilter
