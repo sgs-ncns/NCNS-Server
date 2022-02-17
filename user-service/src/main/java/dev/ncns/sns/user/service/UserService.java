@@ -58,6 +58,13 @@ public class UserService {
         userRepository.delete(getUserById(userId));
     }
 
+    @Transactional(readOnly = true)
+    public UserResponseDto getProfile(String accountName) {
+        User user = getUserByAccountName(accountName);
+        UserCount userCount = userCountService.getUserCount(user.getId());
+        return UserResponseDto.of(user, userCount);
+    }
+
     @Transactional
     public void updateProfile(Long userId, UpdateProfileRequestDto profileRequest) {
         User user = getUserById(userId);
