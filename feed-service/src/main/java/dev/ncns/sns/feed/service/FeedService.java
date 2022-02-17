@@ -33,6 +33,10 @@ public class FeedService {
         feedRepository.save(feedDocument);
     }
 
+    public List<FeedDocument> getAllFeed(){
+        return feedRepository.findAll();
+    }
+
     public List<Feed> getFollowingFeeds(Long userId) {
         return getFeedDocument(userId).getFollowingFeeds();
     }
@@ -46,7 +50,7 @@ public class FeedService {
         FeedDocument feedDocument = getFeedDocument(userId);
 
         List<Long> followingList = feedDocument.getFollowings();
-        List<Long> subscribingList = feedDocument.getSubscribing();
+        List<Long> subscribingList = feedDocument.getSubscribings();
         subscribingList.forEach(followingList::remove);
         LocalDateTime feedLastUpdated = feedDocument.getUpdatedAt();
         FeedPullRequestDto dto = new FeedPullRequestDto(followingList, feedLastUpdated);

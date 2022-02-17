@@ -74,7 +74,7 @@ public class FeedController extends ApiController {
     @NonAuthorize
     @GetMapping("/all")
     public ResponseEntity<List<FeedDocument>> getAllFeed() {
-        List<FeedDocument> list = repository.findAll();
+        List<FeedDocument> list = feedService.getAllFeed();
         return getSuccessResponse(list);
     }
 
