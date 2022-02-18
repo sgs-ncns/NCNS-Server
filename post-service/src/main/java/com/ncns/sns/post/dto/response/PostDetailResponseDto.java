@@ -10,18 +10,20 @@ import java.util.List;
 @Getter
 public class PostDetailResponseDto {
 
-    private Long postId;
-    private Long userId;
-    private String accountName;
-    private String content;
-    private LocalDateTime createdAt;
-    private List<CommentResponseDto> commentList; // TODO:: pagination
+    private final Long postId;
+    private final Long userId;
+    private final String accountName;
+    private final String imagePath;
+    private final String content;
+    private final LocalDateTime createdAt;
+    private final List<CommentResponseDto> commentList; // TODO:: pagination
 
     @Builder
     private PostDetailResponseDto(Post post, List<CommentResponseDto> commentList) {
         this.postId = post.getId();
         this.userId = post.getUserId();
         this.accountName = post.getAccountName();
+        this.imagePath = post.getImagePath();
         this.content = post.getContent();
         this.createdAt = post.getCreatedAt();
         this.commentList = commentList;
@@ -33,4 +35,5 @@ public class PostDetailResponseDto {
                 .commentList(commentList)
                 .build();
     }
+
 }

@@ -1,6 +1,5 @@
 package com.ncns.sns.post.controller;
 
-
 import com.ncns.sns.post.domain.Post;
 import com.ncns.sns.post.dto.request.*;
 import com.ncns.sns.post.dto.response.PostDetailResponseDto;
@@ -95,4 +94,5 @@ public class PostController extends ApiController {
         List<PostResponseDto> newFeeds = feedFeignService.getNewFeeds(dto);
         return newFeeds;
     }
+
 }
