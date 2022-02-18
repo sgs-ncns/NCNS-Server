@@ -9,6 +9,6 @@ public class UpdateHashtagRequestDto {
 
     private final String content;
     private final Long postId;
-    private final boolean status; // true:add, false:remove
+    private final boolean status;
 
 }
