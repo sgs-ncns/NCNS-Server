@@ -7,7 +7,6 @@ import dev.ncns.sns.feed.domain.Feed;
 import dev.ncns.sns.feed.domain.FeedDocument;
 import dev.ncns.sns.feed.domain.FeedRepository;
 import dev.ncns.sns.feed.domain.ListType;
-import dev.ncns.sns.feed.dto.request.CreateFeedDocumentRequestDto;
 import dev.ncns.sns.feed.dto.request.FeedPullRequestDto;
 import dev.ncns.sns.feed.dto.request.UpdateListRequestDto;
 import dev.ncns.sns.feed.dto.response.PostResponseDto;
@@ -28,12 +27,12 @@ public class FeedService {
     private final PostFeignClient postFeignClient;
 
     @Transactional
-    public void createFeedDocument(CreateFeedDocumentRequestDto dto) {
-        FeedDocument feedDocument = FeedDocument.builder().userId(dto.getUserId()).build();
+    public void createFeedDocument(Long userId) {
+        FeedDocument feedDocument = FeedDocument.builder().userId(userId).build();
         feedRepository.save(feedDocument);
     }
 
-    public List<FeedDocument> getAllFeed(){
+    public List<FeedDocument> getAllFeed() {
         return feedRepository.findAll();
     }
 

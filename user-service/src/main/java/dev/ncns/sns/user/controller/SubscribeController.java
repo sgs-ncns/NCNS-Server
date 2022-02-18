@@ -7,6 +7,7 @@ import dev.ncns.sns.user.dto.request.UpdateListRequestDto;
 import dev.ncns.sns.user.dto.response.StatusResponseDto;
 import dev.ncns.sns.user.dto.response.UserSummaryResponseDto;
 import dev.ncns.sns.user.service.SubscribeService;
+import dev.ncns.sns.user.service.kafka.UserProducerService;
 import dev.ncns.sns.user.util.SecurityUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,7 @@ import java.util.List;
 public class SubscribeController extends ApiController {
 
     private final SubscribeService subscribeService;
-    private final FeedFeignClient feedFeignClient;
+    private final UserProducerService kafkaService;
 
     @Operation(summary = "구독(깐부) 목록 조회", description = "사용자 본인의 구독(깐부) 목록 조회 (본인 외에는 비공개)")
     @GetMapping("/subscribing")
@@ -37,7 +38,7 @@ public class SubscribeController extends ApiController {
         StatusResponseDto statusResponse = subscribeService.requestSubscribe(currentUserId, targetId);
         UpdateListRequestDto dto = UpdateListRequestDto
                 .of(currentUserId, targetId, statusResponse.getStatus(), ListType.SUBSCRIBING);
-        feedFeignClient.updateList(dto);
+        kafkaService.sendUpdateListRequest(dto);
         return getSuccessResponse(statusResponse);
     }
 

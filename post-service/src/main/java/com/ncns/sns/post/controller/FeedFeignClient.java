@@ -6,6 +6,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+@Deprecated
 @FeignClient(name = "feed-service", path = "/api/feed", configuration = FeignClientConfig.class)
 public interface FeedFeignClient {
 

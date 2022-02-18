@@ -5,7 +5,6 @@ import dev.ncns.sns.common.controller.ApiController;
 import dev.ncns.sns.common.domain.ResponseEntity;
 import dev.ncns.sns.feed.domain.Feed;
 import dev.ncns.sns.feed.domain.FeedDocument;
-import dev.ncns.sns.feed.domain.FeedRepository;
 import dev.ncns.sns.feed.dto.request.CreateFeedDocumentRequestDto;
 import dev.ncns.sns.feed.dto.request.UpdateListRequestDto;
 import dev.ncns.sns.feed.dto.response.FeedResponseDto;
@@ -25,14 +24,13 @@ import java.util.List;
 public class FeedController extends ApiController {
 
     private final FeedService feedService;
-    private final FeedRepository repository;
 
     @GetMapping
     public ResponseEntity<FeedResponseDto> getFeed() {
         Long currentUser = SecurityUtil.getCurrentUserId();
         boolean pullSuccess = feedService.updateFeedByPull(currentUser);
         FeedResponseDto feedResponse = FeedResponseDto
-                .of(feedService.getFollowingFeeds(currentUser),feedService.getSubscribingFeeds(currentUser));
+                .of(feedService.getFollowingFeeds(currentUser), feedService.getSubscribingFeeds(currentUser));
         if (!pullSuccess) {
             feedResponse.updateFailPullResult();
         }
@@ -51,19 +49,22 @@ public class FeedController extends ApiController {
         return getSuccessResponse(subscribingFeed);
     }
 
+    @Deprecated
     @NonAuthorize
     @PostMapping
     public ResponseEntity<Void> createFeedDocument(@Validated @RequestBody CreateFeedDocumentRequestDto dto) {
-        feedService.createFeedDocument(dto);
+//        feedService.createFeedDocument(dto);
         return getSuccessResponse();
     }
 
+    @Deprecated
     @NonAuthorize
     @PostMapping("/update/feed")
     public void updateSubscribeFeed(@RequestBody PostResponseDto dto) {
         feedService.updateFeedByPush(dto);
     }
 
+    @Deprecated
     @NonAuthorize
     @PostMapping("/update/list")
     public void updateFollowingList(@RequestBody UpdateListRequestDto dto) {
