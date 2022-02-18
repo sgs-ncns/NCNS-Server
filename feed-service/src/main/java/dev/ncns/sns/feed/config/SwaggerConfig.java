@@ -39,7 +39,7 @@ public class SwaggerConfig {
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("NCNS's API Documentation")
-                .description("NCNS팀의 SNS 프로젝트 API 문서 : Post-Service")
+                .description("NCNS팀의 SNS 프로젝트 API 문서 : Feed-Service")
                 .version("0.0.1")
                 .build();
     }

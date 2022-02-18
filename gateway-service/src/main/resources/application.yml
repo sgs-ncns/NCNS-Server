@@ -22,8 +22,9 @@ open-api:
   swagger:
     resources:
       - auth-service,/api/auth,auth-server
-      - user-service,/api/user,user-server
+      - user-service,/api동/user,user-server
       - post-service,/api/post,post-server
+      - feed-service,/api/feed,feed-server
 
 ---
 # Gateway
@@ -59,5 +60,11 @@ spring:
           uri: lb://POST-SERVICE
           predicates:
             - Path=/api/post/**
+          filters:
+            - AuthorizationGatewayFilter
+        - id: feed-service
+          uri: lb://FEED-SERVICE
+          predicates:
+            - Path=/api/feed/**
           filters:
             - AuthorizationGatewayFilter
