@@ -49,6 +49,10 @@ public class SubscribeService {
         subscribeRepository.deleteAllByTargetId(userId);
     }
 
+    public boolean getSubscribeStatus(Long userId, Long targetId) {
+        return subscribeRepository.existsByUserIdAndTargetId(userId, targetId);
+    }
+
     private List<Long> getSubscribingIdList(Long userId) {
         return subscribeRepository.findTargetIdByUserId(userId);
     }

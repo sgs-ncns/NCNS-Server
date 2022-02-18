@@ -27,4 +27,6 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
     @Query("delete from Follow f where f.targetId = :targetId")
     void deleteAllByTargetId(Long targetId);
 
+    boolean existsByUserIdAndTargetId(Long userId, Long targetId);
+
 }

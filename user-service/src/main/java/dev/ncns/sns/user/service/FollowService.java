@@ -54,6 +54,10 @@ public class FollowService {
         followRepository.deleteAllByTargetId(userId);
     }
 
+    public boolean getFollowStatus(Long userId, Long targetId) {
+        return followRepository.existsByUserIdAndTargetId(userId, targetId);
+    }
+
     private List<Long> getFollowingIdList(Long userId) {
         return followRepository.findTargetIdByUserId(userId);
     }
@@ -85,4 +89,5 @@ public class FollowService {
         userCountService.updateUserCount(userId, CountType.FOLLOWING, isUp);
         userCountService.updateUserCount(targetId, CountType.FOLLOWER, isUp);
     }
+
 }
