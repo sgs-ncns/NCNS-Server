@@ -11,20 +11,17 @@ import java.util.List;
 @Getter
 public class FeedResponseDto {
     private boolean result;
-    private List<Feed> followingFeed;
-    private List<Feed> subscribingFeed;
+    private List<Feed> feeds;
 
     @Builder
-    public FeedResponseDto(List<Feed> followingFeed, List<Feed> subscribingFeed) {
+    public FeedResponseDto(List<Feed> feeds) {
         this.result = true;
-        this.followingFeed = followingFeed;
-        this.subscribingFeed = subscribingFeed;
+        this.feeds = feeds;
     }
 
-    public static FeedResponseDto of(List<Feed> followingFeed, List<Feed> subscribingFeed) {
+    public static FeedResponseDto of(List<Feed> feeds) {
         return FeedResponseDto.builder()
-                .followingFeed(followingFeed)
-                .subscribingFeed(subscribingFeed)
+                .feeds(feeds)
                 .build();
     }
 
