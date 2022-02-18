@@ -6,7 +6,7 @@ import org.springframework.data.elasticsearch.repository.ElasticsearchRepository
 import java.util.List;
 import java.util.Optional;
 
-public interface HashtagRepository extends ElasticsearchRepository<Hashtag, Long> {
+public interface HashtagRepository extends ElasticsearchRepository<Hashtag, Long>, HashtagQueryRepository {
 
     Optional<Hashtag> getByContent(String content);
 
