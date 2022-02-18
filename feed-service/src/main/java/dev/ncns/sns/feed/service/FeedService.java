@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,16 +31,12 @@ public class FeedService {
         feedRepository.save(feedDocument);
     }
 
-    public List<FeedDocument> getAllFeed() {
-        return feedRepository.findAll();
+    public List<Feed> getFeed(Long userId) {
+        return getFeedDocument(userId).getFeeds();
     }
 
-    public List<Feed> getFollowingFeeds(Long userId) {
-        return getFeedDocument(userId).getFollowingFeeds();
-    }
-
-    public List<Feed> getSubscribingFeeds(Long userId) {
-        return getFeedDocument(userId).getSubscribingFeeds();
+    public List<Long> getSubscribeFeed(Long userId) {
+        return getFeedDocument(userId).getRecentSubscribing();
     }
 
     @Transactional
@@ -70,9 +65,7 @@ public class FeedService {
         List<Long> subscribers = getFeedDocument(dto.getUserId()).getSubscribers();
         subscribers.forEach(subscriberId -> {
             FeedDocument sub = getFeedDocument(subscriberId);
-            List<Feed> temp = new ArrayList<>();
-            temp.add(dto.toEntity());
-            sub.updateSubscribeFeed(temp);
+            sub.updateSubscribeFeed(dto.toEntity());
             feedRepository.save(sub);
         });
     }
@@ -108,4 +101,9 @@ public class FeedService {
         return feedRepository.findByUserId(userId)
                 .orElseThrow(() -> new BadRequestException(ResponseType.USER_NOT_EXIST_ID));
     }
+
+    public List<FeedDocument> getAllFeed() {
+        return feedRepository.findAll();
+    }
+
 }

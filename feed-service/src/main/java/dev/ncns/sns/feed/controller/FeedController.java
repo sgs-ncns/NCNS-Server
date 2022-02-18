@@ -3,7 +3,6 @@ package dev.ncns.sns.feed.controller;
 import dev.ncns.sns.common.annotation.NonAuthorize;
 import dev.ncns.sns.common.controller.ApiController;
 import dev.ncns.sns.common.domain.ResponseEntity;
-import dev.ncns.sns.feed.domain.Feed;
 import dev.ncns.sns.feed.domain.FeedDocument;
 import dev.ncns.sns.feed.dto.request.CreateFeedDocumentRequestDto;
 import dev.ncns.sns.feed.dto.request.UpdateListRequestDto;
@@ -29,24 +28,17 @@ public class FeedController extends ApiController {
     public ResponseEntity<FeedResponseDto> getFeed() {
         Long currentUser = SecurityUtil.getCurrentUserId();
         boolean pullSuccess = feedService.updateFeedByPull(currentUser);
-        FeedResponseDto feedResponse = FeedResponseDto
-                .of(feedService.getFollowingFeeds(currentUser), feedService.getSubscribingFeeds(currentUser));
+        FeedResponseDto feedResponse = FeedResponseDto.of(feedService.getFeed(currentUser));
         if (!pullSuccess) {
             feedResponse.updateFailPullResult();
         }
         return getSuccessResponse(feedResponse);
     }
 
-    @GetMapping("/follow")
-    public ResponseEntity<List<Feed>> getFollowingFeed() {
-        List<Feed> followingFeed = feedService.getFollowingFeeds(SecurityUtil.getCurrentUserId());
-        return getSuccessResponse(followingFeed);
-    }
-
-    @GetMapping("/subscribe")
-    public ResponseEntity<List<Feed>> getSubscribingFeed() {
-        List<Feed> subscribingFeed = feedService.getSubscribingFeeds(SecurityUtil.getCurrentUserId());
-        return getSuccessResponse(subscribingFeed);
+    @GetMapping("/subscribing")
+    public ResponseEntity<List<Long>> getSubscribingFeed() {
+        List<Long> recentSubscribing = feedService.getSubscribeFeed(SecurityUtil.getCurrentUserId());
+        return getSuccessResponse(recentSubscribing);
     }
 
     @Deprecated
