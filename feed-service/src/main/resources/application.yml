@@ -8,24 +8,11 @@ spring:
     import: "optional:configserver:http://13.125.196.101:9020"
   kafka:
     consumer:
-      bootstrap-servers: localhost:9092
-      group-id: group-id-ncns
-      auto-offset-reset: earliest
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
       properties:
         spring:
           json:
-            trusted:
-              packages: "*"
             type:
               mapping: post:dev.ncns.sns.feed.dto.response.PostResponseDto, list:dev.ncns.sns.feed.dto.request.UpdateListRequestDto
-          deserializer:
-            value:
-              delegate:
-                class: org.springframework.kafka.support.serializer.JsonDeserializer
-
-
 management:
   endpoints:
     web:
