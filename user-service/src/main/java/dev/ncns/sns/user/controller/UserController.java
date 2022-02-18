@@ -10,6 +10,7 @@ import dev.ncns.sns.user.dto.response.UserResponseDto;
 import dev.ncns.sns.user.service.FollowService;
 import dev.ncns.sns.user.service.SubscribeService;
 import dev.ncns.sns.user.service.UserService;
+import dev.ncns.sns.user.service.kafka.UserProducerService;
 import dev.ncns.sns.user.util.SecurityUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -27,15 +28,14 @@ public class UserController extends ApiController {
     private final UserService userService;
     private final FollowService followService;
     private final SubscribeService subscribeService;
-    private final FeedFeignClient feedFeignClient;
+    private final UserProducerService kafkaService;
 
     @Operation(summary = "회원가입", description = "auth type(APPLE|GOOGLE|LOCAL)")
     @NonAuthorize
     @PostMapping
     public ResponseEntity<Void> signUp(@Validated @RequestBody SignUpRequestDto signUpRequest) {
         Long userId = userService.signUp(signUpRequest);
-        CreateFeedDocumentRequestDto dto = CreateFeedDocumentRequestDto.of(userId);
-        feedFeignClient.createFeedDocument(dto);
+        kafkaService.sendCreateDocumentRequest(userId);
         return getSuccessResponse();
     }
 

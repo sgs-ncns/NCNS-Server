@@ -1,6 +1,5 @@
 package com.ncns.sns.post.controller;
 
-
 import com.ncns.sns.post.domain.Post;
 import com.ncns.sns.post.dto.request.*;
 import com.ncns.sns.post.dto.response.PostDetailResponseDto;
@@ -9,6 +8,7 @@ import com.ncns.sns.post.dto.response.StatusResponseDto;
 import com.ncns.sns.post.service.CommentService;
 import com.ncns.sns.post.service.FeedFeignService;
 import com.ncns.sns.post.service.PostService;
+import com.ncns.sns.post.service.kafka.PostProducerService;
 import com.ncns.sns.post.util.SecurityUtil;
 import dev.ncns.sns.common.annotation.NonAuthorize;
 import dev.ncns.sns.common.controller.ApiController;
@@ -28,14 +28,14 @@ public class PostController extends ApiController {
     private final CommentService commentService;
     private final FeedFeignService feedFeignService;
     private final UserFeignClient userFeignClient;
-    private final FeedFeignClient feedFeignClient;
+    private final PostProducerService kafkaService;
 
     @PostMapping
     public ResponseEntity<?> createPost(@Validated @RequestBody CreatePostRequestDto dto) {
         Post post = postService.createPost(dto);
         userFeignClient.updateUserPostCount(new UpdateUserPostCountDto(SecurityUtil.getCurrentUserId(), true));
         PostResponseDto postDto = feedFeignService.createSubscribeFeed(post);
-        feedFeignClient.updateSubscribeFeed(postDto);
+        kafkaService.sendUpdateFeedRequest(postDto);
         return getSuccessResponse();
     }
 
@@ -92,7 +92,7 @@ public class PostController extends ApiController {
     @NonAuthorize
     @PostMapping("/feed")
     public List<PostResponseDto> getNewFeeds(@RequestBody FeedPullRequestDto dto) {
-        List<PostResponseDto> newFeeds = feedFeignService.getNewFeeds(dto);
-        return newFeeds;
+        return feedFeignService.getNewFeeds(dto);
     }
+
 }

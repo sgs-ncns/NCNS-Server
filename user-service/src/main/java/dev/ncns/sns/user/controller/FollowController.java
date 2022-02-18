@@ -7,6 +7,7 @@ import dev.ncns.sns.user.dto.request.UpdateListRequestDto;
 import dev.ncns.sns.user.dto.response.StatusResponseDto;
 import dev.ncns.sns.user.dto.response.UserSummaryResponseDto;
 import dev.ncns.sns.user.service.FollowService;
+import dev.ncns.sns.user.service.kafka.UserProducerService;
 import dev.ncns.sns.user.util.SecurityUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,7 @@ import java.util.List;
 public class FollowController extends ApiController {
 
     private final FollowService followService;
-    private final FeedFeignClient feedFeignClient;
+    private final UserProducerService kafkaService;
 
     @Operation(summary = "팔로잉 목록 조회")
     @GetMapping("/{userId}/following")
@@ -43,7 +44,7 @@ public class FollowController extends ApiController {
         StatusResponseDto statusResponse = followService.requestFollow(currentUserId, targetId);
         UpdateListRequestDto dto = UpdateListRequestDto
                 .of(currentUserId, targetId, statusResponse.getStatus(), ListType.FOLLOWING);
-        feedFeignClient.updateList(dto);
+        kafkaService.sendUpdateListRequest(dto);
         return getSuccessResponse(statusResponse);
     }
 
