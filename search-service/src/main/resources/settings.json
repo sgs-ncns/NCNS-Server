@@ -5,30 +5,14 @@
       "analyzer": {
         "ngram_analyzer": {
           "tokenizer": "text_tokenizer",
-          "char_filter": [
-            "html_strip"
-          ],
           "filter": [
             "lowercase"
           ]
         },
         "edge_ngram_analyzer": {
           "tokenizer": "text_edge_tokenizer",
-          "char_filter": [
-            "html_strip"
-          ],
           "filter": [
             "lowercase"
-          ]
-        },
-        "english_analyzer": {
-          "type": "standard",
-          "stopwords": "_english_"
-        },
-        "whitespace_analyzer": {
-          "tokenizer": "whitespace",
-          "filter": [
-            "lowercase", "asciifolding"
           ]
         }
       },
