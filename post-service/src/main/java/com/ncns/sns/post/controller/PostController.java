@@ -66,7 +66,7 @@ public class PostController extends ApiController {
     }
 
     @PostMapping("/comment")
-    public ResponseEntity<?> createComment(@Validated @RequestBody CreateCommentRequestDto dto) {
+    public ResponseEntity<Void> createComment(@Validated @RequestBody CreateCommentRequestDto dto) {
         commentService.createComment(dto);
         return getSuccessResponse();
     }
