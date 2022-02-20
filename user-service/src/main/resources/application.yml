@@ -14,7 +14,7 @@ spring:
         spring:
           json:
             type:
-              mapping: list:dev.ncns.sns.user.dto.request.UpdateListRequestDto
+              mapping: user:dev.ncns.sns.user.dto.request.UserConsumerRequestDto, list:dev.ncns.sns.user.dto.request.UpdateListRequestDto
 
 management:
   endpoints:

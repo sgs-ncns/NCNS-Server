@@ -7,6 +7,13 @@ spring:
     name: search-service
   config:
     import: "optional:configserver:http://13.125.196.101:9020"
+  kafka:
+    consumer:
+      properties:
+        spring:
+          json:
+            type:
+              mapping: user:dev.ncns.sns.search.dto.request.UserConsumerRequestDto
 
 management:
   endpoints:

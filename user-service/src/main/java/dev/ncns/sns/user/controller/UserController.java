@@ -35,7 +35,8 @@ public class UserController extends ApiController {
     @PostMapping
     public ResponseEntity<Void> signUp(@Validated @RequestBody SignUpRequestDto signUpRequest) {
         Long userId = userService.signUp(signUpRequest);
-        kafkaService.sendCreateDocumentRequest(userId);
+        UserConsumerRequestDto userConsumerRequest = UserConsumerRequestDto.of(userId, signUpRequest.getAccountName(), signUpRequest.getNickname());
+        kafkaService.sendCreateDocumentRequest(userConsumerRequest);
         return getSuccessResponse();
     }
 
@@ -48,6 +49,7 @@ public class UserController extends ApiController {
         subscribeService.deleteSubscribe(currentUserId);
         // TODO: post 삭제
         userService.signOut(currentUserId);
+        kafkaService.sendDeleteDocumentRequest(currentUserId);
         return getSuccessResponse();
     }
 
