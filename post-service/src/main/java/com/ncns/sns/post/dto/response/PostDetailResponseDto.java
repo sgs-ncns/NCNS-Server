@@ -1,6 +1,5 @@
 package com.ncns.sns.post.dto.response;
 
-import com.ncns.sns.post.domain.Post;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -16,24 +15,32 @@ public class PostDetailResponseDto {
     private final String imagePath;
     private final String content;
     private final LocalDateTime createdAt;
+    private final Long likeCount;
+    private boolean isLiking;
     private final List<CommentResponseDto> commentList; // TODO:: pagination
 
     @Builder
-    private PostDetailResponseDto(Post post, List<CommentResponseDto> commentList) {
-        this.postId = post.getId();
-        this.userId = post.getUserId();
-        this.accountName = post.getAccountName();
-        this.imagePath = post.getImagePath();
-        this.content = post.getContent();
-        this.createdAt = post.getCreatedAt();
+    private PostDetailResponseDto(PostResponseDto dto, List<CommentResponseDto> commentList) {
+        this.postId = dto.getPostId();
+        this.userId = dto.getUserId();
+        this.accountName = dto.getAccountName();
+        this.imagePath = dto.getImagePath();
+        this.content = dto.getContent();
+        this.likeCount = dto.getLikeCount();
+        this.isLiking = false;
+        this.createdAt = dto.getCreatedAt();
         this.commentList = commentList;
     }
 
-    public static PostDetailResponseDto of(Post post, List<CommentResponseDto> commentList) {
+    public static PostDetailResponseDto of(PostResponseDto dto, List<CommentResponseDto> commentList) {
         return PostDetailResponseDto.builder()
-                .post(post)
+                .dto(dto)
                 .commentList(commentList)
                 .build();
+    }
+
+    public void liking() {
+        this.isLiking = true;
     }
 
 }

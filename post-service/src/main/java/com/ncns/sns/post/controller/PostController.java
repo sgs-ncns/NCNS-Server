@@ -61,7 +61,8 @@ public class PostController extends ApiController {
     @GetMapping("/{postId}")
     public ResponseEntity<PostDetailResponseDto> getPostDetail(@PathVariable Long postId) {
         PostDetailResponseDto response = PostDetailResponseDto
-                .of(postService.getPostById(postId), commentService.getCommentList(postId));
+                .of(postService.getPostResponse(postId), commentService.getCommentList(postId));
+        if (postService.isLiking(postId) != null) response.liking();
         return getSuccessResponse(response);
     }
 
