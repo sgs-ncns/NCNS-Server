@@ -36,7 +36,6 @@ public class PostService {
             dto.getUsertag().forEach(userId -> saveUserTag(post.getId(), userId));
         }
         postCountRepository.save(new PostCount(post.getId()));
-        // TODO: Post 객체 feign -> Kafka Topic 전송으로 전환
         return post;
     }
 
@@ -78,14 +77,24 @@ public class PostService {
                 ).collect(Collectors.toList());
     }
 
-    public Post getPostById(Long postId) {
-        return postRepository.findById(postId).orElseThrow(() -> new NotFoundException(ResponseType.POST_NOT_EXIST));
+    public PostResponseDto getPostResponse(Long postId) {
+        Post post = getPostById(postId);
+        PostCount postCount = postCountRepository.findByPostId(post.getId());
+        return PostResponseDto.of(post, postCount);
     }
 
     @Transactional
     public StatusResponseDto requestLikePost(Long postId) {
-        Long likeData = likeRepository.isLiked(postId, SecurityUtil.getCurrentUserId());
+        Long likeData = isLiking(postId);
         return likeData == null ? like(postId) : disLike(likeData, postId);
+    }
+
+    public Long isLiking(Long postId) {
+        return likeRepository.isLiked(postId, SecurityUtil.getCurrentUserId());
+    }
+
+    private Post getPostById(Long postId) {
+        return postRepository.findById(postId).orElseThrow(() -> new NotFoundException(ResponseType.POST_NOT_EXIST));
     }
 
     private Post checkAuthorization(Long postId) {
