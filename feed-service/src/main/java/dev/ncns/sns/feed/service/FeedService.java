@@ -43,11 +43,12 @@ public class FeedService {
             throw new BadRequestException(ResponseType.REQUEST_NOT_VALID);
         }
         List<Feed> feeds = getFeedDocument(userId).getFeeds();
+        if (feeds.size() == 0) return FeedResponseDto.of(feeds);
         Collections.reverse(feeds);
         int start = PAGE_SIZE * (page - 1);
         int end = feeds.size() <= PAGE_SIZE * page ? feeds.size() - 1 : PAGE_SIZE * page;
         FeedResponseDto feedResponse = FeedResponseDto.of(feeds.subList(start, end));
-        if (end != PAGE_SIZE * page) feedResponse.setEndOfFeed();
+        if (end == PAGE_SIZE * page) feedResponse.setEndOfFeed();
         return feedResponse;
     }
 

@@ -17,7 +17,7 @@ public class FeedResponseDto {
     @Builder
     public FeedResponseDto(List<Feed> feeds) {
         this.result = true;
-        this.endOfFeed = false;
+        this.endOfFeed = true;
         this.feeds = feeds;
     }
 
@@ -32,7 +32,7 @@ public class FeedResponseDto {
     }
 
     public void setEndOfFeed() {
-        this.endOfFeed = true;
+        this.endOfFeed = false;
     }
 
 }
