@@ -31,11 +31,15 @@ public class PostController extends ApiController {
     private final PostProducerService kafkaService;
 
     @PostMapping
-    public ResponseEntity<?> createPost(@Validated @RequestBody CreatePostRequestDto dto) {
-        Post post = postService.createPost(dto);
+    public ResponseEntity<Void> createPost(@Validated @RequestBody CreatePostRequestDto createPostRequest) {
+        Post post = postService.createPost(createPostRequest);
         userFeignClient.updateUserPostCount(new UpdateUserPostCountDto(SecurityUtil.getCurrentUserId(), true));
-        PostResponseDto postDto = feedFeignService.createSubscribeFeed(post);
-        kafkaService.sendUpdateFeedRequest(postDto);
+
+        PostResponseDto postResponse = feedFeignService.createSubscribeFeed(post);
+        kafkaService.sendUpdateFeedRequest(postResponse);
+
+        HashtagConsumerRequestDto hashtagConsumerRequest = HashtagConsumerRequestDto.of(post.getId(), createPostRequest.getHashtag());
+        kafkaService.sendCreatePostRequest(hashtagConsumerRequest);
         return getSuccessResponse();
     }
 

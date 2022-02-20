@@ -17,24 +17,24 @@ public class UserProducerService {
 
     public void sendCreateUserRequest(UserConsumerRequestDto userConsumerRequest) {
         log.info("[Kafka producer] >> create user document");
-        this.kafkaTemplate.send(Topic.FEED_USER_CREATE, userConsumerRequest.getUserId());
-        this.kafkaTemplate.send(Topic.SEARCH_USER_CREATE, userConsumerRequest);
+        kafkaTemplate.send(Topic.FEED_USER_CREATE, userConsumerRequest.getUserId());
+        kafkaTemplate.send(Topic.SEARCH_USER_CREATE, userConsumerRequest);
     }
 
     public void sendUpdateUserRequest(UserConsumerRequestDto userConsumerRequest) {
         log.info("[Kafka producer] >> update user document");
-        this.kafkaTemplate.send(Topic.SEARCH_USER_UPDATE, userConsumerRequest);
+        kafkaTemplate.send(Topic.SEARCH_USER_UPDATE, userConsumerRequest);
     }
 
     public void sendUpdateListRequest(UpdateListRequestDto updateListRequest) {
         log.info("[Kafka producer] >> update follow/subscribe list");
-        this.kafkaTemplate.send(Topic.FEED_USER_LIST_UPDATE, updateListRequest);
+        kafkaTemplate.send(Topic.FEED_USER_LIST_UPDATE, updateListRequest);
     }
 
     public void sendDeleteUserRequest(Long userId) {
         log.info("[Kafka producer] >> delete user document");
-//        this.kafkaTemplate.send(Topic.FEED_USER_DELETE, userId);
-        this.kafkaTemplate.send(Topic.SEARCH_USER_DELETE, userId);
+//        kafkaTemplate.send(Topic.FEED_USER_DELETE, userId);
+        kafkaTemplate.send(Topic.SEARCH_USER_DELETE, userId);
     }
 
 }

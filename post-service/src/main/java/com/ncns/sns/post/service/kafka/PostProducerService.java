@@ -1,6 +1,8 @@
 package com.ncns.sns.post.service.kafka;
 
+import com.ncns.sns.post.dto.request.HashtagConsumerRequestDto;
 import com.ncns.sns.post.dto.response.PostResponseDto;
+import dev.ncns.sns.common.util.Topic;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -15,7 +17,12 @@ public class PostProducerService {
 
     public void sendUpdateFeedRequest(PostResponseDto postResponseDto) {
         log.info("[Kafka producer] >> update subscriber feed");
-        this.kafkaTemplate.send("NCNS-POST", postResponseDto);
+        kafkaTemplate.send(Topic.FEED_POST_UPDATE, postResponseDto);
+    }
+
+    public void sendCreatePostRequest(HashtagConsumerRequestDto hashtagConsumerRequest) {
+        log.info("[Kafka producer] >> create post document");
+        kafkaTemplate.send(Topic.SEARCH_POST_CREATE, hashtagConsumerRequest);
     }
 
 }
