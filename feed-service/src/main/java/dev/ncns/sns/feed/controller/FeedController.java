@@ -8,6 +8,7 @@ import dev.ncns.sns.feed.dto.request.CreateFeedDocumentRequestDto;
 import dev.ncns.sns.feed.dto.request.UpdateListRequestDto;
 import dev.ncns.sns.feed.dto.response.FeedResponseDto;
 import dev.ncns.sns.feed.dto.response.PostResponseDto;
+import dev.ncns.sns.feed.dto.response.SubscribingFeedResponseDto;
 import dev.ncns.sns.feed.service.FeedService;
 import dev.ncns.sns.feed.util.SecurityUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,8 +37,8 @@ public class FeedController extends ApiController {
     }
 
     @GetMapping("/subscribing")
-    public ResponseEntity<List<Long>> getSubscribingFeed() {
-        List<Long> recentSubscribing = feedService.getSubscribeFeed(SecurityUtil.getCurrentUserId());
+    public ResponseEntity<List<SubscribingFeedResponseDto>> getSubscribingFeed() {
+        List<SubscribingFeedResponseDto> recentSubscribing = feedService.getSubscribeFeed(SecurityUtil.getCurrentUserId());
         return getSuccessResponse(recentSubscribing);
     }
 
