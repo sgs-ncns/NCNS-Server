@@ -15,10 +15,9 @@ import org.springframework.stereotype.Service;
 public class FeedConsumerService {
     private final FeedService feedService;
 
-    @KafkaListener(topics = "NCNS-USER", groupId = "group-id-ncns")
+    @KafkaListener(topics = "NCNS-FEED-USER-CREATE", groupId = "group-id-ncns")
     public void consumeUser(Long userId) {
         log.info("[Kafka consumer] >> create user document");
-        System.out.println("sub new document");
         feedService.createFeedDocument(userId);
     }
 
