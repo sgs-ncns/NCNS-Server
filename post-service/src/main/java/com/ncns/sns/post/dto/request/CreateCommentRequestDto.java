@@ -13,6 +13,10 @@ import javax.validation.constraints.NotNull;
 public class CreateCommentRequestDto {
     @NotNull
     private final Long postId;
+
+    @NotNull
+    private final String accountName;
+
     @NotBlank
     private final String content;
 
@@ -22,6 +26,7 @@ public class CreateCommentRequestDto {
         return Comment.builder()
                 .postId(postId)
                 .userId(SecurityUtil.getCurrentUserId())
+                .accountName(accountName)
                 .parentId(parentId)
                 .content(content)
                 .build();

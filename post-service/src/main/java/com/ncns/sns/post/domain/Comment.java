@@ -28,6 +28,9 @@ public class Comment extends BaseTime {
     @Column(nullable = false)
     private Long userId;
 
+    @Column(nullable = false)
+    private String accountName;
+
     @Column
     private Long parentId;
 
@@ -35,15 +38,15 @@ public class Comment extends BaseTime {
     private String content;
 
     @Builder
-    public Comment(Long postId, Long userId, Long parentId, String content) {
+    public Comment(Long postId, Long userId, String accountName, Long parentId, String content) {
         this.postId = postId;
         this.userId = userId;
+        this.accountName = accountName;
         this.parentId = parentId;
         this.content = content;
     }
 
-    public Comment updateComment(String content) {
+    public void updateComment(String content) {
         this.content = content;
-        return this;
     }
 }
