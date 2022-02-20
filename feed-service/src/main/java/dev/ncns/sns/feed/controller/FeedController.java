@@ -26,10 +26,10 @@ public class FeedController extends ApiController {
     private final FeedService feedService;
 
     @GetMapping
-    public ResponseEntity<FeedResponseDto> getFeed() {
+    public ResponseEntity<FeedResponseDto> getFeed(@RequestParam int page) {
         Long currentUser = SecurityUtil.getCurrentUserId();
         boolean pullSuccess = feedService.updateFeedByPull(currentUser);
-        FeedResponseDto feedResponse = FeedResponseDto.of(feedService.getFeed(currentUser));
+        FeedResponseDto feedResponse = FeedResponseDto.of(feedService.getFeed(currentUser,page));
         if (!pullSuccess) {
             feedResponse.updateFailPullResult();
         }
