@@ -41,6 +41,15 @@ public class SubscribeService {
     }
 
     @Transactional
+    public StatusResponseDto unsubscribeByUnfollow(Long userId, Long targetId) {
+        Subscribe subscribe = subscribeRepository.findByUserIdAndTargetId(userId, targetId);
+        if (subscribe != null) {
+            return unsubscribe(subscribe);
+        }
+        return StatusResponseDto.of(SubscribeStatus.SUBSCRIBE.getValue());
+    }
+
+    @Transactional
     public void deleteSubscribe(Long userId) {
         subscribeRepository.deleteAllByUserId(userId);
 
