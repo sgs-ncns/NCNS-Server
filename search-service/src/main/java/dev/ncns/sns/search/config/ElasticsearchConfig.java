@@ -17,15 +17,34 @@ public class ElasticsearchConfig extends AbstractElasticsearchConfiguration {
     private String host;
 
     @Value("${elasticsearch.port}")
-    private int port;
+    private String port;
+
+    @Value("${spring.profiles.active}")
+    private String profile;
 
     @Override
     @Bean
     public RestHighLevelClient elasticsearchClient() {
-        ClientConfiguration clientConfiguration = ClientConfiguration.builder()
+        ClientConfiguration clientConfiguration;
+        if (profile.equals("prod")) {
+            clientConfiguration = getClientConfigurationWithProd();
+        } else {
+            clientConfiguration = getClientConfigurationWithLocal();
+        }
+        return RestClients.create(clientConfiguration).rest();
+    }
+
+    private ClientConfiguration getClientConfigurationWithProd() {
+        return ClientConfiguration.builder()
+                .connectedTo(host + ":" + port)
+                .usingSsl()
+                .build();
+    }
+
+    private ClientConfiguration getClientConfigurationWithLocal() {
+        return ClientConfiguration.builder()
                 .connectedTo(host + ":" + port)
                 .build();
-        return RestClients.create(clientConfiguration).rest();
     }
 
 }

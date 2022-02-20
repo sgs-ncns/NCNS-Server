@@ -25,6 +25,7 @@ open-api:
       - user-service,/api/user,user-server
       - post-service,/api/post,post-server
       - feed-service,/api/feed,feed-server
+      - search-service,/api/search,search-server
 
 ---
 # Gateway
@@ -68,3 +69,7 @@ spring:
             - Path=/api/feed/**
           filters:
             - AuthorizationGatewayFilter
+        - id: search-service
+          uri: lb://SEARCH-SERVICE
+          predicates:
+            - Path=/api/search/**
