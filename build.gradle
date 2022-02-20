@@ -42,6 +42,7 @@ subprojects {
                     project.dependencies {
                         implementation 'org.springframework.boot:spring-boot-starter-web'
                         developmentOnly 'org.springframework.boot:spring-boot-devtools'
+                        implementation 'org.springframework.boot:spring-boot-starter-cache'
 
                         implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
                         implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
@@ -51,6 +52,8 @@ subprojects {
                         implementation 'org.springframework.kafka:spring-kafka'
 
                         implementation 'io.springfox:springfox-boot-starter:3.0.0'
+
+                        implementation 'com.github.ben-manes.caffeine:caffeine'
                     }
                 })
 
