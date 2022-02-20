@@ -10,6 +10,7 @@ import dev.ncns.sns.feed.domain.ListType;
 import dev.ncns.sns.feed.dto.request.FeedPullRequestDto;
 import dev.ncns.sns.feed.dto.request.UpdateListRequestDto;
 import dev.ncns.sns.feed.dto.response.FeedResponseDto;
+import dev.ncns.sns.feed.dto.response.LikeResponseDto;
 import dev.ncns.sns.feed.dto.response.PostResponseDto;
 import dev.ncns.sns.feed.dto.response.SubscribingFeedResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -126,6 +127,15 @@ public class FeedService {
         }
         feedRepository.save(userDocument);
         feedRepository.save(targetDocument);
+    }
+
+    public void updateLiking(LikeResponseDto likeResponseDto) {
+        FeedDocument feedDocument = getFeedDocument(likeResponseDto.getUserId());
+        List<Feed> feeds = feedDocument.getFeeds();
+        List<Feed> targetPost = feeds.stream().filter(feed -> feed.getPostId().equals(likeResponseDto.getPostId()))
+                .collect(Collectors.toList());
+        if (targetPost.size() != 0) targetPost.get(0).updateLiking(likeResponseDto.getLiking());
+        feedRepository.save(feedDocument);
     }
 
     private FeedDocument getFeedDocument(Long userId) {

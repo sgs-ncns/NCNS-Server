@@ -12,7 +12,7 @@ spring:
         spring:
           json:
             type:
-              mapping: post:dev.ncns.sns.feed.dto.response.PostResponseDto, list:dev.ncns.sns.feed.dto.request.UpdateListRequestDto
+              mapping: post:dev.ncns.sns.feed.dto.response.PostResponseDto, list:dev.ncns.sns.feed.dto.request.UpdateListRequestDto, like:dev.ncns.sns.feed.dto.response.LikeResponseDto
 management:
   endpoints:
     web:
