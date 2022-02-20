@@ -1,0 +1,41 @@
+{
+  "index": {
+    "max_ngram_diff": "5",
+    "analysis": {
+      "analyzer": {
+        "ngram_analyzer": {
+          "tokenizer": "text_tokenizer",
+          "filter": [
+            "lowercase"
+          ]
+        },
+        "edge_ngram_analyzer": {
+          "tokenizer": "text_edge_tokenizer",
+          "filter": [
+            "lowercase"
+          ]
+        }
+      },
+      "tokenizer": {
+        "text_tokenizer": {
+          "type": "ngram",
+          "min_gram": 1,
+          "max_gram": 6,
+          "token_chars": [
+            "letter",
+            "digit"
+          ]
+        },
+        "text_edge_tokenizer": {
+          "type": "edge_ngram",
+          "min_gram": 2,
+          "max_gram": 10,
+          "token_chars": [
+            "letter",
+            "digit"
+          ]
+        }
+      }
+    }
+  }
+}
