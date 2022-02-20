@@ -2,6 +2,7 @@ package com.ncns.sns.post.controller;
 
 import com.ncns.sns.post.domain.Post;
 import com.ncns.sns.post.dto.request.*;
+import com.ncns.sns.post.dto.response.LikeResponseDto;
 import com.ncns.sns.post.dto.response.PostDetailResponseDto;
 import com.ncns.sns.post.dto.response.PostResponseDto;
 import com.ncns.sns.post.dto.response.StatusResponseDto;
@@ -61,7 +62,8 @@ public class PostController extends ApiController {
     @GetMapping("/{postId}")
     public ResponseEntity<PostDetailResponseDto> getPostDetail(@PathVariable Long postId) {
         PostDetailResponseDto response = PostDetailResponseDto
-                .of(postService.getPostById(postId), commentService.getCommentList(postId));
+                .of(postService.getPostResponse(postId), commentService.getCommentList(postId));
+        if (postService.isLiking(postId) != null) response.liking();
         return getSuccessResponse(response);
     }
 
@@ -86,6 +88,7 @@ public class PostController extends ApiController {
     @PostMapping("/like/{postId}")
     public ResponseEntity<StatusResponseDto> likePost(@PathVariable Long postId) {
         StatusResponseDto data = postService.requestLikePost(postId);
+        kafkaService.sendUpdateLikeRequest(LikeResponseDto.of(SecurityUtil.getCurrentUserId(),postId,data.getStatus()));
         return getSuccessResponse(data);
     }
 

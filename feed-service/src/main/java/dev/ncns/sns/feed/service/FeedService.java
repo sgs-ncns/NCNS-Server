@@ -9,6 +9,8 @@ import dev.ncns.sns.feed.domain.FeedRepository;
 import dev.ncns.sns.feed.domain.ListType;
 import dev.ncns.sns.feed.dto.request.FeedPullRequestDto;
 import dev.ncns.sns.feed.dto.request.UpdateListRequestDto;
+import dev.ncns.sns.feed.dto.response.FeedResponseDto;
+import dev.ncns.sns.feed.dto.response.LikeResponseDto;
 import dev.ncns.sns.feed.dto.response.PostResponseDto;
 import dev.ncns.sns.feed.dto.response.SubscribingFeedResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -36,16 +38,18 @@ public class FeedService {
         feedRepository.save(feedDocument);
     }
 
-    public List<Feed> getFeed(Long userId, int page) {
+    public FeedResponseDto getFeed(Long userId, int page) {
         if (page <= 0) {
             throw new BadRequestException(ResponseType.REQUEST_NOT_VALID);
         }
         List<Feed> feeds = getFeedDocument(userId).getFeeds();
+        if (feeds.size() == 0) return FeedResponseDto.of(feeds);
         Collections.reverse(feeds);
         int start = PAGE_SIZE * (page - 1);
         int end = feeds.size() <= PAGE_SIZE * page ? feeds.size() - 1 : PAGE_SIZE * page;
-
-        return feeds.subList(start, end);
+        FeedResponseDto feedResponse = FeedResponseDto.of(feeds.subList(start, end));
+        if (end == PAGE_SIZE * page) feedResponse.setEndOfFeed();
+        return feedResponse;
     }
 
     public List<SubscribingFeedResponseDto> getSubscribeFeed(Long userId) {
@@ -124,6 +128,15 @@ public class FeedService {
         }
         feedRepository.save(userDocument);
         feedRepository.save(targetDocument);
+    }
+
+    public void updateLiking(LikeResponseDto likeResponseDto) {
+        FeedDocument feedDocument = getFeedDocument(likeResponseDto.getUserId());
+        List<Feed> feeds = feedDocument.getFeeds();
+        List<Feed> targetPost = feeds.stream().filter(feed -> feed.getPostId().equals(likeResponseDto.getPostId()))
+                .collect(Collectors.toList());
+        if (targetPost.size() != 0) targetPost.get(0).updateLiking(likeResponseDto.getLiking());
+        feedRepository.save(feedDocument);
     }
 
     private FeedDocument getFeedDocument(Long userId) {
