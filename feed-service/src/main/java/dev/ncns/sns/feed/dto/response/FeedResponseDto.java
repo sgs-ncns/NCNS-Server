@@ -11,11 +11,13 @@ import java.util.List;
 @Getter
 public class FeedResponseDto {
     private boolean result;
+    private boolean endOfFeed;
     private List<Feed> feeds;
 
     @Builder
     public FeedResponseDto(List<Feed> feeds) {
         this.result = true;
+        this.endOfFeed = false;
         this.feeds = feeds;
     }
 
@@ -27,6 +29,10 @@ public class FeedResponseDto {
 
     public void updateFailPullResult() {
         this.result = false;
+    }
+
+    public void setEndOfFeed() {
+        this.endOfFeed = true;
     }
 
 }
