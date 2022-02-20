@@ -10,11 +10,14 @@ import dev.ncns.sns.feed.domain.ListType;
 import dev.ncns.sns.feed.dto.request.FeedPullRequestDto;
 import dev.ncns.sns.feed.dto.request.UpdateListRequestDto;
 import dev.ncns.sns.feed.dto.response.PostResponseDto;
+import dev.ncns.sns.feed.dto.response.SubscribingFeedResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,8 +38,24 @@ public class FeedService {
         return getFeedDocument(userId).getFeeds();
     }
 
-    public List<Long> getSubscribeFeed(Long userId) {
-        return getFeedDocument(userId).getRecentSubscribing();
+    public List<SubscribingFeedResponseDto> getSubscribeFeed(Long userId) {
+        List<SubscribingFeedResponseDto> response = new ArrayList<>();
+
+        FeedDocument feedDocument = getFeedDocument(userId);
+        List<Feed> feeds = feedDocument.getFeeds();
+        Collections.reverse(feeds);
+        List<Long> subscribings = feedDocument.getRecentSubscribing();
+
+        subscribings.forEach(sub -> {
+            SubscribingFeedResponseDto dto = new SubscribingFeedResponseDto();
+            for (Feed feed : feeds) {
+                dto.setUserId(sub);
+                if (sub.equals(feed.getUserId())) dto.add(feed);
+                if (dto.getRecentFeeds().size() == 5) break;
+            }
+            response.add(dto);
+        });
+        return response;
     }
 
     @Transactional
