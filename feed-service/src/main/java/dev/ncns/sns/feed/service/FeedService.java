@@ -28,14 +28,24 @@ public class FeedService {
     private final FeedRepository feedRepository;
     private final PostFeignClient postFeignClient;
 
+    private static final int PAGE_SIZE = 5;
+
     @Transactional
     public void createFeedDocument(Long userId) {
         FeedDocument feedDocument = FeedDocument.builder().userId(userId).build();
         feedRepository.save(feedDocument);
     }
 
-    public List<Feed> getFeed(Long userId) {
-        return getFeedDocument(userId).getFeeds();
+    public List<Feed> getFeed(Long userId, int page) {
+        if (page <= 0) {
+            throw new BadRequestException(ResponseType.REQUEST_NOT_VALID);
+        }
+        List<Feed> feeds = getFeedDocument(userId).getFeeds();
+        Collections.reverse(feeds);
+        int start = PAGE_SIZE * (page - 1);
+        int end = feeds.size() <= PAGE_SIZE * page ? feeds.size() - 1 : PAGE_SIZE * page;
+
+        return feeds.subList(start, end);
     }
 
     public List<SubscribingFeedResponseDto> getSubscribeFeed(Long userId) {
@@ -51,7 +61,7 @@ public class FeedService {
             for (Feed feed : feeds) {
                 dto.setUserId(sub);
                 if (sub.equals(feed.getUserId())) dto.add(feed);
-                if (dto.getRecentFeeds().size() == 5) break;
+                if (dto.getRecentFeeds().size() == PAGE_SIZE) break;
             }
             response.add(dto);
         });
