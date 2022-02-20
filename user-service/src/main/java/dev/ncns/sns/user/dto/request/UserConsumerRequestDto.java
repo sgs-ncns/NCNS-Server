@@ -17,11 +17,19 @@ public class UserConsumerRequestDto {
         this.nickname = nickname;
     }
 
-    public static UserConsumerRequestDto of(Long userId, String accountName, String nickname) {
+    public static UserConsumerRequestDto of(Long userId, SignUpRequestDto signUpRequest) {
         return UserConsumerRequestDto.builder()
                 .userId(userId)
-                .accountName(accountName)
-                .nickname(nickname)
+                .accountName(signUpRequest.getAccountName())
+                .nickname(signUpRequest.getNickname())
+                .build();
+    }
+
+    public static UserConsumerRequestDto of(Long userId, UpdateProfileRequestDto updateProfileRequest) {
+        return UserConsumerRequestDto.builder()
+                .userId(userId)
+                .accountName(updateProfileRequest.getAccountName())
+                .nickname(updateProfileRequest.getNickname())
                 .build();
     }
 

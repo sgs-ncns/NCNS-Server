@@ -30,13 +30,13 @@ public class UserController extends ApiController {
     private final SubscribeService subscribeService;
     private final UserProducerService kafkaService;
 
-    @Operation(summary = "회원가입", description = "auth type(APPLE|GOOGLE|LOCAL)")
+    @Operation(summary = "회원가입", description = "auth type (APPLE | GOOGLE | LOCAL)")
     @NonAuthorize
     @PostMapping
     public ResponseEntity<Void> signUp(@Validated @RequestBody SignUpRequestDto signUpRequest) {
         Long userId = userService.signUp(signUpRequest);
-        UserConsumerRequestDto userConsumerRequest = UserConsumerRequestDto.of(userId, signUpRequest.getAccountName(), signUpRequest.getNickname());
-        kafkaService.sendCreateDocumentRequest(userConsumerRequest);
+        UserConsumerRequestDto userConsumerRequest = UserConsumerRequestDto.of(userId, signUpRequest);
+        kafkaService.sendCreateUserRequest(userConsumerRequest);
         return getSuccessResponse();
     }
 
@@ -49,7 +49,7 @@ public class UserController extends ApiController {
         subscribeService.deleteSubscribe(currentUserId);
         // TODO: post 삭제
         userService.signOut(currentUserId);
-        kafkaService.sendDeleteDocumentRequest(currentUserId);
+        kafkaService.sendDeleteUserRequest(currentUserId);
         return getSuccessResponse();
     }
 
@@ -58,6 +58,8 @@ public class UserController extends ApiController {
     public ResponseEntity<Void> updateProfile(@RequestBody UpdateProfileRequestDto updateProfileRequest) {
         Long currentUserId = SecurityUtil.getCurrentUserId();
         userService.updateProfile(currentUserId, updateProfileRequest);
+        UserConsumerRequestDto userConsumerRequest = UserConsumerRequestDto.of(currentUserId, updateProfileRequest);
+        kafkaService.sendUpdateUserRequest(userConsumerRequest);
         return getSuccessResponse();
     }
 

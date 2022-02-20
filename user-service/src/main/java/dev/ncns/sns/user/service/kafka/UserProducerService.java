@@ -1,5 +1,6 @@
 package dev.ncns.sns.user.service.kafka;
 
+import dev.ncns.sns.common.util.Topic;
 import dev.ncns.sns.user.dto.request.UpdateListRequestDto;
 import dev.ncns.sns.user.dto.request.UserConsumerRequestDto;
 import lombok.RequiredArgsConstructor;
@@ -14,21 +15,26 @@ public class UserProducerService {
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
-    public void sendCreateDocumentRequest(UserConsumerRequestDto userConsumerRequest) {
+    public void sendCreateUserRequest(UserConsumerRequestDto userConsumerRequest) {
         log.info("[Kafka producer] >> create user document");
-        this.kafkaTemplate.send("NCNS-FEED-USER-CREATE", userConsumerRequest.getUserId());
-        this.kafkaTemplate.send("NCNS-SEARCH-USER-CREATE", userConsumerRequest);
+        this.kafkaTemplate.send(Topic.FEED_USER_CREATE, userConsumerRequest.getUserId());
+        this.kafkaTemplate.send(Topic.SEARCH_USER_CREATE, userConsumerRequest);
     }
 
-    public void sendUpdateListRequest(UpdateListRequestDto dto) {
+    public void sendUpdateUserRequest(UserConsumerRequestDto userConsumerRequest) {
+        log.info("[Kafka producer] >> update user document");
+        this.kafkaTemplate.send(Topic.SEARCH_USER_UPDATE, userConsumerRequest);
+    }
+
+    public void sendUpdateListRequest(UpdateListRequestDto updateListRequest) {
         log.info("[Kafka producer] >> update follow/subscribe list");
-        this.kafkaTemplate.send("NCNS-LIST", dto);
+        this.kafkaTemplate.send(Topic.FEED_USER_LIST_UPDATE, updateListRequest);
     }
 
-    public void sendDeleteDocumentRequest(Long userId) {
+    public void sendDeleteUserRequest(Long userId) {
         log.info("[Kafka producer] >> delete user document");
-//        this.kafkaTemplate.send("NCNS-FEED-USER-DELETE", userId);
-        this.kafkaTemplate.send("NCNS-SEARCH-USER-DELETE", userId);
+//        this.kafkaTemplate.send(Topic.FEED_USER_DELETE, userId);
+        this.kafkaTemplate.send(Topic.SEARCH_USER_DELETE, userId);
     }
 
 }

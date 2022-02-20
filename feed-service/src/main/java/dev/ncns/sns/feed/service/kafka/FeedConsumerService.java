@@ -1,5 +1,6 @@
 package dev.ncns.sns.feed.service.kafka;
 
+import dev.ncns.sns.common.util.Topic;
 import dev.ncns.sns.feed.dto.request.UpdateListRequestDto;
 import dev.ncns.sns.feed.dto.response.PostResponseDto;
 import dev.ncns.sns.feed.service.FeedService;
@@ -12,21 +13,24 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Service
 public class FeedConsumerService {
+
+    private static final String GROUP_ID = "group-id-ncns";
+
     private final FeedService feedService;
 
-    @KafkaListener(topics = "NCNS-FEED-USER-CREATE", groupId = "group-id-ncns")
+    @KafkaListener(topics = Topic.FEED_USER_CREATE, groupId = GROUP_ID)
     public void consumeUser(Long userId) {
         log.info("[Kafka consumer] >> create user document");
         feedService.createFeedDocument(userId);
     }
 
-    @KafkaListener(topics = "NCNS-POST", groupId = "group-id-ncns")
+    @KafkaListener(topics = Topic.FEED_POST_UPDATE, groupId = GROUP_ID)
     public void consumePost(PostResponseDto postResponseDto) {
         log.info("[Kafka consumer] >> update subscriber feed");
         feedService.updateFeedByPush(postResponseDto);
     }
 
-    @KafkaListener(topics = "NCNS-LIST", groupId = "group-id-ncns")
+    @KafkaListener(topics = Topic.FEED_USER_LIST_UPDATE, groupId = GROUP_ID)
     public void consumeFollow(UpdateListRequestDto updateListRequestDto) {
         log.info("[Kafka consumer] >> update follow/subscribe list");
         feedService.updateList(updateListRequestDto);
