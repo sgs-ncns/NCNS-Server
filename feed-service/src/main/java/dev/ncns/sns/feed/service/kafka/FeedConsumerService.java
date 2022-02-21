@@ -25,6 +25,12 @@ public class FeedConsumerService {
         feedService.createFeedDocument(userId);
     }
 
+    @KafkaListener(topics = Topic.FEED_USER_DELETE, groupId = GROUP_ID)
+    public void consumeUserDelete(Long userId) {
+        log.info("[Kafka consumer] >> delete user document");
+        feedService.deleteFeedDocument(userId);
+    }
+
     @KafkaListener(topics = Topic.FEED_POST_UPDATE, groupId = GROUP_ID)
     public void consumePost(PostResponseDto postResponseDto) {
         log.info("[Kafka consumer] >> update subscriber feed");

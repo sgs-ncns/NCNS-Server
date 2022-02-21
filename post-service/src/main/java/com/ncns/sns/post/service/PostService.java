@@ -1,12 +1,12 @@
 package com.ncns.sns.post.service;
 
-import com.ncns.sns.post.dto.response.StatusResponseDto;
-import com.ncns.sns.post.util.SecurityUtil;
 import com.ncns.sns.post.domain.*;
 import com.ncns.sns.post.dto.request.CreatePostRequestDto;
 import com.ncns.sns.post.dto.request.UpdatePostRequestDto;
 import com.ncns.sns.post.dto.response.PostResponseDto;
+import com.ncns.sns.post.dto.response.StatusResponseDto;
 import com.ncns.sns.post.repository.*;
+import com.ncns.sns.post.util.SecurityUtil;
 import dev.ncns.sns.common.domain.ResponseType;
 import dev.ncns.sns.common.exception.BadRequestException;
 import dev.ncns.sns.common.exception.NotFoundException;
@@ -23,13 +23,11 @@ public class PostService {
     private final PostRepository postRepository;
     private final PostsCountRepository postCountRepository;
     private final LikeRepository likeRepository;
-    private final HashtagRepository hashtagRepository;
     private final UserTagRepository userTagRepository;
 
     @Transactional
     public Post createPost(CreatePostRequestDto dto) {
-        String hashtags = saveHashTag(dto.getHashtag());
-
+        String hashtags = String.join(",", dto.getHashtag());
         Post post = postRepository.save(dto.toEntity(hashtags));
 
         if (dto.getUsertag() != null) {
@@ -46,10 +44,7 @@ public class PostService {
         userTagRepository.deleteAllByPostId(dto.getPostId());
         dto.getUsertag().forEach(userId -> saveUserTag(dto.getPostId(), userId));
 
-        if (!post.getHashtag().isEmpty()) {
-            deleteHashTags(post.getHashtagList());
-        }
-        String newHashtags = saveHashTag(dto.getHashtag());
+        String newHashtags = String.join(",", dto.getHashtag());
         post.updatePost(dto.getContent(), newHashtags);
     }
 
@@ -57,12 +52,9 @@ public class PostService {
     public void deletePost(Long postId) {
         Post post = checkAuthorization(postId);
 
-        deleteHashTags(post.getHashtagList());
-
         userTagRepository.deleteAllByPostId(postId);
-
-        PostCount postCount = postCountRepository.getById(postId);
-        postCountRepository.deleteById(postCount.getId());
+        likeRepository.deleteAllByPostId(postId);
+        postCountRepository.deleteByPostId(postId);
 
         postRepository.delete(post);
     }
@@ -134,26 +126,4 @@ public class PostService {
         userTagRepository.save(userTag);
     }
 
-    private String saveHashTag(List<String> hashtagList) {
-        return hashtagList.size() == 0 ? "" :
-                hashtagList.stream().map(hash -> {
-
-                    if (hash.isBlank()) throw new BadRequestException(ResponseType.REQUEST_NOT_VALID);
-
-                    Hashtag hashtag = hashtagRepository.findByContent(hash)
-                            .orElseGet(() -> hashtagRepository.save(new Hashtag(hash, 0)));
-                    hashtag.update(true);
-                    return hash;
-                }).collect(Collectors.joining(","));
-    }
-
-    private void deleteHashTags(List<String> hashtagList) {
-        if (hashtagList == null) return;
-
-        hashtagList.forEach(hash -> {
-            Hashtag hashtag = hashtagRepository.findByContent(hash)
-                    .orElseThrow(() -> new NotFoundException(ResponseType.POST_NOT_EXIST_HASHTAG));
-            hashtag.update(false);
-        });
-    }
 }

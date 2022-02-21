@@ -38,6 +38,11 @@ public class FeedService {
         feedRepository.save(feedDocument);
     }
 
+    @Transactional
+    public void deleteFeedDocument(Long userId) {
+        feedRepository.deleteByUserId(userId);
+    }
+
     public FeedResponseDto getFeed(Long userId, int page) {
         if (page <= 0) {
             throw new BadRequestException(ResponseType.REQUEST_NOT_VALID);

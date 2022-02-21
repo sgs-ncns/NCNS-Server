@@ -7,4 +7,6 @@ import java.util.Optional;
 public interface FeedRepository extends MongoRepository<FeedDocument, String> {
 
     Optional<FeedDocument> findByUserId(Long userId);
+
+    void deleteByUserId(Long userId);
 }
