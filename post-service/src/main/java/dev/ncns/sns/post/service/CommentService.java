@@ -13,6 +13,7 @@ import dev.ncns.sns.post.repository.CommentRepository;
 import dev.ncns.sns.post.repository.PostsCountRepository;
 import dev.ncns.sns.post.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +27,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final PostsCountRepository postsCountRepository;
 
+    @Cacheable(cacheNames = "postComments")
     public List<CommentResponseDto> getCommentList(Long postId) {
         return commentRepository.findAllByPostId(postId)
                 .stream().map(CommentResponseDto::new)

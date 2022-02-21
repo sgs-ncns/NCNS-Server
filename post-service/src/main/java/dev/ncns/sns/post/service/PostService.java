@@ -14,6 +14,7 @@ import dev.ncns.sns.post.repository.PostsCountRepository;
 import dev.ncns.sns.post.repository.UserTagRepository;
 import dev.ncns.sns.post.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -63,6 +64,7 @@ public class PostService {
         postRepository.delete(post);
     }
 
+    @Cacheable(cacheNames = "posts")
     @Transactional(readOnly = true)
     public List<PostResponseDto> getUserPosts(Long userId) {
         return postRepository.findAllByUserId(userId).stream()

@@ -7,7 +7,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum CacheType {
 
-    USER_PROFILE("userProfile", 60, 10000);
+    USER_PROFILE("userProfile", 10, 10000),
+    POST_POSTS("posts", 10, 10000),
+    POST_COMMENTS("postComments", 20, 10000);
 
     private final String cacheName;
     private final int expiredAfterWrite;
