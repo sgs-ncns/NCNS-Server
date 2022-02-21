@@ -1,7 +1,7 @@
 package dev.ncns.sns.search.service.kafka;
 
 import dev.ncns.sns.common.util.Topic;
-import dev.ncns.sns.search.dto.request.UserConsumerRequestDto;
+import dev.ncns.sns.search.dto.kafka.UserConsumerRequestDto;
 import dev.ncns.sns.search.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

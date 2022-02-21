@@ -4,6 +4,7 @@ import lombok.Getter;
 
 @Getter
 public class LikeResponseDto {
+
     private Long userId;
     private Long postId;
     private Boolean liking;

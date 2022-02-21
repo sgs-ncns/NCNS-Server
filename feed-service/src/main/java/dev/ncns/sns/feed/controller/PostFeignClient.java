@@ -14,4 +14,5 @@ public interface PostFeignClient {
 
     @PostMapping("/feed")
     List<PostResponseDto> getNewFeeds(@RequestBody FeedPullRequestDto dto);
+
 }

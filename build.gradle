@@ -43,11 +43,11 @@ subprojects {
                         implementation 'org.springframework.boot:spring-boot-starter-web'
                         developmentOnly 'org.springframework.boot:spring-boot-devtools'
                         implementation 'org.springframework.boot:spring-boot-starter-cache'
+                        implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
                         implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
                         implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
                         implementation 'org.springframework.cloud:spring-cloud-starter-config'
-                        implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
                         implementation 'org.springframework.kafka:spring-kafka'
 

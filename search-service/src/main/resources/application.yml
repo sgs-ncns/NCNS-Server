@@ -13,7 +13,9 @@ spring:
         spring:
           json:
             type:
-              mapping: user:dev.ncns.sns.search.dto.request.UserConsumerRequestDto, hashtag:dev.ncns.sns.search.dto.request.HashtagConsumerRequestDto, updateHashtag:dev.ncns.sns.search.dto.request.UpdateHashtagConsumerRequestDto
+              mapping: user:dev.ncns.sns.search.dto.kafka.UserConsumerRequestDto,
+                hashtag:dev.ncns.sns.search.dto.kafka.PostHashtagRequestDto,
+                updateHashtag:dev.ncns.sns.search.dto.kafka.UpdatePostHashtagRequestDto
 
 management:
   endpoints:
