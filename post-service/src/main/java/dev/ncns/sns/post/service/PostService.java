@@ -20,6 +20,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -69,12 +70,14 @@ public class PostService {
     @Cacheable(cacheNames = "posts")
     @Transactional(readOnly = true)
     public List<PostResponseDto> getUserPosts(Long userId) {
-        return postRepository.findAllByUserId(userId).stream()
+        List<PostResponseDto> responseDtoList = postRepository.findAllByUserId(userId).stream()
                 .map(posts -> {
                             PostCount postCount = postCountRepository.findByPostId(posts.getId());
                             return PostResponseDto.of(posts, postCount);
                         }
                 ).collect(Collectors.toList());
+        Collections.reverse(responseDtoList);
+        return responseDtoList;
     }
 
     public PostResponseDto getPostResponse(Long postId) {

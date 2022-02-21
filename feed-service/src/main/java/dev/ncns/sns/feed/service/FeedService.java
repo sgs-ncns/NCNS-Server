@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 @Service
 public class FeedService {
 
-    private static final int PAGE_SIZE = 10;
+    private static final int PAGE_SIZE = 5;
 
     private final FeedRepository feedRepository;
     private final PostFeignClient postFeignClient;
