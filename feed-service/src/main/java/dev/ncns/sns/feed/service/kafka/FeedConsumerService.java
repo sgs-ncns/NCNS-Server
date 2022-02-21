@@ -2,6 +2,7 @@ package dev.ncns.sns.feed.service.kafka;
 
 import dev.ncns.sns.common.util.Topic;
 import dev.ncns.sns.feed.dto.request.UpdateListRequestDto;
+import dev.ncns.sns.feed.dto.response.LikeResponseDto;
 import dev.ncns.sns.feed.dto.response.PostResponseDto;
 import dev.ncns.sns.feed.service.FeedService;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,12 @@ public class FeedConsumerService {
     public void consumeFollow(UpdateListRequestDto updateListRequestDto) {
         log.info("[Kafka consumer] >> update follow/subscribe list");
         feedService.updateList(updateListRequestDto);
+    }
+
+    @KafkaListener(topics = Topic.FEED_POST_LIKE_UPDATE, groupId = GROUP_ID)
+    public void consumeLike(LikeResponseDto likeResponseDto) {
+        log.info("[Kafka consumer] >> update liking status");
+        feedService.updateLiking(likeResponseDto);
     }
 
 }

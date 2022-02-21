@@ -16,5 +16,10 @@ public class Feed {
     private LocalDateTime createdAt;
     private Long likeCount;
     private Long commentCount;
+    private boolean liking;
+
+    public void updateLiking(Boolean liking) {
+        this.liking = liking;
+    }
 
 }

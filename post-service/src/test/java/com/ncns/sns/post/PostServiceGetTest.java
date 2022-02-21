@@ -32,13 +32,13 @@ public class PostServiceGetTest {
     @Test
     void getPostList() {
         List<PostResponseDto> result = postService.getUserPosts(2L);
-        result.forEach(dto -> System.out.println(dto));
+        result.forEach(System.out::println);
     }
 
     @Test
     void getPostDetail() {
         PostDetailResponseDto dto = PostDetailResponseDto
-                .of(postService.getPostById(9L),commentService.getCommentList(9L));
+                .of(postService.getPostResponse(9L),commentService.getCommentList(9L));
 //        dto.getCommentList().forEach(comment -> System.out.println(comment.getContent()));
     }
 }
