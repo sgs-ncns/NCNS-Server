@@ -33,7 +33,7 @@ public class UserProducerService {
 
     public void sendDeleteUserRequest(Long userId) {
         log.info("[Kafka producer] >> delete user document");
-//        kafkaTemplate.send(Topic.FEED_USER_DELETE, userId);
+        kafkaTemplate.send(Topic.FEED_USER_DELETE, userId);
         kafkaTemplate.send(Topic.SEARCH_USER_DELETE, userId);
     }
 
