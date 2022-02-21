@@ -5,8 +5,10 @@ import dev.ncns.sns.common.exception.BadRequestException;
 import dev.ncns.sns.common.exception.NotFoundException;
 import dev.ncns.sns.post.domain.*;
 import dev.ncns.sns.post.dto.request.CreatePostRequestDto;
+import dev.ncns.sns.post.dto.request.PostSummaryRequestDto;
 import dev.ncns.sns.post.dto.request.UpdatePostRequestDto;
 import dev.ncns.sns.post.dto.response.PostResponseDto;
+import dev.ncns.sns.post.dto.response.PostSummaryResponseDto;
 import dev.ncns.sns.post.dto.response.StatusResponseDto;
 import dev.ncns.sns.post.repository.LikeRepository;
 import dev.ncns.sns.post.repository.PostRepository;
@@ -93,6 +95,12 @@ public class PostService {
 
     public Post getPostById(Long postId) {
         return postRepository.findById(postId).orElseThrow(() -> new NotFoundException(ResponseType.POST_NOT_EXIST));
+    }
+
+    public List<PostSummaryResponseDto> getPostSummaries(PostSummaryRequestDto postSummaryRequest) {
+        return postSummaryRequest.getPostIdList().stream()
+                .map(postId -> PostSummaryResponseDto.of(getPostById(postId)))
+                .collect(Collectors.toList());
     }
 
     private Post checkAuthorization(Long postId) {

@@ -1,12 +1,14 @@
-package dev.ncns.sns.search.dto.request;
+package dev.ncns.sns.search.dto.kafka;
 
+import dev.ncns.sns.search.dto.request.CreateHashtagRequestDto;
+import dev.ncns.sns.search.dto.request.UpdateHashtagRequestDto;
 import lombok.Getter;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
-public class HashtagConsumerRequestDto {
+public class PostHashtagRequestDto {
 
     private Long postId;
     private List<String> hashtags;

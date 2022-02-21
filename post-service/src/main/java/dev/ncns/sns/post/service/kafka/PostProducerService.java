@@ -1,8 +1,8 @@
 package dev.ncns.sns.post.service.kafka;
 
 import dev.ncns.sns.common.util.Topic;
-import dev.ncns.sns.post.dto.kafka.HashtagRequestDto;
-import dev.ncns.sns.post.dto.kafka.UpdateHashtagRequestDto;
+import dev.ncns.sns.post.dto.kafka.PostHashtagRequestDto;
+import dev.ncns.sns.post.dto.kafka.UpdatePostHashtagRequestDto;
 import dev.ncns.sns.post.dto.response.LikeResponseDto;
 import dev.ncns.sns.post.dto.response.PostResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -27,20 +27,19 @@ public class PostProducerService {
         kafkaTemplate.send(Topic.FEED_POST_LIKE_UPDATE, likeResponse);
     }
 
-    public void sendCreatePostRequest(HashtagRequestDto hashtagRequest) {
+    public void sendCreatePostRequest(PostHashtagRequestDto postHashtagRequest) {
         log.info("[Kafka producer] >> create post hashtag document");
-        kafkaTemplate.send(Topic.SEARCH_POST_CREATE, hashtagRequest);
+        kafkaTemplate.send(Topic.SEARCH_POST_CREATE, postHashtagRequest);
     }
 
-    public void sendUpdatePostRequest(UpdateHashtagRequestDto updateHashtagRequest) {
+    public void sendUpdatePostRequest(UpdatePostHashtagRequestDto updatePostHashtagRequest) {
         log.info("[Kafka producer] >> update post hashtag document");
-        System.out.println(updateHashtagRequest.getHashtags());
-        kafkaTemplate.send(Topic.SEARCH_POST_UPDATE, updateHashtagRequest);
+        kafkaTemplate.send(Topic.SEARCH_POST_UPDATE, updatePostHashtagRequest);
     }
 
-    public void sendDeletePostRequest(HashtagRequestDto hashtagRequest) {
+    public void sendDeletePostRequest(PostHashtagRequestDto postHashtagRequest) {
         log.info("[Kafka producer] >> delete post hashtag document");
-        kafkaTemplate.send(Topic.SEARCH_POST_DELETE, hashtagRequest);
+        kafkaTemplate.send(Topic.SEARCH_POST_DELETE, postHashtagRequest);
     }
 
 }

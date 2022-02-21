@@ -1,5 +1,7 @@
-package dev.ncns.sns.search.dto.request;
+package dev.ncns.sns.search.dto.kafka;
 
+import dev.ncns.sns.search.dto.request.CreateUserRequestDto;
+import dev.ncns.sns.search.dto.request.UpdateUserRequestDto;
 import lombok.Getter;
 
 @Getter

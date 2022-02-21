@@ -4,13 +4,10 @@ import dev.ncns.sns.common.annotation.NonAuthorize;
 import dev.ncns.sns.common.controller.ApiController;
 import dev.ncns.sns.common.domain.ResponseEntity;
 import dev.ncns.sns.post.domain.Post;
-import dev.ncns.sns.post.dto.kafka.HashtagRequestDto;
-import dev.ncns.sns.post.dto.kafka.UpdateHashtagRequestDto;
+import dev.ncns.sns.post.dto.kafka.PostHashtagRequestDto;
+import dev.ncns.sns.post.dto.kafka.UpdatePostHashtagRequestDto;
 import dev.ncns.sns.post.dto.request.*;
-import dev.ncns.sns.post.dto.response.LikeResponseDto;
-import dev.ncns.sns.post.dto.response.PostDetailResponseDto;
-import dev.ncns.sns.post.dto.response.PostResponseDto;
-import dev.ncns.sns.post.dto.response.StatusResponseDto;
+import dev.ncns.sns.post.dto.response.*;
 import dev.ncns.sns.post.service.CommentService;
 import dev.ncns.sns.post.service.FeedFeignService;
 import dev.ncns.sns.post.service.PostService;
@@ -44,7 +41,7 @@ public class PostController extends ApiController {
         PostResponseDto postResponse = feedFeignService.createSubscribeFeed(post);
         kafkaService.sendUpdateFeedRequest(postResponse);
 
-        HashtagRequestDto hashtagConsumerRequest = HashtagRequestDto.of(post.getId(), createPostRequest.getHashtag());
+        PostHashtagRequestDto hashtagConsumerRequest = PostHashtagRequestDto.of(post.getId(), createPostRequest.getHashtag());
         kafkaService.sendCreatePostRequest(hashtagConsumerRequest);
         return getSuccessResponse();
     }
@@ -53,12 +50,12 @@ public class PostController extends ApiController {
     @PatchMapping
     public ResponseEntity<Void> updatePost(@RequestBody UpdatePostRequestDto updatePostRequest) {
         Post post = postService.getPostById(updatePostRequest.getPostId());
-        UpdateHashtagRequestDto deleteHashtagConsumerRequest = UpdateHashtagRequestDto.of(post.getId(), post.getHashtag(), false);
+        UpdatePostHashtagRequestDto deleteHashtagConsumerRequest = UpdatePostHashtagRequestDto.of(post.getId(), post.getHashtag(), false);
         kafkaService.sendUpdatePostRequest(deleteHashtagConsumerRequest);
 
         postService.updatePost(updatePostRequest);
 
-        HashtagRequestDto hashtagConsumerRequest = HashtagRequestDto.of(post.getId(), updatePostRequest.getHashtag());
+        PostHashtagRequestDto hashtagConsumerRequest = PostHashtagRequestDto.of(post.getId(), updatePostRequest.getHashtag());
         kafkaService.sendCreatePostRequest(hashtagConsumerRequest);
         return getSuccessResponse();
     }
@@ -71,7 +68,7 @@ public class PostController extends ApiController {
         commentService.deleteRelatedComment(postId);
         userFeignClient.updateUserPostCount(new UpdateUserPostCountDto(SecurityUtil.getCurrentUserId(), false));
 
-        HashtagRequestDto hashtagConsumerRequest = HashtagRequestDto.of(post.getId(), post.getHashtag());
+        PostHashtagRequestDto hashtagConsumerRequest = PostHashtagRequestDto.of(post.getId(), post.getHashtag());
         kafkaService.sendDeletePostRequest(hashtagConsumerRequest);
         return getSuccessResponse();
     }
@@ -119,6 +116,13 @@ public class PostController extends ApiController {
         StatusResponseDto statusResponse = postService.requestLikePost(postId);
         kafkaService.sendUpdateLikeRequest(LikeResponseDto.of(SecurityUtil.getCurrentUserId(), postId, statusResponse.getStatus()));
         return getSuccessResponse(statusResponse);
+    }
+
+    @Operation(summary = "게시물 요약 목록 조회")
+    @PostMapping("/summary")
+    public ResponseEntity<List<PostSummaryResponseDto>> getPostSummaries(@RequestBody PostSummaryRequestDto postSummaryRequest) {
+        List<PostSummaryResponseDto> postSummaryResponse = postService.getPostSummaries(postSummaryRequest);
+        return getSuccessResponse(postSummaryResponse);
     }
 
     @ApiIgnore

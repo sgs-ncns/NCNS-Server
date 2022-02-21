@@ -7,26 +7,26 @@ import java.util.Arrays;
 import java.util.List;
 
 @Getter
-public class HashtagRequestDto {
+public class PostHashtagRequestDto {
 
     private final Long postId;
     private final List<String> hashtags;
 
     @Builder
-    private HashtagRequestDto(Long postId, List<String> hashtags) {
+    private PostHashtagRequestDto(Long postId, List<String> hashtags) {
         this.postId = postId;
         this.hashtags = hashtags;
     }
 
-    public static HashtagRequestDto of(Long postId, List<String> hashtags) {
-        return HashtagRequestDto.builder()
+    public static PostHashtagRequestDto of(Long postId, List<String> hashtags) {
+        return PostHashtagRequestDto.builder()
                 .postId(postId)
                 .hashtags(hashtags)
                 .build();
     }
 
-    public static HashtagRequestDto of(Long postId, String hashtags) {
-        return HashtagRequestDto.builder()
+    public static PostHashtagRequestDto of(Long postId, String hashtags) {
+        return PostHashtagRequestDto.builder()
                 .postId(postId)
                 .hashtags(Arrays.asList(hashtags.split(",")))
                 .build();

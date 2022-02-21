@@ -16,8 +16,8 @@ spring:
             type:
               mapping: post:dev.ncns.sns.post.dto.response.PostResponseDto,
                 like:dev.ncns.sns.post.dto.response.LikeResponseDto,
-                hashtag:dev.ncns.sns.post.dto.kafka.HashtagRequestDto,
-                updateHashtag:dev.ncns.sns.post.dto.kafka.UpdateHashtagRequestDto
+                hashtag:dev.ncns.sns.post.dto.kafka.PostHashtagRequestDto,
+                updateHashtag:dev.ncns.sns.post.dto.kafka.UpdatePostHashtagRequestDto
 
 management:
   endpoints:
