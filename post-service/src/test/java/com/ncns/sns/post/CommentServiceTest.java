@@ -14,7 +14,7 @@ public class CommentServiceTest {
 
     @Test
     void createComment() {
-        CreateCommentRequestDto dto = new CreateCommentRequestDto(9L,"comment comment");
+        CreateCommentRequestDto dto = new CreateCommentRequestDto(9L,"ncns","comment comment");
         commentService.createComment(dto);
     }
 

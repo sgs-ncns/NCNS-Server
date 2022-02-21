@@ -55,10 +55,15 @@ public class CommentService {
         postCount.update(CountType.COMMENT, false);
     }
 
+    @Transactional
+    public void deleteRelatedComment(Long postId) {
+        commentRepository.deleteAllByPostId(postId);
+    }
+
     private Comment checkAuthorization(Long commentId) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new NotFoundException(ResponseType.POST_NOT_EXIST_COMMENT));
-        if (comment.getUserId() != (SecurityUtil.getCurrentUserId())) {
+        if (!comment.getUserId().equals(SecurityUtil.getCurrentUserId())) {
             throw new BadRequestException(ResponseType.POST_NOT_AUTHOR);
         }
         return comment;

@@ -53,9 +53,8 @@ public class PostService {
         Post post = checkAuthorization(postId);
 
         userTagRepository.deleteAllByPostId(postId);
-
-        PostCount postCount = postCountRepository.getById(postId);
-        postCountRepository.deleteById(postCount.getId());
+        likeRepository.deleteAllByPostId(postId);
+        postCountRepository.deleteByPostId(postId);
 
         postRepository.delete(post);
     }

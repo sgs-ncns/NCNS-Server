@@ -61,6 +61,7 @@ public class PostController extends ApiController {
     public ResponseEntity<Void> deletePost(@PathVariable Long postId) {
         Post post = postService.getPostById(postId);
         postService.deletePost(postId);
+        commentService.deleteRelatedComment(postId);
         userFeignClient.updateUserPostCount(new UpdateUserPostCountDto(SecurityUtil.getCurrentUserId(), false));
 
         HashtagConsumerRequestDto hashtagConsumerRequest = HashtagConsumerRequestDto.of(post.getId(), post.getHashtag());
