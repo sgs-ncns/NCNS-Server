@@ -14,10 +14,10 @@ spring:
         spring:
           json:
             type:
-              mapping: post:com.ncns.sns.post.dto.response.PostResponseDto,
-                like:com.ncns.sns.post.dto.response.LikeResponseDto,
-                hashtag:com.ncns.sns.post.dto.request.HashtagConsumerRequestDto,
-                updateHashtag:com.ncns.sns.post.dto.request.UpdateHashtagConsumerRequestDto
+              mapping: post:dev.ncns.sns.post.dto.response.PostResponseDto,
+                like:dev.ncns.sns.post.dto.response.LikeResponseDto,
+                hashtag:dev.ncns.sns.post.dto.kafka.HashtagRequestDto,
+                updateHashtag:dev.ncns.sns.post.dto.kafka.UpdateHashtagRequestDto
 
 management:
   endpoints:
