@@ -32,24 +32,39 @@ public class PostController extends ApiController {
     private final PostProducerService kafkaService;
 
     @PostMapping
-    public ResponseEntity<?> createPost(@Validated @RequestBody CreatePostRequestDto dto) {
-        Post post = postService.createPost(dto);
+    public ResponseEntity<Void> createPost(@Validated @RequestBody CreatePostRequestDto createPostRequest) {
+        Post post = postService.createPost(createPostRequest);
         userFeignClient.updateUserPostCount(new UpdateUserPostCountDto(SecurityUtil.getCurrentUserId(), true));
-        PostResponseDto postDto = feedFeignService.createSubscribeFeed(post);
-        kafkaService.sendUpdateFeedRequest(postDto);
+
+        PostResponseDto postResponse = feedFeignService.createSubscribeFeed(post);
+        kafkaService.sendUpdateFeedRequest(postResponse);
+
+        HashtagConsumerRequestDto hashtagConsumerRequest = HashtagConsumerRequestDto.of(post.getId(), createPostRequest.getHashtag());
+        kafkaService.sendCreatePostRequest(hashtagConsumerRequest);
         return getSuccessResponse();
     }
 
     @PatchMapping
-    public ResponseEntity<Void> updatePost(@RequestBody UpdatePostRequestDto dto) {
-        postService.updatePost(dto);
+    public ResponseEntity<Void> updatePost(@RequestBody UpdatePostRequestDto updatePostRequest) {
+        Post post = postService.getPostById(updatePostRequest.getPostId());
+        UpdateHashtagConsumerRequestDto deleteHashtagConsumerRequest = UpdateHashtagConsumerRequestDto.of(post.getId(), post.getHashtag(), false);
+        kafkaService.sendUpdatePostRequest(deleteHashtagConsumerRequest);
+
+        postService.updatePost(updatePostRequest);
+
+        HashtagConsumerRequestDto hashtagConsumerRequest = HashtagConsumerRequestDto.of(post.getId(), updatePostRequest.getHashtag());
+        kafkaService.sendCreatePostRequest(hashtagConsumerRequest);
         return getSuccessResponse();
     }
 
     @DeleteMapping("/{postId}")
     public ResponseEntity<Void> deletePost(@PathVariable Long postId) {
+        Post post = postService.getPostById(postId);
         postService.deletePost(postId);
         userFeignClient.updateUserPostCount(new UpdateUserPostCountDto(SecurityUtil.getCurrentUserId(), false));
+
+        HashtagConsumerRequestDto hashtagConsumerRequest = HashtagConsumerRequestDto.of(post.getId(), post.getHashtag());
+        kafkaService.sendDeletePostRequest(hashtagConsumerRequest);
         return getSuccessResponse();
     }
 
@@ -88,7 +103,7 @@ public class PostController extends ApiController {
     @PostMapping("/like/{postId}")
     public ResponseEntity<StatusResponseDto> likePost(@PathVariable Long postId) {
         StatusResponseDto data = postService.requestLikePost(postId);
-        kafkaService.sendUpdateLikeRequest(LikeResponseDto.of(SecurityUtil.getCurrentUserId(),postId,data.getStatus()));
+        kafkaService.sendUpdateLikeRequest(LikeResponseDto.of(SecurityUtil.getCurrentUserId(), postId, data.getStatus()));
         return getSuccessResponse(data);
     }
 

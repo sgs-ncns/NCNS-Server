@@ -11,12 +11,12 @@ import java.util.List;
 public class CreateHashtagRequestDto {
 
     private final String content;
-    private final List<Long> postIdList;
+    private final Long postId;
 
     public Hashtag toEntity() {
         return Hashtag.builder()
                 .content(content)
-                .postIdList(postIdList)
+                .postIdList(List.of(postId))
                 .build();
     }
 

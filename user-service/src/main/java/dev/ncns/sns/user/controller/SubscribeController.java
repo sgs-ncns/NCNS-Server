@@ -36,9 +36,10 @@ public class SubscribeController extends ApiController {
     public ResponseEntity<StatusResponseDto> requestSubscribe(@PathVariable Long targetId) {
         Long currentUserId = SecurityUtil.getCurrentUserId();
         StatusResponseDto statusResponse = subscribeService.requestSubscribe(currentUserId, targetId);
-        UpdateListRequestDto dto = UpdateListRequestDto
+
+        UpdateListRequestDto updateListRequest = UpdateListRequestDto
                 .of(currentUserId, targetId, statusResponse.getStatus(), ListType.SUBSCRIBING);
-        kafkaService.sendUpdateListRequest(dto);
+        kafkaService.sendUpdateListRequest(updateListRequest);
         return getSuccessResponse(statusResponse);
     }
 

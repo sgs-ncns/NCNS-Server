@@ -93,7 +93,7 @@ public class PostService {
         return likeRepository.isLiked(postId, SecurityUtil.getCurrentUserId());
     }
 
-    private Post getPostById(Long postId) {
+    public Post getPostById(Long postId) {
         return postRepository.findById(postId).orElseThrow(() -> new NotFoundException(ResponseType.POST_NOT_EXIST));
     }
 

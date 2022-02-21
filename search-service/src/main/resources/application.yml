@@ -13,7 +13,7 @@ spring:
         spring:
           json:
             type:
-              mapping: user:dev.ncns.sns.search.dto.request.UserConsumerRequestDto
+              mapping: user:dev.ncns.sns.search.dto.request.UserConsumerRequestDto, hashtag:dev.ncns.sns.search.dto.request.HashtagConsumerRequestDto, updateHashtag:dev.ncns.sns.search.dto.request.UpdateHashtagConsumerRequestDto
 
 management:
   endpoints:

@@ -30,7 +30,9 @@ public class HashtagService {
         if (hashtag == null) {
             hashtagRepository.save(createHashtagRequest.toEntity());
         } else {
-            hashtagRepository.update(hashtag, createHashtagRequest.getPostIdList());
+            List<Long> postIdList = hashtag.getPostIdList();
+            postIdList.add(createHashtagRequest.getPostId());
+            hashtagRepository.update(hashtag, postIdList);
         }
     }
 

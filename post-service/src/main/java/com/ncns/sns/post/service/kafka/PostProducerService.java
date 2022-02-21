@@ -1,6 +1,5 @@
 package com.ncns.sns.post.service.kafka;
 
-import com.ncns.sns.post.dto.response.LikeResponseDto;
 import com.ncns.sns.post.dto.response.PostResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,11 +16,6 @@ public class PostProducerService {
     public void sendUpdateFeedRequest(PostResponseDto postResponseDto) {
         log.info("[Kafka producer] >> update subscriber feed");
         this.kafkaTemplate.send("NCNS-POST", postResponseDto);
-    }
-
-    public void sendUpdateLikeRequest(LikeResponseDto likeResponseDto) {
-        log.info("[Kafka producer] >> update like status");
-        this.kafkaTemplate.send("NCNS-LIKE", likeResponseDto);
     }
 
 }

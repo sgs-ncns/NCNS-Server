@@ -26,14 +26,14 @@ public class HashtagController extends ApiController {
         return getSuccessResponse(hashtagResponse);
     }
 
-    @Operation(summary = "[Only Server] 해시태그 등록", description = "게시물 ID 추가(status:true) / 제거(status:false)")
+    @Operation(summary = "[Only Server] 해시태그 등록")
     @PostMapping
     public ResponseEntity<Void> createHashtag(@RequestBody CreateHashtagRequestDto createHashtagRequest) {
         hashtagService.createHashtag(createHashtagRequest);
         return getSuccessResponse();
     }
 
-    @Operation(summary = "[Only Server] 해시태그 수정")
+    @Operation(summary = "[Only Server] 해시태그 수정", description = "게시물 ID 추가(status:true) / 제거(status:false)")
     @PutMapping
     public ResponseEntity<Void> updateHashtag(@RequestBody UpdateHashtagRequestDto updateHashtagRequest) {
         hashtagService.updateHashtag(updateHashtagRequest);

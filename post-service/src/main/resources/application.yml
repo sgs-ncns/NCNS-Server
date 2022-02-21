@@ -14,7 +14,7 @@ spring:
         spring:
           json:
             type:
-              mapping: post:com.ncns.sns.post.dto.response.PostResponseDto, like:com.ncns.sns.post.dto.response.LikeResponseDto
+              mapping: post:com.ncns.sns.post.dto.response.PostResponseDto
 
 management:
   endpoints:
