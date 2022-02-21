@@ -44,15 +44,26 @@ public class PostController extends ApiController {
     }
 
     @PatchMapping
-    public ResponseEntity<Void> updatePost(@RequestBody UpdatePostRequestDto dto) {
-        postService.updatePost(dto);
+    public ResponseEntity<Void> updatePost(@RequestBody UpdatePostRequestDto updatePostRequest) {
+        Post post = postService.getPostById(updatePostRequest.getPostId());
+        UpdateHashtagConsumerRequestDto deleteHashtagConsumerRequest = UpdateHashtagConsumerRequestDto.of(post.getId(), post.getHashtag(), false);
+        kafkaService.sendUpdatePostRequest(deleteHashtagConsumerRequest);
+
+        postService.updatePost(updatePostRequest);
+
+        HashtagConsumerRequestDto hashtagConsumerRequest = HashtagConsumerRequestDto.of(post.getId(), updatePostRequest.getHashtag());
+        kafkaService.sendCreatePostRequest(hashtagConsumerRequest);
         return getSuccessResponse();
     }
 
     @DeleteMapping("/{postId}")
     public ResponseEntity<Void> deletePost(@PathVariable Long postId) {
+        Post post = postService.getPostById(postId);
         postService.deletePost(postId);
         userFeignClient.updateUserPostCount(new UpdateUserPostCountDto(SecurityUtil.getCurrentUserId(), false));
+
+        HashtagConsumerRequestDto hashtagConsumerRequest = HashtagConsumerRequestDto.of(post.getId(), post.getHashtag());
+        kafkaService.sendDeletePostRequest(hashtagConsumerRequest);
         return getSuccessResponse();
     }
 

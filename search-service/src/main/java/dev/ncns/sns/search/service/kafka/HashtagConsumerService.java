@@ -2,6 +2,7 @@ package dev.ncns.sns.search.service.kafka;
 
 import dev.ncns.sns.common.util.Topic;
 import dev.ncns.sns.search.dto.request.HashtagConsumerRequestDto;
+import dev.ncns.sns.search.dto.request.UpdateHashtagConsumerRequestDto;
 import dev.ncns.sns.search.service.HashtagService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,13 +25,15 @@ public class HashtagConsumerService {
     }
 
     @KafkaListener(topics = Topic.SEARCH_POST_UPDATE, groupId = GROUP_ID)
-    public void consumePostUpdate(HashtagConsumerRequestDto hashtagConsumerRequest) {
+    public void consumePostUpdate(UpdateHashtagConsumerRequestDto hashtagConsumerRequest) {
         log.info("[Kafka consumer] >> update post document");
+        hashtagConsumerRequest.convertUpdateHashtags().forEach(hashtagService::updateHashtag);
     }
 
     @KafkaListener(topics = Topic.SEARCH_POST_DELETE, groupId = GROUP_ID)
     public void consumePostDelete(HashtagConsumerRequestDto hashtagConsumerRequest) {
         log.info("[Kafka consumer] >> delete post document");
+        hashtagConsumerRequest.convertUpdateHashtags(false).forEach(hashtagService::updateHashtag);
     }
 
 }

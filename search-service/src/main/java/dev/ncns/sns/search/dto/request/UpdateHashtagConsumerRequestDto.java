@@ -6,18 +6,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
-public class HashtagConsumerRequestDto {
+public class UpdateHashtagConsumerRequestDto {
 
     private Long postId;
     private List<String> hashtags;
+    private boolean status;
 
-    public List<CreateHashtagRequestDto> convertCreateHashtags() {
-        return hashtags.stream()
-                .map(content -> new CreateHashtagRequestDto(content, postId))
-                .collect(Collectors.toList());
-    }
-
-    public List<UpdateHashtagRequestDto> convertUpdateHashtags(boolean status) {
+    public List<UpdateHashtagRequestDto> convertUpdateHashtags() {
         return hashtags.stream()
                 .map(content -> new UpdateHashtagRequestDto(content, postId, status))
                 .collect(Collectors.toList());
