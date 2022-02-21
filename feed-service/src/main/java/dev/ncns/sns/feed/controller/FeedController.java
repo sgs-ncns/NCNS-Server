@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
 
@@ -25,6 +26,7 @@ public class FeedController extends ApiController {
 
     private final FeedService feedService;
 
+    @Operation(summary = "일반 피드 조회", description = "page는 1부터 시작해서 5개씩 조회")
     @GetMapping
     public ResponseEntity<FeedResponseDto> getFeed(@RequestParam int page) {
         Long currentUser = SecurityUtil.getCurrentUserId();
@@ -36,20 +38,31 @@ public class FeedController extends ApiController {
         return getSuccessResponse(feedResponse);
     }
 
+    @Operation(summary = "구독(깐부) 피드 조회")
     @GetMapping("/subscribing")
     public ResponseEntity<List<SubscribingFeedResponseDto>> getSubscribingFeed() {
         List<SubscribingFeedResponseDto> recentSubscribing = feedService.getSubscribeFeed(SecurityUtil.getCurrentUserId());
         return getSuccessResponse(recentSubscribing);
     }
 
+    @Operation(summary = "[Only Server] Document 상태 체크용")
+    @NonAuthorize
+    @GetMapping("/all")
+    public ResponseEntity<List<FeedDocument>> getAllFeed() {
+        List<FeedDocument> list = feedService.getAllFeed();
+        return getSuccessResponse(list);
+    }
+
+    @ApiIgnore
     @Deprecated
     @NonAuthorize
     @PostMapping
     public ResponseEntity<Void> createFeedDocument(@Validated @RequestBody CreateFeedDocumentRequestDto dto) {
-//        feedService.createFeedDocument(dto);
+        feedService.createFeedDocument(dto.getUserId());
         return getSuccessResponse();
     }
 
+    @ApiIgnore
     @Deprecated
     @NonAuthorize
     @PostMapping("/update/feed")
@@ -57,19 +70,12 @@ public class FeedController extends ApiController {
         feedService.updateFeedByPush(dto);
     }
 
+    @ApiIgnore
     @Deprecated
     @NonAuthorize
     @PostMapping("/update/list")
     public void updateFollowingList(@RequestBody UpdateListRequestDto dto) {
         feedService.updateList(dto);
-    }
-
-    @Operation(summary = "document 상태 체크용")
-    @NonAuthorize
-    @GetMapping("/all")
-    public ResponseEntity<List<FeedDocument>> getAllFeed() {
-        List<FeedDocument> list = feedService.getAllFeed();
-        return getSuccessResponse(list);
     }
 
 }

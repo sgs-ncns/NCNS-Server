@@ -10,6 +10,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 public class SubscribingFeedResponseDto {
+
     private Long userId;
     private List<Feed> recentFeeds = new ArrayList<>();
 
@@ -20,4 +21,5 @@ public class SubscribingFeedResponseDto {
     public void add(Feed feed) {
         this.recentFeeds.add(feed);
     }
+
 }

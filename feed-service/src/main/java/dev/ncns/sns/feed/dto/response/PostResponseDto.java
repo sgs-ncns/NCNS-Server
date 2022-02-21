@@ -19,15 +19,15 @@ public class PostResponseDto {
 
     public Feed toEntity() {
         return Feed.builder()
-                    .postId(this.postId)
-                    .userId(this.userId)
-                    .accountName(this.accountName)
-                    .imagePath(this.imagePath)
-                    .content(this.content)
-                    .createdAt(this.createdAt)
-                    .likeCount(this.likeCount)
-                    .commentCount(this.commentCount)
-                    .build();
+                .postId(this.postId)
+                .userId(this.userId)
+                .accountName(this.accountName)
+                .imagePath(this.imagePath)
+                .content(this.content)
+                .createdAt(this.createdAt)
+                .likeCount(this.likeCount)
+                .commentCount(this.commentCount)
+                .build();
     }
 
 }

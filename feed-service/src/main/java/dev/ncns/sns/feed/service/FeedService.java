@@ -27,10 +27,10 @@ import java.util.stream.Collectors;
 @Service
 public class FeedService {
 
+    private static final int PAGE_SIZE = 5;
+
     private final FeedRepository feedRepository;
     private final PostFeignClient postFeignClient;
-
-    private static final int PAGE_SIZE = 5;
 
     @Transactional
     public void createFeedDocument(Long userId) {
@@ -99,36 +99,36 @@ public class FeedService {
     }
 
     @Transactional
-    public void updateFeedByPush(PostResponseDto dto) {
-        List<Long> subscribers = getFeedDocument(dto.getUserId()).getSubscribers();
+    public void updateFeedByPush(PostResponseDto postResponseDto) {
+        List<Long> subscribers = getFeedDocument(postResponseDto.getUserId()).getSubscribers();
         subscribers.forEach(subscriberId -> {
             FeedDocument sub = getFeedDocument(subscriberId);
-            sub.updateSubscribeFeed(dto.toEntity());
+            sub.updateSubscribeFeed(postResponseDto.toEntity());
             feedRepository.save(sub);
         });
     }
 
     @Transactional
-    public void updateList(UpdateListRequestDto dto) {
-        FeedDocument userDocument = getFeedDocument(dto.getUserId());
-        FeedDocument targetDocument = getFeedDocument(dto.getTargetId());
-        switch (dto.getListType()) {
+    public void updateList(UpdateListRequestDto updateListRequestDto) {
+        FeedDocument userDocument = getFeedDocument(updateListRequestDto.getUserId());
+        FeedDocument targetDocument = getFeedDocument(updateListRequestDto.getTargetId());
+        switch (updateListRequestDto.getListType()) {
             case FOLLOWING:
-                if (dto.getIsAdd()) {
-                    userDocument.addToList(dto.getTargetId(), ListType.FOLLOWING);
-                    targetDocument.addToList(dto.getUserId(), ListType.FOLLOWER);
+                if (updateListRequestDto.getIsAdd()) {
+                    userDocument.addToList(updateListRequestDto.getTargetId(), ListType.FOLLOWING);
+                    targetDocument.addToList(updateListRequestDto.getUserId(), ListType.FOLLOWER);
                 } else {
-                    userDocument.removeFromList(dto.getTargetId(), ListType.FOLLOWING);
-                    targetDocument.removeFromList(dto.getUserId(), ListType.FOLLOWER);
+                    userDocument.removeFromList(updateListRequestDto.getTargetId(), ListType.FOLLOWING);
+                    targetDocument.removeFromList(updateListRequestDto.getUserId(), ListType.FOLLOWER);
                 }
                 break;
             case SUBSCRIBING:
-                if (dto.getIsAdd()) {
-                    userDocument.addToList(dto.getTargetId(), ListType.SUBSCRIBING);
-                    targetDocument.addToList(dto.getUserId(), ListType.SUBSCRIBER);
+                if (updateListRequestDto.getIsAdd()) {
+                    userDocument.addToList(updateListRequestDto.getTargetId(), ListType.SUBSCRIBING);
+                    targetDocument.addToList(updateListRequestDto.getUserId(), ListType.SUBSCRIBER);
                 } else {
-                    userDocument.removeFromList(dto.getTargetId(), ListType.SUBSCRIBING);
-                    targetDocument.removeFromList(dto.getUserId(), ListType.SUBSCRIBER);
+                    userDocument.removeFromList(updateListRequestDto.getTargetId(), ListType.SUBSCRIBING);
+                    targetDocument.removeFromList(updateListRequestDto.getUserId(), ListType.SUBSCRIBER);
                 }
         }
         feedRepository.save(userDocument);

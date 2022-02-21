@@ -10,12 +10,13 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 public class FeedResponseDto {
+
     private boolean result;
     private boolean endOfFeed;
     private List<Feed> feeds;
 
     @Builder
-    public FeedResponseDto(List<Feed> feeds) {
+    private FeedResponseDto(List<Feed> feeds) {
         this.result = true;
         this.endOfFeed = true;
         this.feeds = feeds;
