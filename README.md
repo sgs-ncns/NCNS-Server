@@ -1,4 +1,4 @@
-# 구독형 SNS : NCNS-Server
+# 구독형 SNS : 깐부스타그램
 
 <div align="center">
 <img src="https://user-images.githubusercontent.com/33328991/153784112-0ee47437-9bc5-4678-97cf-c3afca830244.png" width="50%">
@@ -21,7 +21,8 @@
 
 ## ❄️ Project Info
 
-#### 인스타그램 클론 + 깐부(구독) 프로젝트
+#### 인스타그램에 이중 팔로잉 기능 ‘깐부’가 추가된, 깐부스타그램
+
 
 ## 💫 Skill
 
@@ -37,7 +38,9 @@
 
 ## 🧱 Architecture
 
-<img src="https://user-images.githubusercontent.com/33328991/153784362-3d4fe4cd-e460-4ce6-91b6-022743694b1c.png" width="80%">
+<img src="https://user-images.githubusercontent.com/75432228/155558137-4902223a-15eb-4d96-9157-253c5d657fb6.png" width="80%">
+
+
 
 <br>
 
